@@ -10,6 +10,7 @@
         <module name="job-portal-user-service" />
         <module name="job-portal-common" />
         <module name="job-portal-company-service" />
+        <module name="job-portal-job-service" />
       </profile>
     </annotationProcessing>
   </component>
@@ -17,6 +18,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="job-portal-common" options="-parameters" />
       <module name="job-portal-company-service" options="-parameters" />
+      <module name="job-portal-job-service" options="-parameters" />
       <module name="job-portal-user-service" options="-parameters" />
     </option>
   </component>
