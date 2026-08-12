@@ -62,7 +62,7 @@ public class JobCategoryServiceImpl implements JobCategoryService {
     public JobCategoryResponse updateCategory(Long id, JobCategoryRequest req) throws Exception {
         JobCategory jobCategory = getCategoryEntityById(id);
         if(!jobCategory.getName().equals(req.getName())){
-            jobCategoryRepository.existsByName(req.getName()){
+            if(jobCategoryRepository.existsByName(req.getName())){
                 throw new Exception("Category name already exist, choose a different name");
             }
         }
