@@ -31,6 +31,7 @@ public class JobSkillServiceImpl implements JobSkillService {
         JobSkill jobSkill = JobSkill.builder()
                                     .name(req.getName()).slug(slug)
                                     .category(req.getCategory())
+                                    .active(true)
                                     .build();
 
         JobSkill savedSkill = jobSkillRepository.save(jobSkill);
@@ -59,8 +60,8 @@ public class JobSkillServiceImpl implements JobSkillService {
         JobSkill jobSkill = jobSkillRepository.findById(id)
                                               .orElseThrow(() -> new Exception("Job skill not found with ID: " + id));
 
-        if(!jobSkill.getName().equals(req.getName())){
-            if(jobSkillRepository.existsByName(jobSkill.getName())){
+        if (!jobSkill.getName().equals(req.getName())) {
+            if (jobSkillRepository.existsByName(jobSkill.getName())) {
                 throw new Exception("Job skill name already exists");
             }
         }

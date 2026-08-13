@@ -22,7 +22,7 @@ public class JobController {
     @PostMapping
     public ResponseEntity<JobResponse> createJob(
             @RequestHeader("X-User-Id") Long employerId,
-            @RequestBody @Valid JobRequest jobRequest) {
+            @RequestBody @Valid JobRequest jobRequest) throws Exception {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(jobService.createJob(employerId, jobRequest));
     }

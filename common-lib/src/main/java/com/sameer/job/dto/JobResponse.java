@@ -10,6 +10,7 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -27,9 +28,9 @@ public class JobResponse {
     private CompanyResponse company;
     private Long employerId;
 
-//    private JobCategoryResponse category;
-//    private Set<JobSkillResponse> skills;
-//    private Set<JobTagResponse> tags;
+    private JobCategoryResponse category;
+    private Set<JobSkillResponse> skills;
+    private Set<JobTagResponse> tags;
 
     // Location
     private String address;

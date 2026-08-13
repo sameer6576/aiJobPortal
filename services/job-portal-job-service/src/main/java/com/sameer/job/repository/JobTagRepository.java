@@ -1,14 +1,10 @@
 package com.sameer.job.repository;
 
-import com.sameer.job.modal.JobSkill;
+import com.sameer.job.modal.JobTag;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
-
-public interface JobSkillRepository extends JpaRepository<JobSkill, Long> {
-    List<JobSkill> findByActiveTrue();
+public interface JobTagRepository extends JpaRepository<JobTag, Long> {
 
     boolean existsByName(String name);
-
     boolean existsBySlug(String slug);
 }

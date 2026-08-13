@@ -6,28 +6,52 @@ import com.sameer.job.dto.JobResponse;
 import com.sameer.job.dto.response.CompanyResponse;
 import com.sameer.job.mapper.JobMapper;
 import com.sameer.job.modal.Job;
+import com.sameer.job.modal.JobCategory;
+import com.sameer.job.modal.JobSkill;
+import com.sameer.job.modal.JobTag;
 import com.sameer.job.modal.embeddable.JobLocation;
 import com.sameer.job.modal.embeddable.SalaryRange;
 import com.sameer.job.payload.JobSearchRequest;
 import com.sameer.job.repository.JobRepository;
 import com.sameer.job.repository.JobSpecification;
+import com.sameer.job.service.JobCategoryService;
 import com.sameer.job.service.JobService;
+import com.sameer.job.service.JobSkillService;
+import com.sameer.job.service.JobTagService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class JobServiceImpl implements JobService {
 
     private final JobRepository jobRepository;
+    private final JobCategoryService jobCategoryService;
+    private final JobSkillService jobSkillService;
+    private final JobTagService jobTagService;
 
 
     @Override
-    public JobResponse createJob(Long employerId, JobRequest req) {
+    public JobResponse createJob(Long employerId, JobRequest req) throws Exception {
+
+        JobCategory category = jobCategoryService.getCategoryEntityById(req.getCategoryId());
+
+        Set<JobSkill> skills = req.getSkillIds()!=null ?
+                jobSkillService.getSkillByIds(req.getSkillIds())
+                : Collections.emptySet();
+
+        Set<JobTag> tags = req.getTagIds()!=null ?
+                jobTagService.getTagsByIds(req.getTagIds()) : Collections.emptySet();
+
+
         // TODO: fetch company by employerId
 
         Long companyId = 1L;
@@ -40,9 +64,9 @@ public class JobServiceImpl implements JobService {
                 .benefits(req.getBenefits())
                 .companyId(companyId)
                 .employerId(employerId)
-//                .category(category)
-//                .skills(skills)
-//                .tags(tags)
+                .category(category)
+                .skills(skills)
+                .tags(tags)
                 .location(buildLocation(req))
                 .salaryRange(buildSalaryRange(req))
                 .jobType(req.getJobType())
@@ -51,6 +75,8 @@ public class JobServiceImpl implements JobService {
                 .opening(req.getOpenings() != null ? req.getOpenings() : 1)
                 .applicationDeadline(req.getApplicationDeadline())
                 .expiresAt(req.getExpiresAt())
+                .active(true)
+                .status(JobStatus.DRAFT)
                 .build();
 
         Job savedJob = jobRepository.save(job);
@@ -91,15 +117,23 @@ public class JobServiceImpl implements JobService {
         );
         assertEmployer(job,employerId);
 
+        JobCategory category = jobCategoryService.getCategoryEntityById(req.getCategoryId());
+
+        Set<JobSkill> skills = req.getSkillIds()!=null ?
+                jobSkillService.getSkillByIds(req.getSkillIds())
+                : Collections.emptySet();
+
+        Set<JobTag> tags = req.getTagIds()!=null ?
+                jobTagService.getTagsByIds(req.getTagIds()) : Collections.emptySet();
+
         job.setTitle(req.getTitle());
         job.setDescription(req.getDescription());
         job.setRequirements(req.getRequirements());
         job.setResponsibilities(req.getResponsibilities());
         job.setBenefits(req.getBenefits());
-        // TODO: not implemented yet
-//        job.setCategory(category);
-//        job.setSkills(skills);
-//        job.setTags(tags);
+        job.setCategory(category);
+        job.setSkills(skills);
+        job.setTags(tags);
 
         job.setLocation(buildLocation(req));
 

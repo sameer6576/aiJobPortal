@@ -42,7 +42,7 @@ public class JobCategoryController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse> deleteCategory(@PathVariable Long id) throws Exception {
+    public ResponseEntity<ApiResponse> deleteCategory(@PathVariable Long id) {
         jobCategoryService.deleteCategory(id);
         return ResponseEntity.ok(new ApiResponse("Category delete successfully", true));
     }

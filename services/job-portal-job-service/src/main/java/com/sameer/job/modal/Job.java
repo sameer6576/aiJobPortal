@@ -13,6 +13,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -46,9 +47,14 @@ public class Job {
     private Long employerId;
 
 
-//    private JobCategory category;
-//    private Set<JobSkill> skills;
-//    private Set<JobTag> tags;
+    @ManyToOne
+    private JobCategory category;
+
+    @ManyToMany
+    private Set<JobSkill> skills;
+
+    @ManyToMany
+    private Set<JobTag> tags;
 
     @Embedded
     private JobLocation location;
@@ -68,17 +74,20 @@ public class Job {
     @Enumerated(EnumType.STRING)
     private ExperienceLevel experienceLevel;
 
+    @Builder.Default
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private JobStatus status=JobStatus.DRAFT;
+    private JobStatus status = JobStatus.DRAFT;
 
-    private Integer opening=1;
+    @Builder.Default
+    private Integer opening = 1;
+
+    @Builder.Default
+    private Boolean active = true;
 
     private LocalDate applicationDeadline;
 
     private LocalDate expiresAt;
-
-    private Boolean active=true;
 
     @CreationTimestamp
     @Column(nullable = false,updatable = false)

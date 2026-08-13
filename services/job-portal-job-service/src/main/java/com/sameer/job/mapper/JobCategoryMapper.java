@@ -10,7 +10,7 @@ public class JobCategoryMapper {
     public static JobCategoryResponse toJobCategoryResponse(JobCategory jobCategory, boolean includeChildren) {
 
         List<JobCategoryResponse> subCategories = null;
-        if (includeChildren) {
+        if (includeChildren && jobCategory.getSubCategories() !=null) {
             subCategories = jobCategory.getSubCategories()
                                        .stream()
                                        .map(sub -> toJobCategoryResponse(sub, false))

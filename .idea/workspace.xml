@@ -5,11 +5,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0c2727b9-b262-4c3d-97f2-2b2251d43110" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/job-portal-company-service/src/main/java/com/sameer/job/controller/HomeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-company-service/src/main/java/com/sameer/job/controller/HomeController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/services/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common-lib/src/main/java/com/sameer/job/dto/JobResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/common-lib/src/main/java/com/sameer/job/dto/JobResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-company-service/src/main/java/com/sameer/job/repository/CompanyRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-company-service/src/main/java/com/sameer/job/repository/CompanyRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-job-service/src/main/java/com/sameer/job/controller/JobCategoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-job-service/src/main/java/com/sameer/job/controller/JobCategoryController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-job-service/src/main/java/com/sameer/job/controller/JobController.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-job-service/src/main/java/com/sameer/job/controller/JobController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-job-service/src/main/java/com/sameer/job/mapper/JobCategoryMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-job-service/src/main/java/com/sameer/job/mapper/JobCategoryMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-job-service/src/main/java/com/sameer/job/mapper/JobMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-job-service/src/main/java/com/sameer/job/mapper/JobMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-job-service/src/main/java/com/sameer/job/modal/Job.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-job-service/src/main/java/com/sameer/job/modal/Job.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-job-service/src/main/java/com/sameer/job/repository/JobCategoryRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-job-service/src/main/java/com/sameer/job/repository/JobCategoryRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-job-service/src/main/java/com/sameer/job/repository/JobRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-job-service/src/main/java/com/sameer/job/repository/JobRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-job-service/src/main/java/com/sameer/job/repository/JobSkillRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-job-service/src/main/java/com/sameer/job/repository/JobSkillRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-job-service/src/main/java/com/sameer/job/service/JobService.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-job-service/src/main/java/com/sameer/job/service/JobService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-job-service/src/main/java/com/sameer/job/service/impl/JobCategoryServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-job-service/src/main/java/com/sameer/job/service/impl/JobCategoryServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-job-service/src/main/java/com/sameer/job/service/impl/JobServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-job-service/src/main/java/com/sameer/job/service/impl/JobServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-job-service/src/main/java/com/sameer/job/service/impl/JobSkillServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-job-service/src/main/java/com/sameer/job/service/impl/JobSkillServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-user-service/src/main/java/com/sameer/job/repository/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-user-service/src/main/java/com/sameer/job/repository/UserRepository.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,15 +66,17 @@
     "last_opened_file_path": "/Users/sameerahmed/Coding/Job Portal/job-portal-system",
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0"
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "preferences.sourceCode.JAVA"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
-      <recent name="com.sameer.job.dto" />
-      <recent name="com.sameer.job.domain" />
-      <recent name="com.sameer.job.modal" />
       <recent name="com.sameer.job.payload" />
+      <recent name="com.sameer.job.dto" />
+      <recent name="com.sameer.job.mapper" />
+      <recent name="com.sameer.job.domain" />
+      <recent name="com.sameer.job.modal.embeddable" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />

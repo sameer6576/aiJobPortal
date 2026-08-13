@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface JobService {
 
-     JobResponse createJob(Long employerId, JobRequest req);
+     JobResponse createJob(Long employerId, JobRequest req) throws Exception;
 
     JobResponse getJobById(Long id) throws Exception;
 
