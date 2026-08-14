@@ -1,0 +1,65 @@
+package com.sameer.job.modal;
+
+import com.sameer.job.domain.JobType;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "work_experiences")
+public class WorkExperience {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private Resume resume;
+
+    @Column(nullable = false)
+    private String companyName;
+
+    private String companyLogoUrl;
+
+    @Column(nullable = false)
+    private String jobTitle;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private JobType employmentType;
+
+    private String location;
+
+    private LocalDate startDate;
+    private LocalDate endDate;
+
+    @Column(nullable = false)
+    private Boolean isCurrentJob = false;
+
+    private String description;
+
+    @ElementCollection
+    private List<String> technologies = new ArrayList<>();
+
+    @Column(nullable = false)
+    private Integer displayOrder=0;
+
+    @CreationTimestamp
+    @Column(updatable = false, nullable = false)
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
+}
