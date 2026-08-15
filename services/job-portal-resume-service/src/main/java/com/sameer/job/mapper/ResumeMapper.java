@@ -1,8 +1,10 @@
 package com.sameer.job.mapper;
 
+import com.sameer.job.dto.EducationResponse;
 import com.sameer.job.dto.PersonalInfoResponse;
 import com.sameer.job.dto.ResumeResponse;
 import com.sameer.job.dto.ResumeSkillResponse;
+import com.sameer.job.modal.Education;
 import com.sameer.job.modal.PersonalInfo;
 import com.sameer.job.modal.Resume;
 import com.sameer.job.modal.ResumeSkill;
@@ -61,5 +63,25 @@ public final class ResumeMapper {
                                   .yearsOfExperience(skill.getYearsOfExperience())
                                   .displayOrder(skill.getDisplayOrder())
                                   .build();
+    }
+
+    public static EducationResponse toEducationResponse(Education education) {
+
+        if (education == null) {
+            return null;
+        }
+
+        return EducationResponse.builder()
+                                .id(education.getId())
+                                .institutionName(education.getInstitutionName())
+                                .degree(education.getDegree())
+                                .fieldOfStudy(education.getFieldOfStudy())
+                                .grade(education.getGrade())
+                                .startDate(education.getStartDate())
+                                .endDate(education.getEndDate())
+                                .isCurrentlyStudying(education.getIsCurrentlyStudying())
+                                .description(education.getDescription())
+                                .displayOrder(education.getDisplayOrder())
+                                .build();
     }
 }

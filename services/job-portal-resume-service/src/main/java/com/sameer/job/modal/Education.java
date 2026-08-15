@@ -1,6 +1,5 @@
 package com.sameer.job.modal;
 
-import com.sameer.job.domain.JobType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -8,17 +7,15 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
+@Entity
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "work_experiences")
-public class WorkExperience {
-
+@Builder
+@Table(name = "educations")
+public class Education {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -27,33 +24,29 @@ public class WorkExperience {
     @JoinColumn(nullable = false)
     private Resume resume;
 
-    @Column(nullable = false)
-    private String companyName;
+    @Column(nullable = false, length = 200)
+    private String institutionName;
 
-    private String companyLogoUrl;
+    @Column(nullable = false, length = 150)
+    private String degree;
 
-    @Column(nullable = false)
-    private String jobTitle;
+    @Column(length = 150)
+    private String fieldOfStudy;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private JobType employmentType;
-
-    private String location;
+    @Column(length = 50)
+    private String grade;
 
     @Column(nullable = false)
     private LocalDate startDate;
+
     private LocalDate endDate;
 
     @Column(nullable = false)
-    private Boolean isCurrentJob = false;
+    @Builder.Default
+    private Boolean isCurrentlyStudying = false;
 
     private String description;
 
-    @ElementCollection
-    private List<String> technologies = new ArrayList<>();
-
-    @Column(nullable = false)
     private Integer displayOrder=0;
 
     @CreationTimestamp
