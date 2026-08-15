@@ -151,7 +151,7 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     private ResumeResponse buildFullResponse(Resume resume) {
-        return ResumeMapper.toResponse(resume);
+        return ResumeMapper.toPersonalInfoResponse(resume);
     }
 
     private void assertOwner(Resume resume, Long candidateId) throws Exception {
