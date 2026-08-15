@@ -6,6 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="0c2727b9-b262-4c3d-97f2-2b2251d43110" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-resume-service/src/main/java/com/sameer/job/mapper/ResumeMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-resume-service/src/main/java/com/sameer/job/mapper/ResumeMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-resume-service/src/main/java/com/sameer/job/service/impl/ResumeServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-resume-service/src/main/java/com/sameer/job/service/impl/ResumeServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,8 +62,8 @@
     <key name="CreateClassDialog.RecentsKey">
       <recent name="com.sameer.job.payload" />
       <recent name="com.sameer.job.dto" />
-      <recent name="com.sameer.job.modal" />
       <recent name="com.sameer.job.domain" />
+      <recent name="com.sameer.job.modal" />
       <recent name="com.sameer.job.mapper" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
