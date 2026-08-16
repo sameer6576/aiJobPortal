@@ -1,14 +1,15 @@
 package com.sameer.job.service.impl;
 
-import com.sameer.job.dto.PersonalInfoResponse;
-import com.sameer.job.dto.ResumeResponse;
+import com.sameer.job.dto.*;
 import com.sameer.job.mapper.ResumeMapper;
+import com.sameer.job.mapper.WorkExperienceMapper;
 import com.sameer.job.modal.PersonalInfo;
 import com.sameer.job.modal.Resume;
 import com.sameer.job.payload.CreateResumeRequest;
-import com.sameer.job.repository.ResumeRepository;
+import com.sameer.job.repository.*;
 import com.sameer.job.service.ResumeService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -16,9 +17,24 @@ import java.util.List;
 public class ResumeServiceImpl implements ResumeService {
 
     private final ResumeRepository resumeRepository;
+    private final WorkExperienceRepository workExperienceRepository;
+    private final EducationRepository educationRepository;
+    private final ResumeSkillRepository resumeSkillRepository;
+    private final ProjectRepository projectRepository;
+    private final LanguageRepository languageRepository;
 
-    public ResumeServiceImpl(ResumeRepository resumeRepository) {
+    public ResumeServiceImpl(ResumeRepository resumeRepository,
+                             WorkExperienceRepository workExperienceRepository,
+                             EducationRepository educationRepository,
+                             ResumeSkillRepository resumeSkillRepository,
+                             ProjectRepository projectRepository,
+                             LanguageRepository languageRepository) {
         this.resumeRepository = resumeRepository;
+        this.workExperienceRepository = workExperienceRepository;
+        this.educationRepository = educationRepository;
+        this.resumeSkillRepository = resumeSkillRepository;
+        this.projectRepository = projectRepository;
+        this.languageRepository = languageRepository;
     }
 
     @Override
@@ -30,7 +46,9 @@ public class ResumeServiceImpl implements ResumeService {
             });
         }
 
-        Resume resume = Resume.builder().candidateId(candidateId).title(req.getTitle()).template(req.getTemplate()).visibility(req.getVisibility()).isDefault(Boolean.TRUE.equals(req.getIsDefault())).isActive(true).build();
+        Resume resume = Resume.builder().candidateId(candidateId).title(req.getTitle()).template(req.getTemplate())
+                              .visibility(req.getVisibility()).isDefault(Boolean.TRUE.equals(req.getIsDefault()))
+                              .isActive(true).build();
 
         Resume saved = resumeRepository.save(resume);
         return buildFullResponse(saved);
@@ -43,9 +61,14 @@ public class ResumeServiceImpl implements ResumeService {
         return null;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<ResumeResponse> getMyResumes(Long candidateId) {
-        return resumeRepository.findByCandidateIdAndIsActiveTrue(candidateId).stream().map(this::buildFullResponse).toList();
+        return resumeRepository
+                .findByCandidateIdAndIsActiveTrue(candidateId)
+                .stream()
+                .map(this::buildFullResponse)
+                .toList();
     }
 
     @Override
@@ -115,7 +138,7 @@ public class ResumeServiceImpl implements ResumeService {
     @Override
     public ResumeResponse updateSummary(Long resumeId, Long candidateId, String summary) throws Exception {
         Resume resume = getResumeEntity(resumeId);
-        assertOwner(resume,candidateId);
+        assertOwner(resume, candidateId);
 
         resume.setSummary(summary);
         Resume updated = resumeRepository.save(resume);
@@ -125,12 +148,12 @@ public class ResumeServiceImpl implements ResumeService {
     @Override
     public ResumeResponse setDefaultResume(Long resumeId, Long candidateId) throws Exception {
         Resume resume = getResumeEntity(resumeId);
-        assertOwner(resume,candidateId);
+        assertOwner(resume, candidateId);
         resumeRepository.findByCandidateIdAndIsDefaultTrue(candidateId)
-                                .ifPresent(existing ->{
-                                    existing.setIsDefault(false);
-                                    resumeRepository.save(existing);
-                                });
+                        .ifPresent(existing -> {
+                            existing.setIsDefault(false);
+                            resumeRepository.save(existing);
+                        });
         resume.setIsDefault(true);
         Resume updated = resumeRepository.save(resume);
         return buildFullResponse(updated);
@@ -139,7 +162,7 @@ public class ResumeServiceImpl implements ResumeService {
     @Override
     public void deleteResume(Long resumeId, Long candidateId) throws Exception {
         Resume resume = getResumeEntity(resumeId);
-        assertOwner(resume,candidateId);
+        assertOwner(resume, candidateId);
         resume.setIsActive(false);
         resume.setIsDefault(false);
         resumeRepository.save(resume);
@@ -147,11 +170,34 @@ public class ResumeServiceImpl implements ResumeService {
 
     @Override
     public Resume getResumeEntity(Long resumeId) throws Exception {
-        return resumeRepository.findById(resumeId).orElseThrow(() -> new Exception("Resume not found with ID: " + resumeId));
+        return resumeRepository.findById(resumeId)
+                               .orElseThrow(() -> new Exception("Resume not found with ID: " + resumeId));
     }
 
     private ResumeResponse buildFullResponse(Resume resume) {
-        return ResumeMapper.toPersonalInfoResponse(resume);
+        Long resumeId = resume.getId();
+        List<WorkExperienceResponse> workExperienceResponses = workExperienceRepository.findByResume_IdOrderByDisplayOrderAsc(resumeId)
+                                                                                       .stream()
+                                                                                       .map(WorkExperienceMapper::toWorkExperienceResponse)
+                                                                                       .toList();
+
+        List<EducationResponse> educationResponses = educationRepository.findByResume_IdOrderByDisplayOrderAsc(resumeId)
+                                                                        .stream().map(ResumeMapper::toEducationResponse)
+                                                                        .toList();
+
+        List<ResumeSkillResponse> resumeSkillResponses = resumeSkillRepository.findByResume_IdOrderByDisplayOrderAsc(resumeId)
+                                                                              .stream().map(ResumeMapper::toSkillResponse)
+                                                                              .toList();
+
+        List<ProjectResponse> projectResponses = projectRepository.findByResume_IdOrderByDisplayOrderAsc(resumeId)
+                .stream().map(ResumeMapper::toProjectResponse)
+                .toList();
+
+        List<LanguageResponse> languageResponses = languageRepository.findByResume_IdOrderByDisplayOrderAsc(resumeId)
+                .stream().map(ResumeMapper::toLanguageResponse)
+                .toList();
+
+        return ResumeMapper.toResponse(resume,workExperienceResponses,educationResponses,resumeSkillResponses,projectResponses,languageResponses);
     }
 
     private void assertOwner(Resume resume, Long candidateId) throws Exception {

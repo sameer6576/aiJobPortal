@@ -1,11 +1,11 @@
 package com.sameer.job.modal;
 
+import com.sameer.job.domain.LanguageProficiency;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -14,8 +14,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "educations")
-public class Education {
+@Table(name = "languages")
+public class Language {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -24,28 +25,11 @@ public class Education {
     @JoinColumn(nullable = false)
     private Resume resume;
 
-    @Column(nullable = false, length = 200)
-    private String institutionName;
-
-    @Column(nullable = false, length = 150)
-    private String degree;
-
-    @Column(length = 150)
-    private String fieldOfStudy;
-
-    @Column(length = 50)
-    private String grade;
-
     @Column(nullable = false)
-    private LocalDate startDate;
+    private String languageName;
 
-    private LocalDate endDate;
-
-    @Column(nullable = false)
-    @Builder.Default
-    private Boolean isCurrentlyStudying = false;
-
-    private String description;
+    @Enumerated(EnumType.STRING)
+    private LanguageProficiency proficiency;
 
     @Column(nullable = false)
     @Builder.Default

@@ -3,6 +3,9 @@ package com.sameer.job.mapper;
 import com.sameer.job.dto.*;
 import com.sameer.job.modal.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public final class ResumeMapper {
 
     public static PersonalInfoResponse toPersonalInfoResponse(PersonalInfo personalInfo) {
@@ -27,7 +30,12 @@ public final class ResumeMapper {
     }
 
 
-    public static ResumeResponse toPersonalInfoResponse(Resume resume) {
+    public static ResumeResponse toResponse(Resume resume,
+                                            List<WorkExperienceResponse> workExperiences,
+                                            List<EducationResponse> educations,
+                                            List<ResumeSkillResponse> skills,
+                                            List<ProjectResponse> projects,
+                                            List<LanguageResponse> languages) {
 
         if (resume == null) return null;
 
@@ -43,6 +51,11 @@ public final class ResumeMapper {
                              .completionScore(resume.getCompletionScore())
                              .createdAt(resume.getCreatedAt())
                              .updatedAt(resume.getUpdatedAt())
+                             .workExperiences(workExperiences)
+                             .educations(educations)
+                             .languages(languages)
+                             .projects(projects)
+                             .skills(skills)
                              .build();
     }
 
@@ -89,7 +102,11 @@ public final class ResumeMapper {
                               .id(project.getId())
                               .title(project.getTitle())
                               .description(project.getDescription())
-                              .technologies(project.getTechnologies())
+                              .technologies(
+                                      project.getTechnologies() != null
+                                              ? new ArrayList<>(project.getTechnologies())
+                                              : new ArrayList<>()
+                              )
                               .projectUrl(project.getProjectUrl())
                               .sourceCodeUrl(project.getSourceCodeUrl())
                               .startDate(project.getStartDate())
@@ -97,5 +114,19 @@ public final class ResumeMapper {
                               .isOngoing(project.getIsOngoing())
                               .displayOrder(project.getDisplayOrder())
                               .build();
+    }
+
+    public static LanguageResponse toLanguageResponse(Language language) {
+
+        if (language == null) {
+            return null;
+        }
+
+        return LanguageResponse.builder()
+                               .id(language.getId())
+                               .languageName(language.getLanguageName())
+                               .proficiency(language.getProficiency())
+                               .displayOrder(language.getDisplayOrder())
+                               .build();
     }
 }

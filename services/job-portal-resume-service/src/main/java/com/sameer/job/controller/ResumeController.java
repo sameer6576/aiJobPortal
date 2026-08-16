@@ -40,7 +40,7 @@ public class ResumeController {
         );
     }
 
-    @GetMapping("/me")
+    @GetMapping("/my")
     public ResponseEntity<List<ResumeResponse>> getMyResumes(
             @RequestHeader("X-User-Id") Long candidateId
     ) {
