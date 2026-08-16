@@ -6,6 +6,18 @@
   <component name="ChangeListManager">
     <list default="true" id="0c2727b9-b262-4c3d-97f2-2b2251d43110" name="Changes" comment="Implemented Resume Skill related APIs">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common-lib/src/main/java/com/sameer/job/dto/ResumeResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/common-lib/src/main/java/com/sameer/job/dto/ResumeResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-resume-service/src/main/java/com/sameer/job/controller/ResumeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-resume-service/src/main/java/com/sameer/job/controller/ResumeController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-resume-service/src/main/java/com/sameer/job/mapper/ResumeMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-resume-service/src/main/java/com/sameer/job/mapper/ResumeMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-resume-service/src/main/java/com/sameer/job/mapper/WorkExperienceMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-resume-service/src/main/java/com/sameer/job/mapper/WorkExperienceMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-resume-service/src/main/java/com/sameer/job/modal/Education.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-resume-service/src/main/java/com/sameer/job/modal/Education.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-resume-service/src/main/java/com/sameer/job/modal/WorkExperience.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-resume-service/src/main/java/com/sameer/job/modal/WorkExperience.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-resume-service/src/main/java/com/sameer/job/payload/CreateResumeRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-resume-service/src/main/java/com/sameer/job/payload/CreateResumeRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-resume-service/src/main/java/com/sameer/job/repository/WorkExperienceRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-resume-service/src/main/java/com/sameer/job/repository/WorkExperienceRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-resume-service/src/main/java/com/sameer/job/service/impl/ResumeServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-resume-service/src/main/java/com/sameer/job/service/impl/ResumeServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-resume-service/src/main/java/com/sameer/job/service/impl/WorkExperienceServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-resume-service/src/main/java/com/sameer/job/service/impl/WorkExperienceServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-resume-service/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-resume-service/src/main/resources/application.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/services/pom.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,6 +53,7 @@
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "Spring Boot.JobPortalCompanyServiceApplication.executor": "Run",
     "Spring Boot.JobPortalJobServiceApplication.executor": "Run",
