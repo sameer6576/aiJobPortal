@@ -1,0 +1,171 @@
+package com.sameer.job.service.impl;
+
+import com.sameer.job.domain.ApplicationStatus;
+import com.sameer.job.dto.ApplicationResponse;
+import com.sameer.job.dto.JobResponse;
+import com.sameer.job.dto.response.CompanyResponse;
+import com.sameer.job.dto.response.UserResponse;
+import com.sameer.job.mapper.ApplicationMapper;
+import com.sameer.job.modal.Application;
+import com.sameer.job.modal.ApplicationNote;
+import com.sameer.job.payload.CompanyApplicationFilterRequest;
+import com.sameer.job.payload.CreateApplicationRequest;
+import com.sameer.job.payload.WithdrawApplicationRequest;
+import com.sameer.job.repository.ApplicationNoteRepository;
+import com.sameer.job.repository.ApplicationRepository;
+import com.sameer.job.repository.ApplicationSpecification;
+import com.sameer.job.service.ApplicationService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class ApplicationServiceImpl implements ApplicationService {
+
+    private final ApplicationRepository applicationRepository;
+    private final ApplicationNoteRepository applicationNoteRepository;
+
+    @Override
+    public ApplicationResponse createApplication(Long candidateId, CreateApplicationRequest req) throws Exception {
+        if (applicationRepository.existsByCandidateIdAndJobId(candidateId, req.getJobId())) {
+            throw new Exception("You have already applied");
+        }
+//        todo: when fetch job use job.companyId;
+        Long companyId = 1L;
+        Long employerId = 1L;
+//        todo: fetch job
+
+//        todo: fetch resume from resumeService
+
+        Application application = ApplicationMapper.toEntity(req, candidateId, companyId, employerId);
+
+        Application savedApplication = applicationRepository.save(application);
+
+//        todo: AI screening runs in the background thread, no callback needed
+
+        return buildFullResponse(savedApplication);
+    }
+
+    @Override
+    public ApplicationResponse getApplicationById(Long id) throws Exception {
+        Application application = getApplicationEntity(id);
+        return buildFullResponse(application);
+    }
+
+    @Override
+    public List<ApplicationResponse> getMyApplications(Long candidateId) {
+        return applicationRepository.findByCandidateId(candidateId)
+                                    .stream().map(this::buildFullResponse).toList();
+    }
+
+    @Override
+    public List<ApplicationResponse> getApplicationsForCompany(Long userId, CompanyApplicationFilterRequest filter) {
+
+//        todo: fetch company by ownerId
+        Long companyId = 1L;
+        Sort sort = buildSort(filter.getSortBy());
+
+        return applicationRepository.findAll(
+                                            ApplicationSpecification.forCompanyWithFilters(
+                                                    companyId, filter.getJobId(),
+                                                    filter.getStatus(),
+                                                    filter.getIsStarred(),
+                                                    filter.getAiShortListStatus(),
+                                                    filter.getMinAiScore()
+                                            ), sort)
+                                    .stream().map(this::buildFullResponse).toList();
+    }
+
+    @Override
+    public List<ApplicationResponse> getApplicationsForJob(Long jobId) {
+        return applicationRepository.findByJobId(jobId)
+                                    .stream().map(this::buildFullResponse).toList();
+
+    }
+
+    @Override
+    public ApplicationResponse updateStatus(Long applicationId, Long employerId, ApplicationStatus status) throws Exception {
+        Application application = getApplicationEntity(applicationId);
+        assertEmployer(application, employerId);
+
+        if (application.getStatus() == ApplicationStatus.WITHDRAWN) {
+            throw new Exception("Candidate have already withdrawn");
+        }
+
+        application.setStatus(status);
+        Application savedApplication = applicationRepository.save(application);
+        return buildFullResponse(savedApplication);
+    }
+
+    @Override
+    public ApplicationResponse withdraw(Long applicationId, Long candidateId, WithdrawApplicationRequest req) throws Exception {
+        Application application = getApplicationEntity(applicationId);
+        assertCandidate(application, candidateId);
+
+        if (application.getStatus() == ApplicationStatus.WITHDRAWN) {
+            throw new Exception("Candidate have already withdrawn");
+        }
+
+        application.setStatus(ApplicationStatus.WITHDRAWN);
+        application.setWithdrawnReason(req.getReason());
+        Application saved = applicationRepository.save(application);
+        return buildFullResponse(saved);
+    }
+
+    @Override
+    public ApplicationResponse toggleStar(Long applicationId, Long employerId) throws Exception {
+        Application application = getApplicationEntity(applicationId);
+        assertEmployer(application, employerId);
+        application.setIsStarred(!application.getIsStarred());
+        Application saved = applicationRepository.save(application);
+        return buildFullResponse(saved);
+    }
+
+    @Override
+    public void deleteApplication(Long applicationId, Long candidateId) throws Exception {
+        Application application = getApplicationEntity(applicationId);
+        assertCandidate(application, candidateId);
+        applicationRepository.delete(application);
+    }
+
+    @Override
+    public Application getApplicationEntity(Long applicationId) throws Exception {
+        return applicationRepository.findById(applicationId)
+                                    .orElseThrow(() -> new Exception("Application not found with ID: " + applicationId));
+    }
+
+    public ApplicationResponse buildFullResponse(Application application) {
+        // todo: fetch real data from respective micro service
+        List<ApplicationNote> notes = applicationNoteRepository.findByApplicationId(application.getId());
+        JobResponse job = JobResponse.builder().id(application.getJobId()).build();
+        CompanyResponse company = CompanyResponse.builder().id(application.getCompanyId()).build();
+        UserResponse candidate = UserResponse.builder().id(application.getCandidateId()).build();
+        return ApplicationMapper.toResponse(application, notes, job, company, candidate);
+    }
+
+    private Sort buildSort(String sortBy) {
+        if ("AI_SCORE_DESC".equals(sortBy)) {
+            return Sort.by(Sort.Order.desc("aiScore").with(Sort.NullHandling.NULLS_LAST));
+        } else if ("AI_SCORE_ASC".equals(sortBy)) {
+            return Sort.by(Sort.Order.asc("aiScore").with(Sort.NullHandling.NULLS_LAST));
+        }
+        return Sort.by(Sort.Direction.DESC, "appliedAt");
+    }
+
+    private void assertEmployer(Application application, Long employerId) throws Exception {
+        if (!application.getEmployerId().equals(employerId)) {
+            throw new Exception("You are not the employer of this application");
+
+        }
+    }
+
+    private void assertCandidate(Application application, Long candidateId) throws Exception {
+        if (!application.getCandidateId().equals(candidateId)) {
+            throw new Exception("You are not the owner of this application");
+
+        }
+    }
+}
