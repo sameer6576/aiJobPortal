@@ -8,13 +8,18 @@
       <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cloud/job-portal-config-server/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/cloud/job-portal-config-server/src/main/resources/application.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cloud/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/cloud/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/services/job-portal-application-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-application-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-application-service/src/main/java/com/sameer/job/JobPortalApplicationServiceApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-application-service/src/main/java/com/sameer/job/JobPortalApplicationServiceApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-application-service/src/main/java/com/sameer/job/service/impl/ApplicationServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-application-service/src/main/java/com/sameer/job/service/impl/ApplicationServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/services/job-portal-application-service/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-application-service/src/main/resources/application.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/services/job-portal-company-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-company-service/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/services/job-portal-company-service/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-company-service/src/main/resources/application.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/services/job-portal-job-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-job-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-job-service/src/main/java/com/sameer/job/JobPortalJobServiceApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-job-service/src/main/java/com/sameer/job/JobPortalJobServiceApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-job-service/src/main/java/com/sameer/job/mapper/JobMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-job-service/src/main/java/com/sameer/job/mapper/JobMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-job-service/src/main/java/com/sameer/job/service/impl/JobServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-job-service/src/main/java/com/sameer/job/service/impl/JobServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/services/job-portal-job-service/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-job-service/src/main/resources/application.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/services/job-portal-preferences/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-preferences/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/services/job-portal-preferences/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-preferences/src/main/resources/application.yaml" afterDir="false" />
@@ -32,8 +37,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Enum" />
-        <option value="Interface" />
         <option value="Class" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
@@ -54,11 +59,13 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Application.JobPortalResumeServiceApplication.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "Spring Boot.JobPortalApiGatewayApplication.executor": "Run",
     "Spring Boot.JobPortalApplicationServiceApplication.executor": "Run",
     "Spring Boot.JobPortalCompanyServiceApplication.executor": "Run",
     "Spring Boot.JobPortalConfigServerApplication.executor": "Run",
@@ -104,24 +111,17 @@
           <value>
             <map>
               <entry key="JobPortalApplicationServiceApplication" value="STOPPED" />
-              <entry key="JobPortalCompanyServiceApplication" value="STOPPED" />
-              <entry key="JobPortalConfigServerApplication" value="FAILED" />
               <entry key="JobPortalJobServiceApplication" value="STOPPED" />
-              <entry key="JobPortalPreferencesApplication" value="STOPPED" />
-              <entry key="JobPortalResumeServiceApplication" value="STOPPED" />
-              <entry key="JobPortalServiceRegistryApplication" value="STOPPED" />
-              <entry key="JobPortalUserServiceApplication" value="STOPPED" />
             </map>
           </value>
         </entry>
       </map>
     </option>
   </component>
-  <component name="RunManager" selected="Spring Boot.JobPortalConfigServerApplication">
-    <configuration name="JobPortalApplicationServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
-      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UnknownPolicyInFreeMode" />
-      <module name="job-portal-application-service" />
-      <option name="SPRING_BOOT_MAIN_CLASS" value="com.sameer.job.JobPortalApplicationServiceApplication" />
+  <component name="RunManager" selected="Spring Boot.JobPortalJobServiceApplication">
+    <configuration name="JobPortalResumeServiceApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.sameer.job.JobPortalResumeServiceApplication" />
+      <module name="job-portal-resume-service" />
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="com.sameer.job.*" />
@@ -146,20 +146,6 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="JobPortalConfigServerApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
-      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UnknownPolicyInFreeMode" />
-      <module name="job-portal-config-server" />
-      <option name="SPRING_BOOT_MAIN_CLASS" value="com.sameer.job.JobPortalConfigServerApplication" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.sameer.job.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="JobPortalJobServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
       <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UnknownPolicyInFreeMode" />
       <module name="job-portal-job-service" />
@@ -174,10 +160,10 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="JobPortalServiceRegistryApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+    <configuration name="JobPortalPreferencesApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
       <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UnknownPolicyInFreeMode" />
-      <module name="job-portal-service-registry" />
-      <option name="SPRING_BOOT_MAIN_CLASS" value="com.sameer.job.JobPortalServiceRegistryApplication" />
+      <module name="job-portal-preferences-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.sameer.job.JobPortalPreferencesApplication" />
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="com.sameer.job.*" />
@@ -188,13 +174,34 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="JobPortalUserServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UnknownPolicyInFreeMode" />
+      <module name="job-portal-user-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.sameer.job.JobPortalUserServiceApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.sameer.job.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.JobPortalResumeServiceApplication" />
+      <item itemvalue="Spring Boot.JobPortalCompanyServiceApplication" />
+      <item itemvalue="Spring Boot.JobPortalPreferencesApplication" />
+      <item itemvalue="Spring Boot.JobPortalJobServiceApplication" />
+      <item itemvalue="Spring Boot.JobPortalUserServiceApplication" />
+    </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Spring Boot.JobPortalConfigServerApplication" />
-        <item itemvalue="Spring Boot.JobPortalServiceRegistryApplication" />
-        <item itemvalue="Spring Boot.JobPortalApplicationServiceApplication" />
-        <item itemvalue="Spring Boot.JobPortalCompanyServiceApplication" />
         <item itemvalue="Spring Boot.JobPortalJobServiceApplication" />
+        <item itemvalue="Spring Boot.JobPortalUserServiceApplication" />
+        <item itemvalue="Application.JobPortalResumeServiceApplication" />
+        <item itemvalue="Spring Boot.JobPortalPreferencesApplication" />
+        <item itemvalue="Spring Boot.JobPortalCompanyServiceApplication" />
       </list>
     </recent_temporary>
   </component>

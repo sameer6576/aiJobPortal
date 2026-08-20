@@ -1,5 +1,6 @@
 package com.sameer.job.service.impl;
 
+import com.sameer.job.client.CompanyClient;
 import com.sameer.job.domain.JobStatus;
 import com.sameer.job.dto.JobRequest;
 import com.sameer.job.dto.JobResponse;
@@ -37,6 +38,7 @@ public class JobServiceImpl implements JobService {
     private final JobCategoryService jobCategoryService;
     private final JobSkillService jobSkillService;
     private final JobTagService jobTagService;
+    private final CompanyClient companyClient;
 
 
     @Override
@@ -44,40 +46,39 @@ public class JobServiceImpl implements JobService {
 
         JobCategory category = jobCategoryService.getCategoryEntityById(req.getCategoryId());
 
-        Set<JobSkill> skills = req.getSkillIds()!=null ?
+        Set<JobSkill> skills = req.getSkillIds() != null ?
                 jobSkillService.getSkillByIds(req.getSkillIds())
                 : Collections.emptySet();
 
-        Set<JobTag> tags = req.getTagIds()!=null ?
+        Set<JobTag> tags = req.getTagIds() != null ?
                 jobTagService.getTagsByIds(req.getTagIds()) : Collections.emptySet();
 
+        CompanyResponse companyResponse = companyClient.getMyCompany(employerId);
 
-        // TODO: fetch company by employerId
-
-        Long companyId = 1L;
+        Long companyId = companyResponse.getId();
 
         Job job = Job.builder()
-                .title(req.getTitle())
-                .description(req.getDescription())
-                .requirements(req.getRequirements())
-                .responsibilities(req.getResponsibilities())
-                .benefits(req.getBenefits())
-                .companyId(companyId)
-                .employerId(employerId)
-                .category(category)
-                .skills(skills)
-                .tags(tags)
-                .location(buildLocation(req))
-                .salaryRange(buildSalaryRange(req))
-                .jobType(req.getJobType())
-                .workMode(req.getWorkMode())
-                .experienceLevel(req.getExperienceLevel())
-                .opening(req.getOpenings() != null ? req.getOpenings() : 1)
-                .applicationDeadline(req.getApplicationDeadline())
-                .expiresAt(req.getExpiresAt())
-                .active(true)
-                .status(JobStatus.DRAFT)
-                .build();
+                     .title(req.getTitle())
+                     .description(req.getDescription())
+                     .requirements(req.getRequirements())
+                     .responsibilities(req.getResponsibilities())
+                     .benefits(req.getBenefits())
+                     .companyId(companyId)
+                     .employerId(employerId)
+                     .category(category)
+                     .skills(skills)
+                     .tags(tags)
+                     .location(buildLocation(req))
+                     .salaryRange(buildSalaryRange(req))
+                     .jobType(req.getJobType())
+                     .workMode(req.getWorkMode())
+                     .experienceLevel(req.getExperienceLevel())
+                     .opening(req.getOpenings() != null ? req.getOpenings() : 1)
+                     .applicationDeadline(req.getApplicationDeadline())
+                     .expiresAt(req.getExpiresAt())
+                     .active(true)
+                     .status(JobStatus.DRAFT)
+                     .build();
 
         Job savedJob = jobRepository.save(job);
 
@@ -106,8 +107,8 @@ public class JobServiceImpl implements JobService {
         List<Job> jobs = jobRepository.findByCompanyId(companyId);
 
         return jobs.stream()
-                .map(this::convertToResponse)
-                .collect(Collectors.toList());
+                   .map(this::convertToResponse)
+                   .collect(Collectors.toList());
     }
 
     @Override
@@ -115,15 +116,15 @@ public class JobServiceImpl implements JobService {
         Job job = jobRepository.findById(jobId).orElseThrow(
                 () -> new Exception("Job not found with ID: " + jobId)
         );
-        assertEmployer(job,employerId);
+        assertEmployer(job, employerId);
 
         JobCategory category = jobCategoryService.getCategoryEntityById(req.getCategoryId());
 
-        Set<JobSkill> skills = req.getSkillIds()!=null ?
+        Set<JobSkill> skills = req.getSkillIds() != null ?
                 jobSkillService.getSkillByIds(req.getSkillIds())
                 : Collections.emptySet();
 
-        Set<JobTag> tags = req.getTagIds()!=null ?
+        Set<JobTag> tags = req.getTagIds() != null ?
                 jobTagService.getTagsByIds(req.getTagIds()) : Collections.emptySet();
 
         job.setTitle(req.getTitle());
@@ -143,7 +144,7 @@ public class JobServiceImpl implements JobService {
         job.setWorkMode(req.getWorkMode());
         job.setExperienceLevel(req.getExperienceLevel());
 
-        job.setOpening(req.getOpenings() != null ? req.getOpenings(): job.getOpening());
+        job.setOpening(req.getOpenings() != null ? req.getOpenings() : job.getOpening());
 
         job.setApplicationDeadline(req.getApplicationDeadline());
         job.setExpiresAt(req.getExpiresAt());
@@ -158,9 +159,9 @@ public class JobServiceImpl implements JobService {
         Job job = jobRepository.findById(jobId).orElseThrow(
                 () -> new Exception("Job not found with ID: " + jobId)
         );
-        assertEmployer(job,employerId);
+        assertEmployer(job, employerId);
 
-        if(job.getStatus() == JobStatus.CLOSED || job.getStatus() ==JobStatus.EXPIRED){
+        if (job.getStatus() == JobStatus.CLOSED || job.getStatus() == JobStatus.EXPIRED) {
             throw new Exception("Job is already closed/expired");
         }
 
@@ -178,7 +179,7 @@ public class JobServiceImpl implements JobService {
         Job job = jobRepository.findById(jobId).orElseThrow(
                 () -> new Exception("Job not found with ID: " + jobId)
         );
-        assertEmployer(job,employerId);
+        assertEmployer(job, employerId);
 
         job.setStatus(JobStatus.CLOSED);
         job.setClosedAt(LocalDateTime.now());
@@ -194,9 +195,9 @@ public class JobServiceImpl implements JobService {
         Job job = jobRepository.findById(jobId).orElseThrow(
                 () -> new Exception("Job not found with ID: " + jobId)
         );
-        assertEmployer(job,employerId);
+        assertEmployer(job, employerId);
 
-       jobRepository.delete(job);
+        jobRepository.delete(job);
     }
 
     @Override
@@ -208,34 +209,31 @@ public class JobServiceImpl implements JobService {
 
 
     private JobResponse convertToResponse(Job savedJob) {
-        // TODO: fetch company response
-        CompanyResponse companyResponse = CompanyResponse.builder().
-                id(savedJob.getId())
-                .build();
+        CompanyResponse companyResponse = companyClient.getCompanyById(savedJob.getCompanyId());
 
         return JobMapper.toResponse(savedJob, companyResponse);
     }
 
     private SalaryRange buildSalaryRange(JobRequest req) {
         return SalaryRange.builder()
-                .minSalary(req.getMinSalary())
-                .maxSalary(req.getMaxSalary())
-                .build();
+                          .minSalary(req.getMinSalary())
+                          .maxSalary(req.getMaxSalary())
+                          .build();
     }
 
     private JobLocation buildLocation(JobRequest req) {
         return JobLocation.builder()
-                .address(req.getAddress())
-                .city(req.getCity())
-                .state(req.getState())
-                .country(req.getCountry())
-                .zipCode(req.getZipCode())
-                .build();
+                          .address(req.getAddress())
+                          .city(req.getCity())
+                          .state(req.getState())
+                          .country(req.getCountry())
+                          .zipCode(req.getZipCode())
+                          .build();
     }
 
     private void assertEmployer(Job job, Long employerId) throws Exception {
-        if(!job.getEmployerId().equals(employerId)){
-            throw new Exception("You are not the employer who posted this job: "+job.getId());
+        if (!job.getEmployerId().equals(employerId)) {
+            throw new Exception("You are not the employer who posted this job: " + job.getId());
         }
     }
 }

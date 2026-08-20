@@ -9,7 +9,7 @@ spring:
     config:
       server:
         git:
-          uri: "https://github.com/sameer6576/aiJobPortal"
+          uri: "https://github.com/sameer6576/aiJobPortal-test"
           clone-on-start: true
           default-label: main
 

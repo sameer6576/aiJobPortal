@@ -40,6 +40,7 @@ public class JobMapper {
                           .category(JobCategoryMapper.toJobCategoryResponse(job.getCategory(), false))
                           .skills(skills)
                           .tags(tags)
+                          .employerId(job.getEmployerId())
 
                           .address(jobLocation != null ? jobLocation.getAddress() : null)
                           .city(jobLocation != null ? jobLocation.getCity() : null)

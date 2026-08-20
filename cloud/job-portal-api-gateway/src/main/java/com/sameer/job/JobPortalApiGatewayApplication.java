@@ -2,14 +2,12 @@ package com.sameer.job;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
-@EnableFeignClients
-public class JobPortalJobServiceApplication {
+public class JobPortalApiGatewayApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(JobPortalJobServiceApplication.class, args);
+		SpringApplication.run(JobPortalApiGatewayApplication.class, args);
 	}
 
 }

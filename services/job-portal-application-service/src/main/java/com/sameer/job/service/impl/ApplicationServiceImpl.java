@@ -1,8 +1,13 @@
 package com.sameer.job.service.impl;
 
+import com.sameer.job.client.CompanyClient;
+import com.sameer.job.client.JobClient;
+import com.sameer.job.client.ResumeClient;
+import com.sameer.job.client.UserClient;
 import com.sameer.job.domain.ApplicationStatus;
 import com.sameer.job.dto.ApplicationResponse;
 import com.sameer.job.dto.JobResponse;
+import com.sameer.job.dto.ResumeResponse;
 import com.sameer.job.dto.response.CompanyResponse;
 import com.sameer.job.dto.response.UserResponse;
 import com.sameer.job.mapper.ApplicationMapper;
@@ -27,18 +32,22 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private final ApplicationRepository applicationRepository;
     private final ApplicationNoteRepository applicationNoteRepository;
+    private final JobClient jobClient;
+    private final ResumeClient resumeClient;
+    private final CompanyClient companyClient;
+    private final UserClient userClient;
 
     @Override
     public ApplicationResponse createApplication(Long candidateId, CreateApplicationRequest req) throws Exception {
         if (applicationRepository.existsByCandidateIdAndJobId(candidateId, req.getJobId())) {
             throw new Exception("You have already applied");
         }
-//        todo: when fetch job use job.companyId;
-        Long companyId = 1L;
-        Long employerId = 1L;
-//        todo: fetch job
 
-//        todo: fetch resume from resumeService
+        JobResponse jobResponse = jobClient.getJobById(req.getJobId());
+        Long companyId = jobResponse.getCompany().getId();
+        Long employerId = jobResponse.getEmployerId();
+
+        ResumeResponse resumeResponse = resumeClient.getResumeById(req.getResumeId(), candidateId);
 
         Application application = ApplicationMapper.toEntity(req, candidateId, companyId, employerId);
 
@@ -64,8 +73,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public List<ApplicationResponse> getApplicationsForCompany(Long userId, CompanyApplicationFilterRequest filter) {
 
-//        todo: fetch company by ownerId
-        Long companyId = 1L;
+        Long companyId = companyClient.getMyCompany(userId).getId();
         Sort sort = buildSort(filter.getSortBy());
 
         return applicationRepository.findAll(
@@ -138,11 +146,10 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     public ApplicationResponse buildFullResponse(Application application) {
-        // todo: fetch real data from respective micro service
         List<ApplicationNote> notes = applicationNoteRepository.findByApplicationId(application.getId());
-        JobResponse job = JobResponse.builder().id(application.getJobId()).build();
-        CompanyResponse company = CompanyResponse.builder().id(application.getCompanyId()).build();
-        UserResponse candidate = UserResponse.builder().id(application.getCandidateId()).build();
+        JobResponse job = jobClient.getJobById(application.getJobId());
+        CompanyResponse company = companyClient.getCompanyById(application.getCompanyId());
+        UserResponse candidate = userClient.getUserById(application.getCandidateId());
         return ApplicationMapper.toResponse(application, notes, job, company, candidate);
     }
 
