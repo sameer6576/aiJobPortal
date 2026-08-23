@@ -4,12 +4,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0c2727b9-b262-4c3d-97f2-2b2251d43110" name="Changes" comment="Implemented Language related APIs">
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+    <list default="true" id="0c2727b9-b262-4c3d-97f2-2b2251d43110" name="Changes" comment="Created Semantic Search using AI embedding models">
+      <change afterPath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/resources/application.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cloud/job-portal-api-gateway/src/main/java/com/sameer/job/config/RouteConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/cloud/job-portal-api-gateway/src/main/java/com/sameer/job/config/RouteConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/services/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/controller/AiApplicationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/controller/AiApplicationController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/controller/ResumeAiController.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/controller/ResumeAiController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/CareerFeedbackRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/CareerFeedbackRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/CoverLetterRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/CoverLetterRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/JobAlertSuggestRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/JobAlertSuggestRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/JobDescriptionRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/JobDescriptionRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/ResumeImprovementRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/ResumeImprovementRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/ResumeSummaryRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/ResumeSummaryRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/SalaryRangeRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/SalaryRangeRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/ScreeningScoreRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/ScreeningScoreRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/SearchEnhanceRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/SearchEnhanceRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/SkillsGapRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/SkillsGapRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/WorkExperienceBulletRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/WorkExperienceBulletRequest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -89,12 +99,23 @@
         <option value="SpringBootApplicationConfigurationType" />
       </set>
     </option>
+    <option name="configurationStatuses">
+      <map>
+        <entry key="SpringBootApplicationConfigurationType">
+          <value>
+            <map>
+              <entry key="JobPortalAiServiceApplication" value="STOPPED" />
+            </map>
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
-  <component name="RunManager" selected="Spring Boot.JobPortalUserServiceApplication">
-    <configuration name="JobPortalCompanyServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Spring Boot.JobPortalAiServiceApplication">
+    <configuration name="JobPortalAiServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
       <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UnknownPolicyInFreeMode" />
-      <module name="job-portal-company-service" />
-      <option name="SPRING_BOOT_MAIN_CLASS" value="com.sameer.job.JobPortalCompanyServiceApplication" />
+      <module name="job-portal-ai-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.sameer.job.JobPortalAiServiceApplication" />
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="com.sameer.job.*" />
@@ -162,19 +183,19 @@
       </method>
     </configuration>
     <list>
-      <item itemvalue="Spring Boot.JobPortalCompanyServiceApplication" />
       <item itemvalue="Spring Boot.JobPortalPreferencesApplication" />
       <item itemvalue="Spring Boot.JobPortalResumeServiceApplication" />
+      <item itemvalue="Spring Boot.JobPortalAiServiceApplication" />
       <item itemvalue="Spring Boot.JobPortalJobServiceApplication" />
       <item itemvalue="Spring Boot.JobPortalUserServiceApplication" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Spring Boot.JobPortalAiServiceApplication" />
         <item itemvalue="Spring Boot.JobPortalUserServiceApplication" />
         <item itemvalue="Spring Boot.JobPortalResumeServiceApplication" />
         <item itemvalue="Spring Boot.JobPortalPreferencesApplication" />
         <item itemvalue="Spring Boot.JobPortalJobServiceApplication" />
-        <item itemvalue="Spring Boot.JobPortalCompanyServiceApplication" />
       </list>
     </recent_temporary>
   </component>
@@ -218,7 +239,39 @@
       <option name="project" value="LOCAL" />
       <updated>1786884646268</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Created AI powered resume analysis and optimization services">
+      <option name="closed" value="true" />
+      <created>1787487141175</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1787487141175</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Created AI generated Job Insights and Requirement Analyzers">
+      <option name="closed" value="true" />
+      <created>1787503220554</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1787503220554</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Created AI screening for candidate applications">
+      <option name="closed" value="true" />
+      <created>1787505575004</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1787505575005</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Created Semantic Search using AI embedding models">
+      <option name="closed" value="true" />
+      <created>1787506234522</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1787506234522</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -238,6 +291,10 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Implemented Resume Skill related APIs" />
     <MESSAGE value="Implemented Language related APIs" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implemented Language related APIs" />
+    <MESSAGE value="Created AI powered resume analysis and optimization services" />
+    <MESSAGE value="Created AI generated Job Insights and Requirement Analyzers" />
+    <MESSAGE value="Created AI screening for candidate applications" />
+    <MESSAGE value="Created Semantic Search using AI embedding models" />
+    <option name="LAST_COMMIT_MESSAGE" value="Created Semantic Search using AI embedding models" />
   </component>
 </project>

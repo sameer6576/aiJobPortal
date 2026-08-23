@@ -42,7 +42,7 @@ public class ResumeAiController {
         return ResponseEntity.ok(resumeImprovementResponse);
     }
 
-    @GetMapping("/improvements")
+    @GetMapping("/career-feedback")
     public ResponseEntity<CareerFeedbackResponse> generateCareerFeedback(
             @RequestBody
             CareerFeedbackRequest request
