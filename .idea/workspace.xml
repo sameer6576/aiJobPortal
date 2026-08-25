@@ -4,22 +4,29 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0c2727b9-b262-4c3d-97f2-2b2251d43110" name="Changes" comment="Created Semantic Search using AI embedding models">
+    <list default="true" id="0c2727b9-b262-4c3d-97f2-2b2251d43110" name="Changes" comment="Created Semantic Search using AI embedding models and fixed few dtos">
       <change afterPath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/resources/application.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/controller/AiApplicationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/controller/AiApplicationController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/controller/ResumeAiController.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/controller/ResumeAiController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/CareerFeedbackRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/CareerFeedbackRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/CoverLetterRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/CoverLetterRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/JobAlertSuggestRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/JobAlertSuggestRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/JobDescriptionRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/JobDescriptionRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/ResumeImprovementRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/ResumeImprovementRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/ResumeSummaryRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/ResumeSummaryRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/SalaryRangeRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/SalaryRangeRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/ScreeningScoreRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/ScreeningScoreRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/SearchEnhanceRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/SearchEnhanceRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/SkillsGapRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/SkillsGapRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/WorkExperienceBulletRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/java/com/sameer/job/payload/WorkExperienceBulletRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cloud/job-portal-api-gateway/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/cloud/job-portal-api-gateway/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cloud/job-portal-api-gateway/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/cloud/job-portal-api-gateway/src/main/resources/application.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cloud/job-portal-config-server/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/cloud/job-portal-config-server/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cloud/job-portal-service-registry/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/cloud/job-portal-service-registry/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common-lib/target/job-portal-common-0.0.1-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/common-lib/target/job-portal-common-0.0.1-SNAPSHOT.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common-lib/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/common-lib/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common-lib/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/common-lib/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-ai-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-ai-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-application-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-application-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-application-service/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-application-service/src/main/resources/application.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-company-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-company-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-company-service/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-company-service/src/main/resources/application.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-job-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-job-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-job-service/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-job-service/src/main/resources/application.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-preferences/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-preferences/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-preferences/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-preferences/src/main/resources/application.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-resume-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-resume-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-resume-service/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-resume-service/src/main/resources/application.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-user-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-user-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/job-portal-user-service/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-user-service/src/main/resources/application.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -105,6 +112,15 @@
           <value>
             <map>
               <entry key="JobPortalAiServiceApplication" value="STOPPED" />
+              <entry key="JobPortalApiGatewayApplication" value="STOPPED" />
+              <entry key="JobPortalApplicationServiceApplication" value="STOPPED" />
+              <entry key="JobPortalCompanyServiceApplication" value="STOPPED" />
+              <entry key="JobPortalConfigServerApplication" value="STOPPED" />
+              <entry key="JobPortalJobServiceApplication" value="STOPPED" />
+              <entry key="JobPortalPreferencesApplication" value="STOPPED" />
+              <entry key="JobPortalResumeServiceApplication" value="STOPPED" />
+              <entry key="JobPortalServiceRegistryApplication" value="STOPPED" />
+              <entry key="JobPortalUserServiceApplication" value="STOPPED" />
             </map>
           </value>
         </entry>
@@ -271,7 +287,15 @@
       <option name="project" value="LOCAL" />
       <updated>1787506234522</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Created Semantic Search using AI embedding models and fixed few dtos">
+      <option name="closed" value="true" />
+      <created>1787507854605</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1787507854605</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -295,6 +319,7 @@
     <MESSAGE value="Created AI generated Job Insights and Requirement Analyzers" />
     <MESSAGE value="Created AI screening for candidate applications" />
     <MESSAGE value="Created Semantic Search using AI embedding models" />
-    <option name="LAST_COMMIT_MESSAGE" value="Created Semantic Search using AI embedding models" />
+    <MESSAGE value="Created Semantic Search using AI embedding models and fixed few dtos" />
+    <option name="LAST_COMMIT_MESSAGE" value="Created Semantic Search using AI embedding models and fixed few dtos" />
   </component>
 </project>
