@@ -4,30 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0c2727b9-b262-4c3d-97f2-2b2251d43110" name="Changes" comment="Created Semantic Search using AI embedding models and fixed few dtos">
-      <change afterPath="$PROJECT_DIR$/services/job-portal-ai-service/src/main/resources/application.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cloud/job-portal-api-gateway/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/cloud/job-portal-api-gateway/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cloud/job-portal-api-gateway/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/cloud/job-portal-api-gateway/src/main/resources/application.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cloud/job-portal-config-server/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/cloud/job-portal-config-server/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cloud/job-portal-service-registry/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/cloud/job-portal-service-registry/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common-lib/target/job-portal-common-0.0.1-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/common-lib/target/job-portal-common-0.0.1-SNAPSHOT.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common-lib/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/common-lib/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common-lib/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/common-lib/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/job-portal-ai-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-ai-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/job-portal-application-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-application-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/job-portal-application-service/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-application-service/src/main/resources/application.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/job-portal-company-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-company-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/job-portal-company-service/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-company-service/src/main/resources/application.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/job-portal-job-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-job-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/job-portal-job-service/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-job-service/src/main/resources/application.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/job-portal-preferences/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-preferences/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/job-portal-preferences/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-preferences/src/main/resources/application.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/job-portal-resume-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-resume-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/job-portal-resume-service/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-resume-service/src/main/resources/application.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/job-portal-user-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-user-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/job-portal-user-service/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/services/job-portal-user-service/src/main/resources/application.yaml" afterDir="false" />
-    </list>
+    <list default="true" id="0c2727b9-b262-4c3d-97f2-2b2251d43110" name="Changes" comment="Built Docker images and containers" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -44,6 +21,9 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 6,
@@ -71,12 +51,15 @@
     "Spring Boot.JobPortalCompanyServiceApplication.executor": "Run",
     "Spring Boot.JobPortalConfigServerApplication.executor": "Run",
     "Spring Boot.JobPortalJobServiceApplication.executor": "Run",
+    "Spring Boot.JobPortalNotificationServiceApplication.executor": "Run",
     "Spring Boot.JobPortalPreferencesApplication.executor": "Run",
     "Spring Boot.JobPortalResumeServiceApplication.executor": "Run",
     "Spring Boot.JobPortalServiceRegistryApplication.executor": "Run",
     "Spring Boot.JobPortalUserServiceApplication.executor": "Run",
+    "Spring Boot.Unnamed.executor": "Run",
     "codeWithMe.voiceChat.enabledByDefault": "false",
     "git-widget-placeholder": "main",
+    "git.auto.fetch.suggestion.counter": "1",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "/Users/sameerahmed/Coding/Job Portal/job-portal-system",
     "project.structure.last.edited": "Modules",
@@ -117,6 +100,7 @@
               <entry key="JobPortalCompanyServiceApplication" value="STOPPED" />
               <entry key="JobPortalConfigServerApplication" value="STOPPED" />
               <entry key="JobPortalJobServiceApplication" value="STOPPED" />
+              <entry key="JobPortalNotificationServiceApplication" value="STOPPED" />
               <entry key="JobPortalPreferencesApplication" value="STOPPED" />
               <entry key="JobPortalResumeServiceApplication" value="STOPPED" />
               <entry key="JobPortalServiceRegistryApplication" value="STOPPED" />
@@ -127,11 +111,53 @@
       </map>
     </option>
   </component>
-  <component name="RunManager" selected="Spring Boot.JobPortalAiServiceApplication">
+  <component name="RunManager" selected="Spring Boot.JobPortalNotificationServiceApplication">
     <configuration name="JobPortalAiServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
       <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UnknownPolicyInFreeMode" />
       <module name="job-portal-ai-service" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.sameer.job.JobPortalAiServiceApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.sameer.job.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="JobPortalApplicationServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UnknownPolicyInFreeMode" />
+      <module name="job-portal-application-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.sameer.job.JobPortalApplicationServiceApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.sameer.job.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="JobPortalCompanyServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UnknownPolicyInFreeMode" />
+      <module name="job-portal-company-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.sameer.job.JobPortalCompanyServiceApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.sameer.job.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="JobPortalConfigServerApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UnknownPolicyInFreeMode" />
+      <module name="job-portal-config-server" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.sameer.job.JobPortalConfigServerApplication" />
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="com.sameer.job.*" />
@@ -156,38 +182,10 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="JobPortalPreferencesApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+    <configuration name="JobPortalNotificationServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
       <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UnknownPolicyInFreeMode" />
-      <module name="job-portal-preferences-service" />
-      <option name="SPRING_BOOT_MAIN_CLASS" value="com.sameer.job.JobPortalPreferencesApplication" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.sameer.job.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="JobPortalResumeServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
-      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UnknownPolicyInFreeMode" />
-      <module name="job-portal-resume-service" />
-      <option name="SPRING_BOOT_MAIN_CLASS" value="com.sameer.job.JobPortalResumeServiceApplication" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.sameer.job.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="JobPortalUserServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
-      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UnknownPolicyInFreeMode" />
-      <module name="job-portal-user-service" />
-      <option name="SPRING_BOOT_MAIN_CLASS" value="com.sameer.job.JobPortalUserServiceApplication" />
+      <module name="job-portal-notification-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.sameer.job.JobPortalNotificationServiceApplication" />
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="com.sameer.job.*" />
@@ -199,18 +197,19 @@
       </method>
     </configuration>
     <list>
-      <item itemvalue="Spring Boot.JobPortalPreferencesApplication" />
-      <item itemvalue="Spring Boot.JobPortalResumeServiceApplication" />
-      <item itemvalue="Spring Boot.JobPortalAiServiceApplication" />
+      <item itemvalue="Spring Boot.JobPortalConfigServerApplication" />
+      <item itemvalue="Spring Boot.JobPortalApplicationServiceApplication" />
+      <item itemvalue="Spring Boot.JobPortalCompanyServiceApplication" />
       <item itemvalue="Spring Boot.JobPortalJobServiceApplication" />
-      <item itemvalue="Spring Boot.JobPortalUserServiceApplication" />
+      <item itemvalue="Spring Boot.JobPortalNotificationServiceApplication" />
+      <item itemvalue="Spring Boot.JobPortalAiServiceApplication" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Spring Boot.JobPortalNotificationServiceApplication" />
+        <item itemvalue="Spring Boot.JobPortalApplicationServiceApplication" />
         <item itemvalue="Spring Boot.JobPortalAiServiceApplication" />
-        <item itemvalue="Spring Boot.JobPortalUserServiceApplication" />
-        <item itemvalue="Spring Boot.JobPortalResumeServiceApplication" />
-        <item itemvalue="Spring Boot.JobPortalPreferencesApplication" />
+        <item itemvalue="Spring Boot.JobPortalCompanyServiceApplication" />
         <item itemvalue="Spring Boot.JobPortalJobServiceApplication" />
       </list>
     </recent_temporary>
@@ -295,7 +294,15 @@
       <option name="project" value="LOCAL" />
       <updated>1787507854605</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Built Docker images and containers">
+      <option name="closed" value="true" />
+      <created>1787655346695</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1787655346695</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -320,6 +327,13 @@
     <MESSAGE value="Created AI screening for candidate applications" />
     <MESSAGE value="Created Semantic Search using AI embedding models" />
     <MESSAGE value="Created Semantic Search using AI embedding models and fixed few dtos" />
-    <option name="LAST_COMMIT_MESSAGE" value="Created Semantic Search using AI embedding models and fixed few dtos" />
+    <MESSAGE value="Built Docker images and containers" />
+    <MESSAGE value="added apache kafka" />
+    <option name="LAST_COMMIT_MESSAGE" value="added apache kafka" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/job_portal_system$JobPortalConfigServerApplication.ic" NAME="JobPortalConfigServerApplication Coverage Results" MODIFIED="1787865083197" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
+      <FILTER>com.sameer.job.*</FILTER>
+    </SUITE>
   </component>
 </project>

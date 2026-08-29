@@ -37,3 +37,4 @@
 /Users/sameerahmed/Coding/Job Portal/job-portal-system/common-lib/src/main/java/com/sameer/job/dto/response/CompanyResponse.java
 /Users/sameerahmed/Coding/Job Portal/job-portal-system/common-lib/src/main/java/com/sameer/job/dto/response/SocialLinkResponse.java
 /Users/sameerahmed/Coding/Job Portal/job-portal-system/common-lib/src/main/java/com/sameer/job/dto/response/UserResponse.java
+/Users/sameerahmed/Coding/Job Portal/job-portal-system/common-lib/src/main/java/com/sameer/job/event/ApplicationStatusChangedEvent.java

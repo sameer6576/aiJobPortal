@@ -347,13 +347,17 @@ services:
     cpus: 0.5
     ports:
       - "5010:5010"
+
     depends_on:
       discovery:
         condition: service_healthy
       config-server:
         condition: service_healthy
+
     environment:
       SPRING_CONFIG_IMPORT: configserver:http://config-server:8888
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka/
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+
     networks:
       - job-portal-net

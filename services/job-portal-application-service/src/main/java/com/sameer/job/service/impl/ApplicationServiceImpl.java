@@ -10,6 +10,7 @@ import com.sameer.job.dto.JobResponse;
 import com.sameer.job.dto.ResumeResponse;
 import com.sameer.job.dto.response.CompanyResponse;
 import com.sameer.job.dto.response.UserResponse;
+import com.sameer.job.event.ApplicationEventPublisher;
 import com.sameer.job.mapper.ApplicationMapper;
 import com.sameer.job.modal.Application;
 import com.sameer.job.modal.ApplicationNote;
@@ -36,6 +37,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     private final ResumeClient resumeClient;
     private final CompanyClient companyClient;
     private final UserClient userClient;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Override
     public ApplicationResponse createApplication(Long candidateId, CreateApplicationRequest req) throws Exception {
@@ -97,6 +99,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public ApplicationResponse updateStatus(Long applicationId, Long employerId, ApplicationStatus status) throws Exception {
         Application application = getApplicationEntity(applicationId);
+
+        ApplicationStatus oldStatus = application.getStatus();
         assertEmployer(application, employerId);
 
         if (application.getStatus() == ApplicationStatus.WITHDRAWN) {
@@ -105,6 +109,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         application.setStatus(status);
         Application savedApplication = applicationRepository.save(application);
+
+        applicationEventPublisher.publishStatusChange(application, oldStatus, status, "Your application status got changed");
+
         return buildFullResponse(savedApplication);
     }
 

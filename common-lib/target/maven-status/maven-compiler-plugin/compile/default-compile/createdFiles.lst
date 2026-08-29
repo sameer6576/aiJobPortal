@@ -7,6 +7,7 @@ com/sameer/job/dto/EducationResponse$EducationResponseBuilder.class
 com/sameer/job/domain/JobStatus.class
 com/sameer/job/domain/JobType.class
 com/sameer/job/dto/JobResponse$JobResponseBuilder.class
+com/sameer/job/event/ApplicationStatusChangedEvent$ApplicationStatusChangedEventBuilder.class
 com/sameer/job/dto/JobTagResponse$JobTagResponseBuilder.class
 com/sameer/job/dto/EducationResponse.class
 com/sameer/job/domain/UserStatus.class
@@ -28,6 +29,7 @@ com/sameer/job/dto/ProjectResponse$ProjectResponseBuilder.class
 com/sameer/job/dto/SavedJobResponse.class
 com/sameer/job/dto/PersonalInfoResponse$PersonalInfoResponseBuilder.class
 com/sameer/job/dto/ResumeSkillResponse.class
+com/sameer/job/event/ApplicationStatusChangedEvent.class
 com/sameer/job/domain/AiShortListStatus.class
 com/sameer/job/dto/response/UserResponse.class
 com/sameer/job/dto/ApplicationResponse$ApplicationResponseBuilder.class

@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="job-portal-user-service" />
         <module name="job-portal-preferences-service" />
+        <module name="job-portal-notification-service" />
         <module name="job-portal-common" />
         <module name="job-portal-service-registry" />
         <module name="job-portal-job-service" />
@@ -30,6 +31,7 @@
       <module name="job-portal-company-service" options="-parameters" />
       <module name="job-portal-config-server" options="-parameters" />
       <module name="job-portal-job-service" options="-parameters" />
+      <module name="job-portal-notification-service" options="-parameters" />
       <module name="job-portal-preferences-service" options="-parameters" />
       <module name="job-portal-resume-service" options="-parameters" />
       <module name="job-portal-service-registry" options="-parameters" />
