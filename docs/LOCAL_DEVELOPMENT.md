@@ -16,7 +16,7 @@ MAIL_PASSWORD=
 
 `JWT_SECRET` must contain at least 32 bytes. Gemini and mail values are optional unless those integrations are started.
 
-For IDE runs, set `DB_PASSWORD` and `JWT_SECRET` in each relevant process environment. Config Server accepts `CONFIG_REPOSITORY_PATH`; its default assumes it starts from its module directory.
+For IDE runs, set `DB_PASSWORD` and `JWT_SECRET` in each relevant process environment. Config Server looks for `job-portal-config/` relative to the process working directory (module, repo root, or `cloud/`). Override only if needed with `CONFIG_REPOSITORY_PATH` (Compose uses `file:/config`).
 
 ## Start databases
 
@@ -96,6 +96,6 @@ If `MAIL_PASSWORD` is unset, notification-service will fail the send and the Kaf
 
 **Datasource connection refused:** confirm the service is using the host port from the table, not PostgreSQL's internal `5432`.
 
-**Config not found:** start Config Server from its module directory or set `CONFIG_REPOSITORY_PATH` to an absolute `file:` URI.
+**Config not found:** `curl http://localhost:8888/job-portal-resume-service/default` should list `propertySources`. Restart Config Server after changing search paths. Docker Compose already sets `CONFIG_REPOSITORY_PATH=file:/config`.
 
 **Feign service unavailable:** verify the target service is registered in Eureka with the application name expected by the Feign client.

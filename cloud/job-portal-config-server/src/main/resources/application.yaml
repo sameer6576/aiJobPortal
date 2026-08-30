@@ -11,7 +11,7 @@ spring:
     config:
       server:
         native:
-          search-locations: ${CONFIG_REPOSITORY_PATH:file:../../job-portal-config}
+          search-locations: ${CONFIG_REPOSITORY_PATH:file:../../job-portal-config,file:./job-portal-config,file:../job-portal-config}
 
 eureka:
   client:
