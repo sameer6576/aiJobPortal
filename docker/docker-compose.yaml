@@ -157,7 +157,12 @@ services:
         condition: service_healthy
 
     environment:
+      CONFIG_REPOSITORY_PATH: file:/config
+      SPRING_PROFILES_ACTIVE: native
+      SPRING_CLOUD_CONFIG_SERVER_NATIVE_SEARCH_LOCATIONS: file:/config
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka/
+    volumes:
+      - ../job-portal-config:/config:ro
 
     healthcheck:
       test: [ "CMD-SHELL", "wget -qO- http://localhost:8888/actuator/health || exit 1" ]
@@ -186,6 +191,7 @@ services:
     environment:
       SPRING_CONFIG_IMPORT: configserver:http://config-server:8888
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka/
+      JWT_SECRET: ${JWT_SECRET}
 
     networks:
       - job-portal-net
@@ -215,6 +221,7 @@ services:
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka/
+      JWT_SECRET: ${JWT_SECRET}
 
     networks:
       - job-portal-net

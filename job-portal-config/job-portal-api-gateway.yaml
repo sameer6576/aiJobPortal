@@ -1,0 +1,15 @@
+server:
+  port: 5007
+
+app:
+  jwt:
+    secret: ${JWT_SECRET}
+
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true

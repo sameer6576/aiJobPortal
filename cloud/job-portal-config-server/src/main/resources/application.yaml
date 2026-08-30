@@ -4,14 +4,14 @@ server:
 spring:
   application:
     name: job-portal-config-server
+  profiles:
+    active: native
 
   cloud:
     config:
       server:
-        git:
-          uri: "https://github.com/sameer6576/aiJobPortal-test"
-          clone-on-start: true
-          default-label: main
+        native:
+          search-locations: ${CONFIG_REPOSITORY_PATH:file:../../job-portal-config}
 
 eureka:
   client:
