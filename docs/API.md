@@ -1,6 +1,6 @@
 # API notes
 
-The API is exposed through the gateway. There is no generated OpenAPI document. A clone walkthrough is in [demo.http](http/demo.http).
+The API is exposed through the gateway. There is no generated OpenAPI document. A clone walkthrough is in [demo.http](http/demo.http). Import [JobMate.postman_collection.json](http/JobMate.postman_collection.json) into Postman for every gateway route.
 
 ## Authentication
 

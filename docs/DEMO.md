@@ -1,6 +1,6 @@
 # Demo
 
-This document is the walkthrough. Runnable requests are in [demo.http](http/demo.http).
+This document is the walkthrough. Runnable requests are in [demo.http](http/demo.http). A full Postman collection (every gateway endpoint) is [JobMate.postman_collection.json](http/JobMate.postman_collection.json).
 
 ## Environment
 
