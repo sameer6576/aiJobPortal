@@ -46,7 +46,7 @@ public class JobSpecification {
                 predicates.add(cb.equal(root.get("companyId"), req.getCompanyId()));
             }
             if (req.getCategoryId() != null) {
-                predicates.add(cb.equal(root.get("jobType"), req.getCategoryId()));
+                predicates.add(cb.equal(root.get("category").get("id"), req.getCategoryId()));
             }
             if (req.getLocation() != null && !req.getLocation().isBlank()) {
                 String pattern = "%" + req.getLocation().toLowerCase() + "%";
@@ -72,12 +72,12 @@ public class JobSpecification {
 
             if (req.getMinOpenings() != null) {
                 predicates.add(cb.greaterThanOrEqualTo(
-                        root.get("openings"), req.getMinOpenings()));
+                        root.get("opening"), req.getMinOpenings()));
             }
 
             if (req.getMaxOpenings() != null) {
                 predicates.add(cb.lessThanOrEqualTo(
-                        root.get("openings"), req.getMaxOpenings()));
+                        root.get("opening"), req.getMaxOpenings()));
             }
 
             // TODO: Filter for tag, skills

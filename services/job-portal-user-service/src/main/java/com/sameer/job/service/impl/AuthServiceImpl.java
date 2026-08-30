@@ -11,17 +11,17 @@ import com.sameer.job.repository.UserRepository;
 import com.sameer.job.security.CustomUserDetailsService;
 import com.sameer.job.security.JwtProvider;
 import com.sameer.job.service.AuthService;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -55,8 +55,15 @@ public class AuthServiceImpl implements AuthService {
 
         User savedUser = userRepository.save(user);
 
+        UserDetails principal = new org.springframework.security.core.userdetails.User(
+                savedUser.getEmail(),
+                savedUser.getPassword(),
+                List.of(new SimpleGrantedAuthority(savedUser.getRole().name()))
+        );
         Authentication authentication = new UsernamePasswordAuthenticationToken(
-                user.getEmail(), user.getPassword()
+                principal,
+                null,
+                principal.getAuthorities()
         );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);

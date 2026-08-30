@@ -1,0 +1,185 @@
+### Gateway (host run). Docker maps this to localhost:5050
+@gateway = http://localhost:5007
+@seekerToken = {{seekerLogin.response.body.jwt}}
+@employerToken = {{employerLogin.response.body.jwt}}
+
+### Signup seeker
+# @name seekerSignup
+POST {{gateway}}/auth/signup
+Content-Type: application/json
+
+{
+  "fullName": "Sam Seeker",
+  "email": "sam.seeker@example.com",
+  "password": "SeekPass1",
+  "phone": "9000000001",
+  "role": "ROLE_JOB_SEEKER"
+}
+
+### Signup employer
+# @name employerSignup
+POST {{gateway}}/auth/signup
+Content-Type: application/json
+
+{
+  "fullName": "Erin Employer",
+  "email": "erin.employer@example.com",
+  "password": "EmpPass1",
+  "phone": "9000000002",
+  "role": "ROLE_EMPLOYER"
+}
+
+### Login seeker
+# @name seekerLogin
+POST {{gateway}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "sam.seeker@example.com",
+  "password": "SeekPass1"
+}
+
+### Login employer
+# @name employerLogin
+POST {{gateway}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "erin.employer@example.com",
+  "password": "EmpPass1"
+}
+
+### Optional job description draft
+POST {{gateway}}/api/ai/job/describe
+Authorization: Bearer {{employerToken}}
+Content-Type: application/json
+
+{
+  "jobTitle": "Java backend engineer",
+  "skills": ["Java", "Spring Boot"],
+  "experienceLevel": "MID_LEVEL",
+  "jobType": "FULL_TIME",
+  "workMode": "HYBRID",
+  "category": "Engineering"
+}
+
+### Create company
+# @name createCompany
+POST {{gateway}}/api/companies
+Authorization: Bearer {{employerToken}}
+Content-Type: application/json
+
+{
+  "name": "Acme Labs",
+  "website": "https://acme.example",
+  "email": "jobs@acme.example",
+  "companySize": "SMALL",
+  "companyType": "PRIVATE",
+  "industryType": "TECHNOLOGY"
+}
+
+### Create job category
+# @name createCategory
+POST {{gateway}}/api/job-categories
+Authorization: Bearer {{employerToken}}
+Content-Type: application/json
+
+{
+  "name": "Engineering"
+}
+
+### Create job
+# @name createJob
+POST {{gateway}}/api/jobs
+Authorization: Bearer {{employerToken}}
+Content-Type: application/json
+
+{
+  "title": "Java backend engineer",
+  "description": "Build job application APIs.",
+  "requirements": "Java 21 and Spring Boot",
+  "categoryId": {{createCategory.response.body.id}},
+  "city": "Bengaluru",
+  "country": "India",
+  "jobType": "FULL_TIME",
+  "workMode": "HYBRID",
+  "experienceLevel": "MID_LEVEL",
+  "openings": 2
+}
+
+### Publish job
+PATCH {{gateway}}/api/jobs/{{createJob.response.body.id}}/publish
+Authorization: Bearer {{employerToken}}
+
+### Create resume
+# @name createResume
+POST {{gateway}}/api/resumes
+Authorization: Bearer {{seekerToken}}
+Content-Type: application/json
+
+{
+  "title": "Sam backend resume",
+  "isDefault": true
+}
+
+### Add resume skill
+POST {{gateway}}/api/resumes/{{createResume.response.body.id}}/skills
+Authorization: Bearer {{seekerToken}}
+Content-Type: application/json
+
+{
+  "skillName": "Java",
+  "proficiencyLevel": "ADVANCED",
+  "yearsOfExperience": 4
+}
+
+### Apply
+# @name apply
+POST {{gateway}}/api/applications
+Authorization: Bearer {{seekerToken}}
+Content-Type: application/json
+
+{
+  "jobId": {{createJob.response.body.id}},
+  "resumeId": {{createResume.response.body.id}}
+}
+
+### Duplicate apply (expect error)
+POST {{gateway}}/api/applications
+Authorization: Bearer {{seekerToken}}
+Content-Type: application/json
+
+{
+  "jobId": {{createJob.response.body.id}},
+  "resumeId": {{createResume.response.body.id}}
+}
+
+### Cover letter
+POST {{gateway}}/api/applications/{{apply.response.body.id}}/cover-letter
+Authorization: Bearer {{seekerToken}}
+
+### Skills gap
+GET {{gateway}}/api/applications/{{apply.response.body.id}}/skills-gap
+Authorization: Bearer {{seekerToken}}
+
+### Employer filter by AI score
+GET {{gateway}}/api/applications/company?minAiScore=50
+Authorization: Bearer {{employerToken}}
+
+### Change status (Kafka email if profile kafka + SMTP)
+PATCH {{gateway}}/api/applications/{{apply.response.body.id}}/status
+Authorization: Bearer {{employerToken}}
+Content-Type: application/json
+
+{
+  "status": "REVIEWING"
+}
+
+### Natural language search
+POST {{gateway}}/api/jobs/search/natural
+Authorization: Bearer {{seekerToken}}
+Content-Type: application/json
+
+{
+  "query": "remote java jobs in bangalore"
+}

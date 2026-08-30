@@ -1,6 +1,6 @@
 # Demo
 
-This document defines the current portfolio walkthrough. A complete runnable request file will be added with later authorization, Kafka, and AI integration hardening.
+This document is the walkthrough. Runnable requests are in [demo.http](http/demo.http).
 
 ## Environment
 
@@ -28,8 +28,8 @@ This document defines the current portfolio walkthrough. A complete runnable req
 ## Expected limitations
 
 - Screening is synchronous and fail-open: a Gemini outage does not block apply.
+- Gateway `ROLE_ADMIN` is required for user list/suspend/activate/delete, company verify/deactivate, and `GET /api/jobs/admin`. Direct service ports skip that check.
 - Kafka publish is not in the same transaction as the status update.
-- Several authorization checks and a consistent error contract remain later work.
 - There is no job-alert product; `/api/ai/alert-suggestion` was removed.
 
 The walkthrough uses the gateway. Direct service calls skip JWT verification.

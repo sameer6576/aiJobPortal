@@ -16,10 +16,10 @@ public interface ApplicationService {
             CreateApplicationRequest req
     ) throws Exception;
 
-    ApplicationResponse getApplicationById(Long id) throws Exception;
+    ApplicationResponse getApplicationById(Long id, Long userId) throws Exception;
     List<ApplicationResponse> getMyApplications(Long candidateId);
     List<ApplicationResponse> getApplicationsForCompany(Long userId, CompanyApplicationFilterRequest filter);
-    List<ApplicationResponse> getApplicationsForJob(Long jobId);
+    List<ApplicationResponse> getApplicationsForJob(Long jobId, Long userId) throws Exception;
     ApplicationResponse updateStatus(Long applicationId, Long employerId, ApplicationStatus status) throws Exception;
     ApplicationResponse withdraw(Long applicationId, Long candidateId, WithdrawApplicationRequest req) throws Exception;
     ApplicationResponse toggleStar(Long applicationId, Long employerId) throws Exception;

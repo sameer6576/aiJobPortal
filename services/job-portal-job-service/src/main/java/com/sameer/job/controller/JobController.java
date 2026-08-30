@@ -31,8 +31,7 @@ public class JobController {
     @GetMapping("/{id}")
     public ResponseEntity<JobResponse> getJobById(
             @PathVariable Long id) throws Exception {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(jobService.getJobById(id));
+        return ResponseEntity.ok(jobService.getJobById(id));
     }
 
     @GetMapping

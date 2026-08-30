@@ -7,6 +7,7 @@ import org.springframework.cloud.gateway.server.mvc.handler.GatewayRouterFunctio
 import org.springframework.cloud.gateway.server.mvc.handler.HandlerFunctions;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.function.RequestPredicates;
@@ -32,29 +33,51 @@ public class RouteConfig {
 
     }
 
-//    Admin-only Routes ( JWT + ROLE_ADMIN )
-
     @Bean
-    public RouterFunction<ServerResponse> adminRoutes() {
-        return GatewayRouterFunctions.route("admin-routes")
-                                     .route(RequestPredicates.path("/api/admin/**"), HandlerFunctions.http())
+    @Order(-1)
+    public RouterFunction<ServerResponse> userAdminRoutes() {
+        return GatewayRouterFunctions.route("user-admin-routes")
+                                     .route(RequestPredicates.GET("/api/users"), HandlerFunctions.http())
+                                     .route(RequestPredicates.PATCH("/api/users/*/suspend"), HandlerFunctions.http())
+                                     .route(RequestPredicates.PATCH("/api/users/*/activate"), HandlerFunctions.http())
+                                     .route(RequestPredicates.DELETE("/api/users/*/delete"), HandlerFunctions.http())
                                      .filter(LoadBalancerFilterFunctions.lb("job-portal-user-service"))
                                      .before(this::jwtAuthFilter)
                                      .before(request -> requireRole(request, "ROLE_ADMIN"))
                                      .build();
-
     }
 
-    private ServerRequest requireRole(ServerRequest request, String roleAdmin) {
+    @Bean
+    @Order(-1)
+    public RouterFunction<ServerResponse> companyAdminRoutes() {
+        return GatewayRouterFunctions.route("company-admin-routes")
+                                     .route(RequestPredicates.PATCH("/api/companies/*/verify"), HandlerFunctions.http())
+                                     .route(RequestPredicates.PATCH("/api/companies/*/deactivate"), HandlerFunctions.http())
+                                     .filter(LoadBalancerFilterFunctions.lb("job-portal-company-service"))
+                                     .before(this::jwtAuthFilter)
+                                     .before(request -> requireRole(request, "ROLE_ADMIN"))
+                                     .build();
+    }
+
+    @Bean
+    @Order(-1)
+    public RouterFunction<ServerResponse> jobAdminRoutes() {
+        return GatewayRouterFunctions.route("job-admin-routes")
+                                     .route(RequestPredicates.GET("/api/jobs/admin"), HandlerFunctions.http())
+                                     .filter(LoadBalancerFilterFunctions.lb("job-portal-job-service"))
+                                     .before(this::jwtAuthFilter)
+                                     .before(request -> requireRole(request, "ROLE_ADMIN"))
+                                     .build();
+    }
+
+    private ServerRequest requireRole(ServerRequest request, String requiredRole) {
         String roles = request.headers().firstHeader("X-User-Role");
 
-        if (roles == null || !roles.contains(roleAdmin)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied for role" + roleAdmin);
+        if (roles == null || !roles.contains(requiredRole)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied for role " + requiredRole);
         }
         return request;
     }
-
-//    Protected Routes (JWT required)
 
     @Bean
     public RouterFunction<ServerResponse> userServiceRoutes() {

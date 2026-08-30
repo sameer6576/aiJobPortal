@@ -46,4 +46,12 @@
 
 **Decision:** Harden this model rather than introduce Keycloak, an authorization server, or session storage.
 
-**Consequence:** The system remains stateless and simple to demonstrate. Refresh tokens, revocation, internal service authentication, and identity-provider federation remain explicit future work.
+**Consequence:** The system remains stateless and simple to demonstrate. Refresh tokens, revocation, internal service authentication, and identity-provider federation remain explicit future work. An internal mesh would validate JWT or mTLS so Feign cannot be spoofed on an open network.
+
+## 7. Path-based admin at the gateway
+
+**Context:** Admin operations live under `/api/users`, `/api/companies`, and `/api/jobs`, not `/api/admin/**`.
+
+**Decision:** Require `ROLE_ADMIN` on those specific gateway paths after JWT validation. Signup tokens include the user's role.
+
+**Consequence:** A seeker or employer token cannot call those routes through the gateway. Services remain header-trusting if their ports are exposed.

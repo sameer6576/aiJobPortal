@@ -39,11 +39,12 @@ public class ApplicationController {
     // Get application by ID
     @GetMapping("/{applicationId}")
     public ResponseEntity<ApplicationResponse> getApplicationById(
-            @PathVariable Long applicationId
+            @PathVariable Long applicationId,
+            @RequestHeader("X-User-Id") Long userId
     ) throws Exception {
 
         return ResponseEntity.ok(
-                applicationService.getApplicationById(applicationId)
+                applicationService.getApplicationById(applicationId, userId)
         );
     }
 
@@ -73,11 +74,12 @@ public class ApplicationController {
     // Get all applications for a job // can be skipped since getApplicationsForCompany covers this
     @GetMapping("/job/{jobId}")
     public ResponseEntity<List<ApplicationResponse>> getApplicationsForJob(
-            @PathVariable Long jobId
-    ) {
+            @PathVariable Long jobId,
+            @RequestHeader("X-User-Id") Long userId
+    ) throws Exception {
 
         return ResponseEntity.ok(
-                applicationService.getApplicationsForJob(jobId)
+                applicationService.getApplicationsForJob(jobId, userId)
         );
     }
 

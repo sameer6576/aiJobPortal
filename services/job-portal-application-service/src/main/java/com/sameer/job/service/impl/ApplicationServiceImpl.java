@@ -70,8 +70,9 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public ApplicationResponse getApplicationById(Long id) throws Exception {
+    public ApplicationResponse getApplicationById(Long id, Long userId) throws Exception {
         Application application = getApplicationEntity(id);
+        assertViewer(application, userId);
         return buildFullResponse(application);
     }
 
@@ -99,10 +100,13 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public List<ApplicationResponse> getApplicationsForJob(Long jobId) {
+    public List<ApplicationResponse> getApplicationsForJob(Long jobId, Long userId) throws Exception {
+        JobResponse job = jobClient.getJobById(jobId);
+        if (job.getEmployerId() == null || !job.getEmployerId().equals(userId)) {
+            throw new Exception("You are not the employer of this job");
+        }
         return applicationRepository.findByJobId(jobId)
                                     .stream().map(this::buildFullResponse).toList();
-
     }
 
     @Override
@@ -234,6 +238,12 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (!application.getCandidateId().equals(candidateId)) {
             throw new Exception("You are not the owner of this application");
 
+        }
+    }
+
+    private void assertViewer(Application application, Long userId) throws Exception {
+        if (!application.getCandidateId().equals(userId) && !application.getEmployerId().equals(userId)) {
+            throw new Exception("You cannot view this application");
         }
     }
 }

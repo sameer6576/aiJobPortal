@@ -1,6 +1,6 @@
 # API notes
 
-The API is exposed through the gateway. There is no generated OpenAPI document in the current repository.
+The API is exposed through the gateway. There is no generated OpenAPI document. A clone walkthrough is in [demo.http](http/demo.http).
 
 ## Authentication
 
@@ -17,7 +17,19 @@ Configured `/api/**` gateway routes require:
 Authorization: Bearer <access-token>
 ```
 
-Signup accepts `ROLE_JOB_SEEKER` or `ROLE_EMPLOYER`. Self-registration as `ROLE_ADMIN` is rejected.
+Signup JWT includes the user's role in `authorities`. Self-registration as `ROLE_ADMIN` is rejected.
+
+Admin-only through the gateway (`ROLE_ADMIN`):
+
+| Method | Path |
+|---|---|
+| GET | `/api/users` |
+| PATCH | `/api/users/{userId}/suspend` |
+| PATCH | `/api/users/{userId}/activate` |
+| DELETE | `/api/users/{userId}/delete` |
+| PATCH | `/api/companies/{id}/verify` |
+| PATCH | `/api/companies/{id}/deactivate` |
+| GET | `/api/jobs/admin` |
 
 ## Main resources
 
@@ -27,7 +39,7 @@ Signup accepts `ROLE_JOB_SEEKER` or `ROLE_EMPLOYER`. Self-registration as `ROLE_
 - `PUT /api/users/profile`
 - `GET /api/users/{userId}`
 - `GET /api/users`
-- suspend, activate, and soft-delete endpoints
+- suspend, activate, and soft-delete endpoints (admin through the gateway)
 
 ### Company
 
@@ -40,9 +52,10 @@ Signup accepts `ROLE_JOB_SEEKER` or `ROLE_EMPLOYER`. Self-registration as `ROLE_
 ### Job
 
 - `POST /api/jobs`
-- `GET /api/jobs/{id}`
-- `GET /api/jobs` with query filters
+- `GET /api/jobs/{id}` (HTTP 200)
+- `GET /api/jobs` with query filters (`categoryId` matches the category, openings use the `opening` column)
 - `POST /api/jobs/search/natural` with `{ "query": "..." }`
+- `GET /api/jobs/admin` (admin through the gateway)
 - `PATCH /api/jobs/{id}/publish`
 - `PATCH /api/jobs/{id}/close`
 - categories, skills, and tags under their own resources
@@ -69,7 +82,7 @@ Resumes are structured records; PDF or DOC upload is not implemented.
 
 `POST /api/applications` stores `aiScore` and `aiShortListStatus` when Gemini screening succeeds (`>=80` AUTO_SHORTLISTED, `>=50` REVIEW_RECOMMENDED, otherwise LOW_MATCH). Gemini failure leaves `NOT_SCREENED` and does not reject the apply.
 
-An application can be submitted once per candidate/job pair.
+`GET /api/applications/{applicationId}` is limited to the candidate or employer on that row. `GET /api/applications/job/{jobId}` is limited to the job's employer.
 
 ### Preferences
 
@@ -92,5 +105,5 @@ Application-service and job-service assemble job/resume context and call these o
 - No consistent global error contract
 - No pagination on list endpoints
 - No generated OpenAPI specification
-- Authorization is not complete on administrative and record-by-ID endpoints
-- Resume AI uses request bodies on GET endpoints; this will be corrected in a later hardening change
+- Direct service ports still trust identity headers
+- Resume AI is `POST /api/ai/resume/...`

@@ -34,7 +34,9 @@ The gateway removes caller-supplied `X-User-Id`, `X-User-Email`, and `X-User-Rol
 
 ### Authorization coverage
 
-Ownership checks exist in several job, resume, company, and application operations, but administrative role checks are incomplete. Some read endpoints expose records by identifier without verifying the caller's relationship to them.
+The gateway requires `ROLE_ADMIN` for user administration, company verify/deactivate, and `GET /api/jobs/admin`. Application GET by id is limited to the candidate or employer on that application. Other list-by-id endpoints can still leak records through the gateway if a caller has a valid token.
+
+Direct service ports do not apply the gateway role checks.
 
 ### Token lifecycle
 
@@ -51,8 +53,8 @@ Email credentials must be application-specific credentials rather than an accoun
 Before exposing this system outside a local environment:
 
 1. Restrict network access so only the gateway can reach business APIs.
-2. Remove and replace inbound identity headers at the gateway.
-3. Apply role checks to administrative endpoints.
+2. The gateway already replaces inbound identity headers from the JWT.
+3. The gateway already requires `ROLE_ADMIN` on the listed administrative paths.
 4. Add service-level JWT or mTLS authentication if services run on an untrusted network.
 5. Add rate limiting to authentication and AI routes.
 6. Add audit logs without tokens, passwords, or resume content.

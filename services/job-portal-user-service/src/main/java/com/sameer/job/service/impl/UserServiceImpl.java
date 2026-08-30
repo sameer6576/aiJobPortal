@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
             user.setFullName(req.getFullName());
         }
         if(req.getPhone()!=null){
-            user.setPhone(req.getFullName());
+            user.setPhone(req.getPhone());
         }
         if(req.getProfileImage()!=null){
             user.setProfileImage(req.getProfileImage());
