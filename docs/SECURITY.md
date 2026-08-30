@@ -58,7 +58,7 @@ Before exposing this system outside a local environment:
 4. Add service-level JWT or mTLS authentication if services run on an untrusted network.
 5. Add rate limiting to authentication and AI routes.
 6. Add audit logs without tokens, passwords, or resume content.
-7. Replace `ddl-auto: update` with versioned migrations.
+7. Replace `ddl-auto: create` with versioned migrations.
 
 ## Reporting
 

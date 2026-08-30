@@ -161,7 +161,7 @@ Known limitations:
 
 - Service-level authorization is not complete; the gateway is the intended public entry point.
 - Gemini and Kafka failures are logged; apply and status updates still persist.
-- Database schemas use `ddl-auto: update`; migrations are not present.
+- Database schemas use `ddl-auto: create`; migrations are not present.
 - Tests cover a few domain paths plus context-load smoke tests.
 - There is no frontend, OpenAPI document, refresh-token flow, resume file parser, search index, or production deployment.
 
