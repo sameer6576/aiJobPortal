@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: job-portal-config-server
+  profiles:
+    active: native
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: ${CONFIG_REPOSITORY_PATH:file:../../job-portal-config}
+
+eureka:
+  client:
+    enabled: false
+    register-with-eureka: false
+    fetch-registry: false

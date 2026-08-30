@@ -19,6 +19,9 @@ public class KafkaConsumerConfig {
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
+    @Value("${spring.kafka.listener.auto-startup:true}")
+    private boolean listenerAutoStartup;
+
     @Bean
     public ConsumerFactory<String, Object> consumerFactory() {
         JacksonJsonDeserializer<Object> deserializer= new JacksonJsonDeserializer<>(Object.class);
@@ -42,6 +45,7 @@ public class KafkaConsumerConfig {
         ConcurrentKafkaListenerContainerFactory<String,Object> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
+        factory.setAutoStartup(listenerAutoStartup);
         return factory;
     }
 

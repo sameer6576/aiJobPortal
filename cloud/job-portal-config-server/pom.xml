@@ -6,7 +6,7 @@
 		<groupId>com.sameer.job</groupId>
 		<artifactId>job-portal-cloud</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>job-portal-config-server</artifactId>
 	<name>job-portal-config-server</name>

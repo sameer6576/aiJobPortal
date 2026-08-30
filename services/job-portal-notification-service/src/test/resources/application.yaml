@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: job-portal-notification-service
+  cloud:
+    config:
+      enabled: false
+    discovery:
+      enabled: false
+  kafka:
+    bootstrap-servers: localhost:9092
+    listener:
+      auto-startup: false
+  mail:
+    host: localhost
+    port: 3025
+    username: ""
+    password: ""
+
+eureka:
+  client:
+    enabled: false
+    register-with-eureka: false
+    fetch-registry: false
