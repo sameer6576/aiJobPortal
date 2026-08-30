@@ -30,7 +30,7 @@
 
 **Decision:** Keep prompts and model parsing in AI service. Do not give AI service a database or ownership of domain records.
 
-**Consequence:** Application and job services own orchestration. Gemini outages do not roll back an application row; screening fields stay `NOT_SCREENED`.
+**Consequence:** Application and job services own orchestration. Gemini outages do not roll back an application row; screening fields stay `NOT_SCREENED`. Cover-letter generation also fail-opens and returns the stored application.
 
 ## 5. Native Config Server for local evaluation
 

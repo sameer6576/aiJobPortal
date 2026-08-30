@@ -6,7 +6,7 @@ import com.sameer.job.domain.IndustryType;
 import com.sameer.job.dto.request.CompanyRequest;
 import com.sameer.job.dto.response.CompanyResponse;
 import com.sameer.job.dto.response.SocialLinkResponse;
-import com.sameer.job.mapper.CompanyMapper;
+import com.sameer.job.exception.ForbiddenException;
 import com.sameer.job.modal.Company;
 import com.sameer.job.modal.SocialLink;
 import com.sameer.job.repository.CompanyRepository;
@@ -113,6 +113,7 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public CompanyResponse updateCompany(Long companyId, Long ownerId, CompanyRequest req) throws Exception {
         Company company = getCompanyEntityById(companyId);
+        assertOwner(company, ownerId);
 
         if (!company.getName().equals(req.getName()) && companyRepository.existsByName(req.getName())) {
             throw new Exception("Company already exists. Please choose a different name.");
@@ -163,7 +164,7 @@ public class CompanyServiceImpl implements CompanyService {
 
     private void assertOwner(Company company, Long ownerId) throws Exception {
         if(!company.getOwnerId().equals(ownerId)){
-            throw new Exception("You are not the owner of this company");
+            throw new ForbiddenException("You are not the owner of this company");
         }
     }
 

@@ -57,8 +57,8 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ProjectResponse> getAllProjects(Long resumeId) {
-
+    public List<ProjectResponse> getAllProjects(Long resumeId, Long candidateId) throws Exception {
+        resumeService.requireOwner(resumeId, candidateId);
         return projectRepository
                 .findByResume_IdOrderByDisplayOrderAsc(resumeId)
                 .stream()

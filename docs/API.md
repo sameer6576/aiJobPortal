@@ -31,6 +31,16 @@ Admin-only through the gateway (`ROLE_ADMIN`):
 | PATCH | `/api/companies/{id}/deactivate` |
 | GET | `/api/jobs/admin` |
 
+Employer or admin through the gateway:
+
+| Method | Path |
+|---|---|
+| POST/PUT/DELETE | `/api/job-categories` |
+| POST/PUT/DELETE | `/api/job-skills` |
+| POST/PUT/DELETE | `/api/job-tags` |
+
+Passwords must be at least 8 characters. Suspended and deleted accounts cannot log in. Access tokens expire after 24 hours.
+
 ## Main resources
 
 ### User
@@ -52,8 +62,9 @@ Admin-only through the gateway (`ROLE_ADMIN`):
 ### Job
 
 - `POST /api/jobs`
-- `GET /api/jobs/{id}` (HTTP 200)
+- `GET /api/jobs/{id}` (HTTP 200; drafts are hidden unless the employer or an admin)
 - `GET /api/jobs` with query filters (`categoryId` matches the category, openings use the `opening` column)
+- `GET /api/jobs/company/{companyId}` (open jobs only)
 - `POST /api/jobs/search/natural` with `{ "query": "..." }`
 - `GET /api/jobs/admin` (admin through the gateway)
 - `PATCH /api/jobs/{id}/publish`
@@ -80,7 +91,7 @@ Resumes are structured records; PDF or DOC upload is not implemented.
 - `POST /api/applications/{applicationId}/cover-letter`
 - `GET /api/applications/{applicationId}/skills-gap`
 
-`POST /api/applications` stores `aiScore` and `aiShortListStatus` when Gemini screening succeeds (`>=80` AUTO_SHORTLISTED, `>=50` REVIEW_RECOMMENDED, otherwise LOW_MATCH). Gemini failure leaves `NOT_SCREENED` and does not reject the apply.
+`POST /api/applications` stores `aiScore` and `aiShortListStatus` when Gemini screening succeeds (`>=80` AUTO_SHORTLISTED, `>=50` REVIEW_RECOMMENDED, otherwise LOW_MATCH). Gemini failure leaves `NOT_SCREENED` and does not reject the apply. Cover-letter generation is also fail-open.
 
 `GET /api/applications/{applicationId}` is limited to the candidate or employer on that row. `GET /api/applications/job/{jobId}` is limited to the job's employer.
 

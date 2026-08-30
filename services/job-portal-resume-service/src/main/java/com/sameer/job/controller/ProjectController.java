@@ -37,11 +37,12 @@ public class ProjectController {
 
     @GetMapping
     public ResponseEntity<List<ProjectResponse>> getAllProjects(
-            @PathVariable Long resumeId
-    ) {
+            @PathVariable Long resumeId,
+            @RequestHeader("X-User-Id") Long candidateId
+    ) throws Exception {
 
         return ResponseEntity.ok(
-                projectService.getAllProjects(resumeId)
+                projectService.getAllProjects(resumeId, candidateId)
         );
     }
 

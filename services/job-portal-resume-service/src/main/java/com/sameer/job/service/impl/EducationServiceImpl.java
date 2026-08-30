@@ -55,8 +55,8 @@ public class EducationServiceImpl implements EducationService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<EducationResponse> getEducations(Long resumeId) {
-
+    public List<EducationResponse> getEducations(Long resumeId, Long candidateId) throws Exception {
+        resumeService.requireOwner(resumeId, candidateId);
         return educationRepository
                 .findByResume_IdOrderByDisplayOrderAsc(resumeId)
                 .stream()

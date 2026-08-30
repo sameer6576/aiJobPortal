@@ -43,6 +43,7 @@ public class JobSkillController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse> deleteSkill(@PathVariable Long id) throws Exception {
+        jobSkillService.deleteSkill(id);
         return ResponseEntity.ok(new ApiResponse("Skill deleted successfully", true));
     }
 

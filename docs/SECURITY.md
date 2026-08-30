@@ -34,7 +34,7 @@ The gateway removes caller-supplied `X-User-Id`, `X-User-Email`, and `X-User-Rol
 
 ### Authorization coverage
 
-The gateway requires `ROLE_ADMIN` for user administration, company verify/deactivate, and `GET /api/jobs/admin`. Application GET by id is limited to the candidate or employer on that application. Other list-by-id endpoints can still leak records through the gateway if a caller has a valid token.
+The gateway requires `ROLE_ADMIN` for user administration, company verify/deactivate, and `GET /api/jobs/admin`. Job category, skill, and tag writes require `ROLE_ADMIN` or `ROLE_EMPLOYER`. Company updates, resume nested GETs, and application notes require the owner or employer. Application GET by id is limited to the candidate or employer on that application. `GET /api/users/{userId}` remains readable to any authenticated caller because application-service uses it over Feign.
 
 Direct service ports do not apply the gateway role checks.
 

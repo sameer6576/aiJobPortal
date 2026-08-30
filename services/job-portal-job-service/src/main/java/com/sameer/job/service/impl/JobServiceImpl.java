@@ -6,7 +6,7 @@ import com.sameer.job.domain.JobStatus;
 import com.sameer.job.dto.JobRequest;
 import com.sameer.job.dto.JobResponse;
 import com.sameer.job.dto.response.CompanyResponse;
-import com.sameer.job.mapper.JobMapper;
+import com.sameer.job.exception.NotFoundException;
 import com.sameer.job.modal.Job;
 import com.sameer.job.modal.JobCategory;
 import com.sameer.job.modal.JobSkill;
@@ -92,10 +92,13 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public JobResponse getJobById(Long id) throws Exception {
+    public JobResponse getJobById(Long id, Long userId, String role) throws Exception {
         Job job = jobRepository.findById(id).orElseThrow(
-                () -> new Exception("Job not found with ID: " + id)
+                () -> new NotFoundException("Job not found with ID: " + id)
         );
+        if (job.getStatus() == JobStatus.DRAFT && !canViewDraft(job, userId, role)) {
+            throw new NotFoundException("Job not found with ID: " + id);
+        }
         return convertToResponse(job);
     }
 
@@ -129,6 +132,7 @@ public class JobServiceImpl implements JobService {
         List<Job> jobs = jobRepository.findByCompanyId(companyId);
 
         return jobs.stream()
+                   .filter(job -> job.getStatus() == JobStatus.OPEN)
                    .map(this::convertToResponse)
                    .collect(Collectors.toList());
     }
@@ -255,7 +259,13 @@ public class JobServiceImpl implements JobService {
 
     private void assertEmployer(Job job, Long employerId) throws Exception {
         if (!job.getEmployerId().equals(employerId)) {
-            throw new Exception("You are not the employer who posted this job: " + job.getId());
+            throw new com.sameer.job.exception.ForbiddenException("You are not the employer who posted this job: " + job.getId());
         }
+    }
+
+    private boolean canViewDraft(Job job, Long userId, String role) {
+        boolean owner = userId != null && userId.equals(job.getEmployerId());
+        boolean admin = role != null && role.contains("ROLE_ADMIN");
+        return owner || admin;
     }
 }

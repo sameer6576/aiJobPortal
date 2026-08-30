@@ -202,7 +202,12 @@ public class ResumeServiceImpl implements ResumeService {
 
     private void assertOwner(Resume resume, Long candidateId) throws Exception {
         if (!resume.getCandidateId().equals(candidateId)) {
-            throw new Exception("This resume does not belong to this candidate");
+            throw new com.sameer.job.exception.ForbiddenException("This resume does not belong to this candidate");
         }
+    }
+
+    @Override
+    public void requireOwner(Long resumeId, Long candidateId) throws Exception {
+        assertOwner(getResumeEntity(resumeId), candidateId);
     }
 }

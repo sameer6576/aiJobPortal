@@ -37,11 +37,12 @@ public class ResumeSkillController {
 
     @GetMapping
     public ResponseEntity<List<ResumeSkillResponse>> getSkills(
-            @PathVariable Long resumeId
-    ) {
+            @PathVariable Long resumeId,
+            @RequestHeader("X-User-Id") Long candidateId
+    ) throws Exception {
 
         return ResponseEntity.ok(
-                resumeSkillService.getSkills(resumeId)
+                resumeSkillService.getSkills(resumeId, candidateId)
         );
     }
 

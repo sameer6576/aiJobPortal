@@ -9,7 +9,7 @@ import java.util.List;
 public interface WorkExperienceService {
     WorkExperienceResponse addWorkExperience(Long resumeId, Long candidateId, AddWorkExperience req) throws Exception;
 
-    List<WorkExperienceResponse> getWorkExperiences(Long resumeId);
+    List<WorkExperienceResponse> getWorkExperiences(Long resumeId, Long candidateId) throws Exception;
 
     WorkExperienceResponse updateWorkExperience(
             Long resumeId, Long workExperienceId, Long candidateId, AddWorkExperience req

@@ -112,6 +112,19 @@ class ApplicationServiceImplTest {
     }
 
     @Test
+    void createApplicationRejectsDraftJobs() {
+        when(applicationRepository.existsByCandidateIdAndJobId(5L, 9L)).thenReturn(false);
+        JobResponse draft = job();
+        draft.setStatus(com.sameer.job.domain.JobStatus.DRAFT);
+        when(jobClient.getJobById(9L)).thenReturn(draft);
+
+        assertThatThrownBy(() -> applicationService.createApplication(5L, applyRequest()))
+                .isInstanceOf(Exception.class)
+                .hasMessageContaining("not open");
+        verify(aiClient, never()).scoreCandidate(any());
+    }
+
+    @Test
     void getApplicationByIdRejectsUnrelatedUser() {
         Application application = Application.builder()
                                                .id(1L)
@@ -153,6 +166,7 @@ class ApplicationServiceImplTest {
                            .id(9L)
                            .title("Java developer")
                            .employerId(2L)
+                           .status(com.sameer.job.domain.JobStatus.OPEN)
                            .experienceLevel(ExperienceLevel.MID_LEVEL)
                            .responsibilities("Build APIs")
                            .company(CompanyResponse.builder().id(10L).name("Acme").build())

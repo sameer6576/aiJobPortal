@@ -30,8 +30,11 @@ public class JobController {
 
     @GetMapping("/{id}")
     public ResponseEntity<JobResponse> getJobById(
-            @PathVariable Long id) throws Exception {
-        return ResponseEntity.ok(jobService.getJobById(id));
+            @PathVariable Long id,
+            @RequestHeader(value = "X-User-Id", required = false) Long userId,
+            @RequestHeader(value = "X-User-Role", required = false) String role
+    ) throws Exception {
+        return ResponseEntity.ok(jobService.getJobById(id, userId, role));
     }
 
     @GetMapping

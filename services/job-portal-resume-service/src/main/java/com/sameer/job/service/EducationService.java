@@ -9,7 +9,7 @@ public interface EducationService {
 
     EducationResponse addEducation(Long resumeId, Long candidateId, AddEducationRequest request) throws Exception;
 
-    List<EducationResponse> getEducations(Long educationId);
+    List<EducationResponse> getEducations(Long resumeId, Long candidateId) throws Exception;
 
     EducationResponse updateEducation(Long educationId, Long resumeId, Long candidateId, AddEducationRequest request) throws Exception;
 

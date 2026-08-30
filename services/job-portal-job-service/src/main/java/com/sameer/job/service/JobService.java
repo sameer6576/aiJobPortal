@@ -10,7 +10,7 @@ public interface JobService {
 
      JobResponse createJob(Long employerId, JobRequest req) throws Exception;
 
-    JobResponse getJobById(Long id) throws Exception;
+    JobResponse getJobById(Long id, Long userId, String role) throws Exception;
 
     List<JobResponse> getJobs(JobSearchRequest jobSearchRequest);
 

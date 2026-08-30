@@ -2,7 +2,8 @@ package com.sameer.job.service.impl;
 
 import com.sameer.job.domain.UserRole;
 import com.sameer.job.domain.UserStatus;
-import com.sameer.job.mapper.UserMapper;
+import com.sameer.job.exception.ForbiddenException;
+import com.sameer.job.exception.UnauthorizedException;
 import com.sameer.job.modal.User;
 import com.sameer.job.payload.AuthResponse;
 import com.sameer.job.payload.LoginRequest;
@@ -89,6 +90,9 @@ public class AuthServiceImpl implements AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         User user = userRepository.findByEmail(req.getEmail());
+        if (user.getStatus() == UserStatus.SUSPENDED || user.getStatus() == UserStatus.DELETED) {
+            throw new ForbiddenException("This account cannot log in");
+        }
 
         String jwt = jwtProvider.generateToken(authentication, user.getId());
 
@@ -112,7 +116,7 @@ public class AuthServiceImpl implements AuthService {
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
 
         if(!passwordEncoder.matches(password, userDetails.getPassword())){
-            throw new Exception("Invalid Password");
+            throw new UnauthorizedException("Invalid Password");
         }
 
         return new UsernamePasswordAuthenticationToken

@@ -8,6 +8,7 @@ import com.sameer.job.client.ResumeClient;
 import com.sameer.job.client.UserClient;
 import com.sameer.job.domain.AiShortListStatus;
 import com.sameer.job.domain.ApplicationStatus;
+import com.sameer.job.domain.JobStatus;
 import com.sameer.job.dto.ApplicationResponse;
 import com.sameer.job.dto.JobResponse;
 import com.sameer.job.dto.ResumeResponse;
@@ -17,6 +18,7 @@ import com.sameer.job.dto.ai.SkillsGapResponse;
 import com.sameer.job.dto.response.CompanyResponse;
 import com.sameer.job.dto.response.UserResponse;
 import com.sameer.job.event.ApplicationEventPublisher;
+import com.sameer.job.exception.ConflictException;
 import com.sameer.job.mapper.ApplicationMapper;
 import com.sameer.job.modal.Application;
 import com.sameer.job.modal.ApplicationNote;
@@ -52,10 +54,13 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public ApplicationResponse createApplication(Long candidateId, CreateApplicationRequest req) throws Exception {
         if (applicationRepository.existsByCandidateIdAndJobId(candidateId, req.getJobId())) {
-            throw new Exception("You have already applied");
+            throw new ConflictException("You have already applied");
         }
 
         JobResponse jobResponse = jobClient.getJobById(req.getJobId());
+        if (jobResponse.getStatus() != JobStatus.OPEN) {
+            throw new ConflictException("This job is not open for applications");
+        }
         Long companyId = jobResponse.getCompany().getId();
         Long employerId = jobResponse.getEmployerId();
 
@@ -172,11 +177,16 @@ public class ApplicationServiceImpl implements ApplicationService {
                 candidate.getFullName() != null ? candidate.getFullName() : "Candidate"
         );
 
-        AiTextResponse generated = aiClient.generateCoverLetter(
-                aiPromptAssembler.coverLetterRequest(job, resume, name)
-        );
-        application.setCoverLetter(generated.getContent());
-        return buildFullResponse(applicationRepository.save(application));
+        try {
+            AiTextResponse generated = aiClient.generateCoverLetter(
+                    aiPromptAssembler.coverLetterRequest(job, resume, name)
+            );
+            application.setCoverLetter(generated.getContent());
+            return buildFullResponse(applicationRepository.save(application));
+        } catch (Exception e) {
+            log.error("Cover letter generation failed for application {}", applicationId, e);
+            return buildFullResponse(application);
+        }
     }
 
     @Override

@@ -27,13 +27,15 @@ public class JwtProvider {
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
+    public static final long ACCESS_TOKEN_TTL_MS = 24L * 60 * 60 * 1000;
+
     public String generateToken(Authentication authentication, Long userId){
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         String roles = populateAuthorities(authorities);
 
         return Jwts.builder()
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis()+100*60*60*24))
+                .expiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_TTL_MS))
                 .claim("email", authentication.getName())
                 .claim("authorities", roles)
                 .claim("userId", userId)

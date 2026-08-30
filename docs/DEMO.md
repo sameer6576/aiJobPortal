@@ -27,8 +27,8 @@ This document is the walkthrough. Runnable requests are in [demo.http](http/demo
 
 ## Expected limitations
 
-- Screening is synchronous and fail-open: a Gemini outage does not block apply.
-- Gateway `ROLE_ADMIN` is required for user list/suspend/activate/delete, company verify/deactivate, and `GET /api/jobs/admin`. Direct service ports skip that check.
+- Screening and cover-letter generation are fail-open: a Gemini outage does not block apply or the cover-letter endpoint.
+- Gateway `ROLE_ADMIN` is required for user list/suspend/activate/delete, company verify/deactivate, and `GET /api/jobs/admin`. Job category/skill/tag writes need `ROLE_ADMIN` or `ROLE_EMPLOYER`. Direct service ports skip that check.
 - Kafka publish is not in the same transaction as the status update.
 - There is no job-alert product; `/api/ai/alert-suggestion` was removed.
 

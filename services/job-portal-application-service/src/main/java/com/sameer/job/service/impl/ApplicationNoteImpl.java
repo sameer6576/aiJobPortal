@@ -1,6 +1,8 @@
 package com.sameer.job.service.impl;
 
 import com.sameer.job.dto.ApplicationNoteResponse;
+import com.sameer.job.exception.ForbiddenException;
+import com.sameer.job.exception.NotFoundException;
 import com.sameer.job.mapper.ApplicationMapper;
 import com.sameer.job.modal.Application;
 import com.sameer.job.modal.ApplicationNote;
@@ -40,7 +42,9 @@ public class ApplicationNoteImpl implements ApplicationNoteService {
     }
 
     @Override
-    public List<ApplicationNoteResponse> getNotesByApplication(Long applicationId, Long employerId) {
+    public List<ApplicationNoteResponse> getNotesByApplication(Long applicationId, Long employerId) throws Exception {
+        Application application = applicationService.getApplicationEntity(applicationId);
+        assertEmployer(application, employerId);
         return applicationNoteRepository.findByApplicationId(applicationId).stream()
                                         .map(ApplicationMapper::toNoteResponse)
                                         .toList();
@@ -52,7 +56,10 @@ public class ApplicationNoteImpl implements ApplicationNoteService {
         assertEmployer(application, employerId);
 
         ApplicationNote applicationNote = applicationNoteRepository.findById(noteId)
-                                                                   .orElseThrow(() -> new Exception("Note does not exist with ID: " + noteId));
+                                                                   .orElseThrow(() -> new NotFoundException("Note does not exist with ID: " + noteId));
+        if (!applicationNote.getApplication().getId().equals(applicationId)) {
+            throw new NotFoundException("Note does not exist with ID: " + noteId);
+        }
 
         applicationNoteRepository.delete(applicationNote);
     }
@@ -60,7 +67,7 @@ public class ApplicationNoteImpl implements ApplicationNoteService {
 
     private void assertEmployer(Application application, Long employerId) throws Exception {
         if (!application.getEmployerId().equals(employerId)) {
-            throw new Exception("You are not the employer of this application");
+            throw new ForbiddenException("You are not the employer of this application");
         }
     }
 }

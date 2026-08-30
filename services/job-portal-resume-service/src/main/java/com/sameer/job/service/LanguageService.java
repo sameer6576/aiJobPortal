@@ -13,7 +13,7 @@ public interface LanguageService {
             AddLanguageRequest req
     ) throws Exception;
 
-    List<LanguageResponse> getLanguages(Long resumeId);
+    List<LanguageResponse> getLanguages(Long resumeId, Long candidateId) throws Exception;
 
     LanguageResponse updateLanguage(
             Long languageId,

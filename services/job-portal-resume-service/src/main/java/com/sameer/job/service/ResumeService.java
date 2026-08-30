@@ -23,4 +23,6 @@ public interface ResumeService {
     void deleteResume(Long resumeId, Long candidateId) throws Exception;
 
     Resume getResumeEntity(Long resumeId) throws Exception;
+
+    void requireOwner(Long resumeId, Long candidateId) throws Exception;
 }

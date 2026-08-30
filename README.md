@@ -150,8 +150,11 @@ Implemented:
 - Feign collaboration between job, company, resume, user, and application services
 - Kafka application-status event and SMTP email consumer (`docker compose --profile kafka`)
 - Gemini screening on apply, cover letter, skills-gap, and natural-language job search
-- Gateway `ROLE_ADMIN` on administrative user, company, and job routes; application GET ownership
-- Unit coverage for signup JWT roles, job search filters, and apply-time screening
+- Gateway `ROLE_ADMIN` on administrative user, company, and job routes; employer/admin taxonomy writes; application GET ownership
+- Company update, resume nested GETs, and application notes check the owner or employer
+- Apply is limited to `OPEN` jobs; drafts are not listed on public company job lists
+- Login rejects `SUSPENDED` and `DELETED` accounts
+- Unit coverage for signup JWT roles, suspended login, job search filters, apply-time screening, and draft-job apply rejection
 - Jib image configuration and Docker Compose infrastructure
 
 Known limitations:
@@ -160,7 +163,7 @@ Known limitations:
 - Gemini and Kafka failures are logged; apply and status updates still persist.
 - Database schemas use `ddl-auto: update`; migrations are not present.
 - Tests cover a few domain paths plus context-load smoke tests.
-- There is no frontend, CI workflow, OpenAPI document, refresh-token flow, resume file parser, search index, or production deployment.
+- There is no frontend, OpenAPI document, refresh-token flow, resume file parser, search index, or production deployment.
 
 ## Security
 

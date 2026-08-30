@@ -46,7 +46,9 @@ public class WorkExperienceServiceImpl implements WorkExperienceService {
     }
 
     @Override
-    public List<WorkExperienceResponse> getWorkExperiences(Long resumeId) {
+    public List<WorkExperienceResponse> getWorkExperiences(Long resumeId, Long candidateId) throws Exception {
+        Resume resume = resumeService.getResumeEntity(resumeId);
+        assertOwner(resume, candidateId);
         return workExperienceRepository.findByResume_IdOrderByDisplayOrderAsc(resumeId).stream()
                                        .map(WorkExperienceMapper::toWorkExperienceResponse).toList();
     }

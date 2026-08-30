@@ -14,7 +14,7 @@ public interface ApplicationNoteService {
             AddApplicationNoteRequest req
     ) throws Exception;
 
-    List<ApplicationNoteResponse> getNotesByApplication(Long applicationId, Long employerId);
+    List<ApplicationNoteResponse> getNotesByApplication(Long applicationId, Long employerId) throws Exception;
 
     void deleteNote(Long applicationId, Long noteId, Long employerId) throws Exception;
 

@@ -70,13 +70,40 @@ public class RouteConfig {
                                      .build();
     }
 
-    private ServerRequest requireRole(ServerRequest request, String requiredRole) {
-        String roles = request.headers().firstHeader("X-User-Role");
+    @Bean
+    @Order(-1)
+    public RouterFunction<ServerResponse> jobTaxonomyWriteRoutes() {
+        return GatewayRouterFunctions.route("job-taxonomy-write-routes")
+                                     .route(RequestPredicates.POST("/api/job-categories"), HandlerFunctions.http())
+                                     .route(RequestPredicates.PUT("/api/job-categories/**"), HandlerFunctions.http())
+                                     .route(RequestPredicates.DELETE("/api/job-categories/**"), HandlerFunctions.http())
+                                     .route(RequestPredicates.POST("/api/job-skills"), HandlerFunctions.http())
+                                     .route(RequestPredicates.PUT("/api/job-skills/**"), HandlerFunctions.http())
+                                     .route(RequestPredicates.DELETE("/api/job-skills/**"), HandlerFunctions.http())
+                                     .route(RequestPredicates.POST("/api/job-tags"), HandlerFunctions.http())
+                                     .route(RequestPredicates.PUT("/api/job-tags/**"), HandlerFunctions.http())
+                                     .route(RequestPredicates.DELETE("/api/job-tags/**"), HandlerFunctions.http())
+                                     .filter(LoadBalancerFilterFunctions.lb("job-portal-job-service"))
+                                     .before(this::jwtAuthFilter)
+                                     .before(request -> requireAnyRole(request, "ROLE_ADMIN", "ROLE_EMPLOYER"))
+                                     .build();
+    }
 
-        if (roles == null || !roles.contains(requiredRole)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied for role " + requiredRole);
+    private ServerRequest requireRole(ServerRequest request, String requiredRole) {
+        return requireAnyRole(request, requiredRole);
+    }
+
+    private ServerRequest requireAnyRole(ServerRequest request, String... requiredRoles) {
+        String roles = request.headers().firstHeader("X-User-Role");
+        if (roles == null) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied");
         }
-        return request;
+        for (String requiredRole : requiredRoles) {
+            if (roles.contains(requiredRole)) {
+                return request;
+            }
+        }
+        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied for required role");
     }
 
     @Bean

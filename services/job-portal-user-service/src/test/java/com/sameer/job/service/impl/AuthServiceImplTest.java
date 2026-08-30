@@ -1,6 +1,8 @@
 package com.sameer.job.service.impl;
 
 import com.sameer.job.domain.UserRole;
+import com.sameer.job.domain.UserStatus;
+import com.sameer.job.exception.ForbiddenException;
 import com.sameer.job.modal.User;
 import com.sameer.job.payload.SignupRequest;
 import com.sameer.job.repository.UserRepository;
@@ -82,5 +84,34 @@ class AuthServiceImplTest {
                 .hasMessageContaining("admin");
         verify(userRepository, never()).save(any());
         verify(jwtProvider, never()).generateToken(any(), any());
+    }
+
+    @Test
+    void loginRejectsSuspendedUsers() throws Exception {
+        User user = User.builder()
+                .id(3L)
+                .email("sam@example.com")
+                .password("hashed")
+                .fullName("Sam")
+                .role(UserRole.ROLE_JOB_SEEKER)
+                .status(UserStatus.SUSPENDED)
+                .build();
+        when(customUserDetailsService.loadUserByUsername("sam@example.com"))
+                .thenReturn(new org.springframework.security.core.userdetails.User(
+                        "sam@example.com", "hashed", java.util.List.of()
+                ));
+        when(passwordEncoder.matches("secret", "hashed")).thenReturn(true);
+        when(userRepository.findByEmail("sam@example.com")).thenReturn(user);
+
+        assertThatThrownBy(() -> authService.login(loginRequest("sam@example.com", "secret")))
+                .isInstanceOf(ForbiddenException.class);
+        verify(jwtProvider, never()).generateToken(any(), any());
+    }
+
+    private com.sameer.job.payload.LoginRequest loginRequest(String email, String password) {
+        com.sameer.job.payload.LoginRequest login = new com.sameer.job.payload.LoginRequest();
+        login.setEmail(email);
+        login.setPassword(password);
+        return login;
     }
 }

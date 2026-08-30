@@ -37,7 +37,9 @@ public class ResumeSkillServiceImpl implements ResumeSkillService {
     }
 
     @Override
-    public List<ResumeSkillResponse> getSkills(Long resumeId) {
+    public List<ResumeSkillResponse> getSkills(Long resumeId, Long candidateId) throws Exception {
+        Resume resume = resumeService.getResumeEntity(resumeId);
+        assertOwner(resume, candidateId);
         return resumeSkillRepository.findByResume_IdOrderByDisplayOrderAsc(resumeId).stream()
                                     .map(ResumeMapper::toSkillResponse).toList();
     }

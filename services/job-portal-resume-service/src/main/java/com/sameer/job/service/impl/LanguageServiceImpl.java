@@ -50,8 +50,8 @@ public class LanguageServiceImpl implements LanguageService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<LanguageResponse> getLanguages(Long resumeId) {
-
+    public List<LanguageResponse> getLanguages(Long resumeId, Long candidateId) throws Exception {
+        resumeService.requireOwner(resumeId, candidateId);
         return languageRepository
                 .findByResume_IdOrderByDisplayOrderAsc(resumeId)
                 .stream()

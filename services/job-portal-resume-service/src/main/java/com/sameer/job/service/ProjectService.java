@@ -8,7 +8,7 @@ import java.util.List;
 public interface ProjectService {
     ProjectResponse addProject(Long resumeId, Long candidateId, AddProjectRequest req) throws Exception;
 
-    List<ProjectResponse> getAllProjects(Long resumeId);
+    List<ProjectResponse> getAllProjects(Long resumeId, Long candidateId) throws Exception;
 
     ProjectResponse updateProject(Long projectId, Long resumeId, Long candidateId, AddProjectRequest req) throws Exception;
 
