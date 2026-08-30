@@ -1,6 +1,8 @@
 package com.sameer.job.service.impl;
 
 import com.sameer.job.dto.LanguageResponse;
+import com.sameer.job.exception.ForbiddenException;
+import com.sameer.job.exception.NotFoundException;
 import com.sameer.job.mapper.ResumeMapper;
 import com.sameer.job.modal.Language;
 import com.sameer.job.modal.Resume;
@@ -111,13 +113,13 @@ public class LanguageServiceImpl implements LanguageService {
 
         Language language = languageRepository.findById(languageId)
                                               .orElseThrow(() ->
-                                                      new Exception(
+                                                      new NotFoundException(
                                                               "Language not found with ID: " + languageId
                                                       )
                                               );
 
         if (!language.getResume().getId().equals(resumeId)) {
-            throw new Exception(
+            throw new ForbiddenException(
                     "Language does not belong to this resume"
             );
         }
@@ -133,7 +135,7 @@ public class LanguageServiceImpl implements LanguageService {
     ) throws Exception {
 
         if (!resume.getCandidateId().equals(candidateId)) {
-            throw new Exception("Resume not found");
+            throw new NotFoundException("Resume not found");
         }
     }
 }

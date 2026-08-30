@@ -51,7 +51,7 @@ public class EmailNotificationService {
             );
 
         } catch (Exception e) {
-            throw new Exception("Failed to send application status email", e);
+            throw new RuntimeException("Failed to send application status email", e);
         }
     }
 

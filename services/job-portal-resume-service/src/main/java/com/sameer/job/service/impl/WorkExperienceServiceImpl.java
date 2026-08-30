@@ -1,6 +1,8 @@
 package com.sameer.job.service.impl;
 
 import com.sameer.job.dto.WorkExperienceResponse;
+import com.sameer.job.exception.ForbiddenException;
+import com.sameer.job.exception.NotFoundException;
 import com.sameer.job.mapper.WorkExperienceMapper;
 import com.sameer.job.modal.Resume;
 import com.sameer.job.modal.WorkExperience;
@@ -58,7 +60,7 @@ public class WorkExperienceServiceImpl implements WorkExperienceService {
         WorkExperience exp = getWorkExperienceEntity(workExperienceId);
 
         if (!exp.getResume().getId().equals(resumeId)) {
-            throw new Exception("Work experience does not belong to this resume");
+            throw new ForbiddenException("Work experience does not belong to this resume");
         }
 
         assertOwner(exp.getResume(), candidateId);
@@ -84,7 +86,7 @@ public class WorkExperienceServiceImpl implements WorkExperienceService {
         WorkExperience exp = getWorkExperienceEntity(workExperienceId);
 
         if (!exp.getResume().getId().equals(resumeId)) {
-            throw new Exception("Work experience does not belong to this resume");
+            throw new ForbiddenException("Work experience does not belong to this resume");
         }
 
         assertOwner(exp.getResume(), candidateId);
@@ -95,12 +97,12 @@ public class WorkExperienceServiceImpl implements WorkExperienceService {
     @Override
     public WorkExperience getWorkExperienceEntity(Long workExperienceId) throws Exception {
         return workExperienceRepository.findById(workExperienceId)
-                                       .orElseThrow(() -> new Exception("Work Experience not found with ID: " + workExperienceId));
+                                       .orElseThrow(() -> new NotFoundException("Work Experience not found with ID: " + workExperienceId));
     }
 
     private void assertOwner(Resume resume, Long candidateId) throws Exception {
         if (!resume.getCandidateId().equals(candidateId)) {
-            throw new Exception("Resume not found");
+            throw new NotFoundException("Resume not found");
         }
     }
 

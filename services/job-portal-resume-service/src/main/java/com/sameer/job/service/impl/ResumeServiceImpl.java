@@ -1,6 +1,7 @@
 package com.sameer.job.service.impl;
 
 import com.sameer.job.dto.*;
+import com.sameer.job.exception.NotFoundException;
 import com.sameer.job.mapper.ResumeMapper;
 import com.sameer.job.mapper.WorkExperienceMapper;
 import com.sameer.job.modal.PersonalInfo;
@@ -171,7 +172,7 @@ public class ResumeServiceImpl implements ResumeService {
     @Override
     public Resume getResumeEntity(Long resumeId) throws Exception {
         return resumeRepository.findById(resumeId)
-                               .orElseThrow(() -> new Exception("Resume not found with ID: " + resumeId));
+                               .orElseThrow(() -> new NotFoundException("Resume not found with ID: " + resumeId));
     }
 
     private ResumeResponse buildFullResponse(Resume resume) {

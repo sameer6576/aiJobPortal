@@ -6,7 +6,9 @@ import com.sameer.job.domain.JobStatus;
 import com.sameer.job.dto.JobRequest;
 import com.sameer.job.dto.JobResponse;
 import com.sameer.job.dto.response.CompanyResponse;
+import com.sameer.job.exception.ConflictException;
 import com.sameer.job.exception.NotFoundException;
+import com.sameer.job.mapper.JobMapper;
 import com.sameer.job.modal.Job;
 import com.sameer.job.modal.JobCategory;
 import com.sameer.job.modal.JobSkill;
@@ -140,7 +142,7 @@ public class JobServiceImpl implements JobService {
     @Override
     public JobResponse updateJob(Long jobId, Long employerId, JobRequest req) throws Exception {
         Job job = jobRepository.findById(jobId).orElseThrow(
-                () -> new Exception("Job not found with ID: " + jobId)
+                () -> new NotFoundException("Job not found with ID: " + jobId)
         );
         assertEmployer(job, employerId);
 
@@ -183,12 +185,12 @@ public class JobServiceImpl implements JobService {
     @Override
     public JobResponse publishJob(Long jobId, Long employerId) throws Exception {
         Job job = jobRepository.findById(jobId).orElseThrow(
-                () -> new Exception("Job not found with ID: " + jobId)
+                () -> new NotFoundException("Job not found with ID: " + jobId)
         );
         assertEmployer(job, employerId);
 
         if (job.getStatus() == JobStatus.CLOSED || job.getStatus() == JobStatus.EXPIRED) {
-            throw new Exception("Job is already closed/expired");
+            throw new ConflictException("Job is already closed/expired");
         }
 
         job.setStatus(JobStatus.OPEN);
@@ -203,7 +205,7 @@ public class JobServiceImpl implements JobService {
     @Override
     public JobResponse closeJob(Long jobId, Long employerId) throws Exception {
         Job job = jobRepository.findById(jobId).orElseThrow(
-                () -> new Exception("Job not found with ID: " + jobId)
+                () -> new NotFoundException("Job not found with ID: " + jobId)
         );
         assertEmployer(job, employerId);
 
@@ -219,7 +221,7 @@ public class JobServiceImpl implements JobService {
     @Override
     public void deleteJob(Long jobId, Long employerId) throws Exception {
         Job job = jobRepository.findById(jobId).orElseThrow(
-                () -> new Exception("Job not found with ID: " + jobId)
+                () -> new NotFoundException("Job not found with ID: " + jobId)
         );
         assertEmployer(job, employerId);
 

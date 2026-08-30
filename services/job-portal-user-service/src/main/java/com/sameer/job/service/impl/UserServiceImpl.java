@@ -2,6 +2,7 @@ package com.sameer.job.service.impl;
 
 import com.sameer.job.domain.UserStatus;
 import com.sameer.job.dto.response.UserResponse;
+import com.sameer.job.exception.NotFoundException;
 import com.sameer.job.mapper.UserMapper;
 import com.sameer.job.modal.User;
 import com.sameer.job.payload.UpdateUserRequest;
@@ -23,14 +24,14 @@ public class UserServiceImpl implements UserService {
     public User getUserByEmail(String email) throws Exception{
         User user = userRepository.findByEmail(email);
         if(user == null){
-            throw new Exception("User not found with email: "+email);
+            throw new NotFoundException("User not found with email: "+email);
         }
         return user;
     }
 
     @Override
     public User getUserById(Long id) throws Exception{
-        return userRepository.findById(id).orElseThrow(() -> new Exception("User not found with id: "+id));
+        return userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found with id: "+id));
     }
 
     @Override

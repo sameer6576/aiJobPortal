@@ -1,6 +1,7 @@
 package com.sameer.job.service.impl;
 
 import com.sameer.job.dto.ResumeSkillResponse;
+import com.sameer.job.exception.NotFoundException;
 import com.sameer.job.mapper.ResumeMapper;
 import com.sameer.job.modal.Resume;
 import com.sameer.job.modal.ResumeSkill;
@@ -59,7 +60,7 @@ public class ResumeSkillServiceImpl implements ResumeSkillService {
     @Override
     public ResumeSkill getSkillEntity(Long skillId) throws Exception {
         return resumeSkillRepository.findById(skillId)
-                .orElseThrow(() -> new Exception("Skill not found with ID: "+ skillId));
+                .orElseThrow(() -> new NotFoundException("Skill not found with ID: "+ skillId));
     }
 
     @Override
@@ -71,7 +72,7 @@ public class ResumeSkillServiceImpl implements ResumeSkillService {
 
     private void assertOwner(Resume resume, Long candidateId) throws Exception {
         if (!resume.getCandidateId().equals(candidateId)) {
-            throw new Exception("Resume not found");
+            throw new NotFoundException("Resume not found");
         }
     }
 }

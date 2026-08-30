@@ -1,6 +1,9 @@
 package com.sameer.job.service.impl;
 
 import com.sameer.job.dto.SavedJobResponse;
+import com.sameer.job.exception.ConflictException;
+import com.sameer.job.exception.ForbiddenException;
+import com.sameer.job.exception.NotFoundException;
 import com.sameer.job.mapper.PreferenceMapper;
 import com.sameer.job.modal.SavedJob;
 import com.sameer.job.payload.SaveJobRequest;
@@ -20,7 +23,7 @@ public class SavedJobServiceImpl implements SavedJobService {
     @Override
     public SavedJobResponse savedJob(Long candidateId, SaveJobRequest req) throws Exception {
         if (isSaved(candidateId, req.getJobId())) {
-            throw new Exception("Job already saved");
+            throw new ConflictException("Job already saved");
         }
 
         SavedJob savedJob = SavedJob.builder()
@@ -34,10 +37,10 @@ public class SavedJobServiceImpl implements SavedJobService {
     @Override
     public void unsaveJob(Long candidateId, Long savedJobId) throws Exception {
         SavedJob savedJob = savedJobRepository.findById(savedJobId)
-                .orElseThrow(() -> new Exception("Job not found with ID: "+ savedJobId));
+                .orElseThrow(() -> new NotFoundException("Job not found with ID: "+ savedJobId));
 
         if(!savedJob.getCandidateId().equals(candidateId)){
-            throw new Exception("You cannot un save this job");
+            throw new ForbiddenException("You cannot un save this job");
         }
 
         savedJobRepository.delete(savedJob);

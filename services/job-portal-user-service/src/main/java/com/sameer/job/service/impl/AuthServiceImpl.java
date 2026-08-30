@@ -2,8 +2,11 @@ package com.sameer.job.service.impl;
 
 import com.sameer.job.domain.UserRole;
 import com.sameer.job.domain.UserStatus;
+import com.sameer.job.exception.ConflictException;
+import com.sameer.job.exception.ErrorCodes;
 import com.sameer.job.exception.ForbiddenException;
 import com.sameer.job.exception.UnauthorizedException;
+import com.sameer.job.mapper.UserMapper;
 import com.sameer.job.modal.User;
 import com.sameer.job.payload.AuthResponse;
 import com.sameer.job.payload.LoginRequest;
@@ -18,6 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -37,11 +41,11 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AuthResponse signup(SignupRequest req) throws Exception {
         if(userRepository.existsByEmail(req.getEmail())){
-            throw new Exception("Email already registered: "+req.getEmail());
+            throw new ConflictException(ErrorCodes.EMAIL_REGISTERED, "Email already registered");
         }
 
         if(req.getRole() == UserRole.ROLE_ADMIN){
-            throw new Exception("Cannot self register as a role admin");
+            throw new ForbiddenException(ErrorCodes.ADMIN_SELF_SIGNUP, "Cannot self register as a role admin");
         }
 
         User user = User.builder()
@@ -91,7 +95,7 @@ public class AuthServiceImpl implements AuthService {
 
         User user = userRepository.findByEmail(req.getEmail());
         if (user.getStatus() == UserStatus.SUSPENDED || user.getStatus() == UserStatus.DELETED) {
-            throw new ForbiddenException("This account cannot log in");
+            throw new ForbiddenException(ErrorCodes.ACCOUNT_DISABLED, "This account cannot log in");
         }
 
         String jwt = jwtProvider.generateToken(authentication, user.getId());
@@ -113,10 +117,15 @@ public class AuthServiceImpl implements AuthService {
 
     private Authentication authenticate(String email, String password) throws Exception{
 
-        UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
+        UserDetails userDetails;
+        try {
+            userDetails = customUserDetailsService.loadUserByUsername(email);
+        } catch (UsernameNotFoundException e) {
+            throw new UnauthorizedException(ErrorCodes.INVALID_CREDENTIALS, "Invalid credentials");
+        }
 
         if(!passwordEncoder.matches(password, userDetails.getPassword())){
-            throw new UnauthorizedException("Invalid Password");
+            throw new UnauthorizedException(ErrorCodes.INVALID_CREDENTIALS, "Invalid credentials");
         }
 
         return new UsernamePasswordAuthenticationToken

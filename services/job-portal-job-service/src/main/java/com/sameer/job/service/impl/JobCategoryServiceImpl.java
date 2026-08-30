@@ -1,6 +1,9 @@
 package com.sameer.job.service.impl;
 
 import com.sameer.job.dto.JobCategoryResponse;
+import com.sameer.job.exception.BadRequestException;
+import com.sameer.job.exception.ConflictException;
+import com.sameer.job.exception.NotFoundException;
 import com.sameer.job.mapper.JobCategoryMapper;
 import com.sameer.job.modal.JobCategory;
 import com.sameer.job.payload.JobCategoryRequest;
@@ -21,7 +24,7 @@ public class JobCategoryServiceImpl implements JobCategoryService {
     @Override
     public JobCategoryResponse createCategory(JobCategoryRequest req) throws Exception {
         if (jobCategoryRepository.existsByName(req.getName())) {
-            throw new Exception("Category name already exists, choose a different name");
+            throw new ConflictException("Category name already exists, choose a different name");
         }
 
         JobCategory parent = null;
@@ -64,14 +67,14 @@ public class JobCategoryServiceImpl implements JobCategoryService {
         JobCategory jobCategory = getCategoryEntityById(id);
         if(!jobCategory.getName().equals(req.getName())){
             if(jobCategoryRepository.existsByName(req.getName())){
-                throw new Exception("Category name already exist, choose a different name");
+                throw new ConflictException("Category name already exist, choose a different name");
             }
         }
 
         JobCategory parent = null;
         if(req.getParentId()!=null){
             if(req.getParentId().equals(id)){
-                throw new Exception("A category can't be it's own parent");
+                throw new BadRequestException("A category can't be it's own parent");
             }
             parent = getCategoryEntityById(req.getParentId());
         }
@@ -91,7 +94,7 @@ public class JobCategoryServiceImpl implements JobCategoryService {
 
     @Override
     public JobCategory getCategoryEntityById(Long id) {
-        return jobCategoryRepository.findById(id).orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
+        return jobCategoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Category not found with id: " + id));
     }
 
     private String generateUniqueSlug(@NotBlank(message = "Category name is required") String name) {

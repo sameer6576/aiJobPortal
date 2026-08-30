@@ -110,10 +110,21 @@ The AI service exposes:
 
 Application-service and job-service assemble job/resume context and call these over Feign. Direct `/api/ai/**` calls still accept the same payloads in the request body. `GET /api/ai/{prompt}` and `/api/ai/alert-suggestion` are removed.
 
+## Errors
+
+Failed requests return a JSON body (not a wrapper around successes):
+
+```json
+{ "code": "NOT_FOUND", "message": "Job not found with ID: 12" }
+```
+
+HTTP status comes from the exception type (`404`, `403`, `409`, `400`, `401`, `503`). Unexpected failures log the cause and return `INTERNAL_ERROR` with `"An unexpected error occurred"`.
+
+Stable codes: `NOT_FOUND`, `FORBIDDEN`, `CONFLICT`, `BAD_REQUEST`, `UNAUTHORIZED`, `VALIDATION_FAILED`, `INTERNAL_ERROR`, `AI_UNAVAILABLE`, `ALREADY_APPLIED`, `JOB_NOT_OPEN`, `EMAIL_REGISTERED`, `ADMIN_SELF_SIGNUP`, `ACCOUNT_DISABLED`, `INVALID_CREDENTIALS`.
+
 ## Current API constraints
 
 - No `/v1` version prefix
-- No consistent global error contract
 - No pagination on list endpoints
 - No generated OpenAPI specification
 - Direct service ports still trust identity headers

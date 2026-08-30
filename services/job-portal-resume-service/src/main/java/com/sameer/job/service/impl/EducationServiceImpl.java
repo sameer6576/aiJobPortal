@@ -1,6 +1,8 @@
 package com.sameer.job.service.impl;
 
 import com.sameer.job.dto.EducationResponse;
+import com.sameer.job.exception.ForbiddenException;
+import com.sameer.job.exception.NotFoundException;
 import com.sameer.job.mapper.ResumeMapper;
 import com.sameer.job.modal.Education;
 import com.sameer.job.modal.Resume;
@@ -124,10 +126,10 @@ public class EducationServiceImpl implements EducationService {
 
         Education education = educationRepository.findById(educationId)
                                                  .orElseThrow(() ->
-                                                         new Exception("Education not found with ID: " + educationId));
+                                                         new NotFoundException("Education not found with ID: " + educationId));
 
         if (!education.getResume().getId().equals(resumeId)) {
-            throw new Exception("Education does not belong to this resume");
+            throw new ForbiddenException("Education does not belong to this resume");
         }
 
         assertOwner(education.getResume(), candidateId);
@@ -141,7 +143,7 @@ public class EducationServiceImpl implements EducationService {
     ) throws Exception {
 
         if (!resume.getCandidateId().equals(candidateId)) {
-            throw new Exception("Resume not found");
+            throw new NotFoundException("Resume not found");
         }
     }
 }

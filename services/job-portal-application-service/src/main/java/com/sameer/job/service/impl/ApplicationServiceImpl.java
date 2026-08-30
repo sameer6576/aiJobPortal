@@ -19,6 +19,9 @@ import com.sameer.job.dto.response.CompanyResponse;
 import com.sameer.job.dto.response.UserResponse;
 import com.sameer.job.event.ApplicationEventPublisher;
 import com.sameer.job.exception.ConflictException;
+import com.sameer.job.exception.ErrorCodes;
+import com.sameer.job.exception.ForbiddenException;
+import com.sameer.job.exception.NotFoundException;
 import com.sameer.job.mapper.ApplicationMapper;
 import com.sameer.job.modal.Application;
 import com.sameer.job.modal.ApplicationNote;
@@ -54,12 +57,12 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public ApplicationResponse createApplication(Long candidateId, CreateApplicationRequest req) throws Exception {
         if (applicationRepository.existsByCandidateIdAndJobId(candidateId, req.getJobId())) {
-            throw new ConflictException("You have already applied");
+            throw new ConflictException(ErrorCodes.ALREADY_APPLIED, "You have already applied");
         }
 
         JobResponse jobResponse = jobClient.getJobById(req.getJobId());
         if (jobResponse.getStatus() != JobStatus.OPEN) {
-            throw new ConflictException("This job is not open for applications");
+            throw new ConflictException(ErrorCodes.JOB_NOT_OPEN, "This job is not open for applications");
         }
         Long companyId = jobResponse.getCompany().getId();
         Long employerId = jobResponse.getEmployerId();
@@ -108,7 +111,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     public List<ApplicationResponse> getApplicationsForJob(Long jobId, Long userId) throws Exception {
         JobResponse job = jobClient.getJobById(jobId);
         if (job.getEmployerId() == null || !job.getEmployerId().equals(userId)) {
-            throw new Exception("You are not the employer of this job");
+            throw new ForbiddenException("You are not the employer of this job");
         }
         return applicationRepository.findByJobId(jobId)
                                     .stream().map(this::buildFullResponse).toList();
@@ -122,7 +125,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         assertEmployer(application, employerId);
 
         if (application.getStatus() == ApplicationStatus.WITHDRAWN) {
-            throw new Exception("Candidate have already withdrawn");
+            throw new ConflictException("Candidate has already withdrawn");
         }
 
         application.setStatus(status);
@@ -139,7 +142,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         assertCandidate(application, candidateId);
 
         if (application.getStatus() == ApplicationStatus.WITHDRAWN) {
-            throw new Exception("Candidate have already withdrawn");
+            throw new ConflictException("Candidate has already withdrawn");
         }
 
         application.setStatus(ApplicationStatus.WITHDRAWN);
@@ -193,7 +196,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     public SkillsGapResponse analyzeSkillsGap(Long applicationId, Long userId) throws Exception {
         Application application = getApplicationEntity(applicationId);
         if (!application.getCandidateId().equals(userId) && !application.getEmployerId().equals(userId)) {
-            throw new Exception("You cannot view the skills gap for this application");
+            throw new ForbiddenException("You cannot view the skills gap for this application");
         }
         JobResponse job = jobClient.getJobById(application.getJobId());
         ResumeResponse resume = resumeClient.getResumeById(application.getResumeId(), application.getCandidateId());
@@ -217,7 +220,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public Application getApplicationEntity(Long applicationId) throws Exception {
         return applicationRepository.findById(applicationId)
-                                    .orElseThrow(() -> new Exception("Application not found with ID: " + applicationId));
+                                    .orElseThrow(() -> new NotFoundException("Application not found with ID: " + applicationId));
     }
 
     public ApplicationResponse buildFullResponse(Application application) {
@@ -239,21 +242,21 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private void assertEmployer(Application application, Long employerId) throws Exception {
         if (!application.getEmployerId().equals(employerId)) {
-            throw new Exception("You are not the employer of this application");
+            throw new ForbiddenException("You are not the employer of this application");
 
         }
     }
 
     private void assertCandidate(Application application, Long candidateId) throws Exception {
         if (!application.getCandidateId().equals(candidateId)) {
-            throw new Exception("You are not the owner of this application");
+            throw new ForbiddenException("You are not the owner of this application");
 
         }
     }
 
     private void assertViewer(Application application, Long userId) throws Exception {
         if (!application.getCandidateId().equals(userId) && !application.getEmployerId().equals(userId)) {
-            throw new Exception("You cannot view this application");
+            throw new ForbiddenException("You cannot view this application");
         }
     }
 }

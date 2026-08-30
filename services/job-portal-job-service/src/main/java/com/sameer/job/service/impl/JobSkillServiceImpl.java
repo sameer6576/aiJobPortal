@@ -1,6 +1,8 @@
 package com.sameer.job.service.impl;
 
 import com.sameer.job.dto.JobSkillResponse;
+import com.sameer.job.exception.ConflictException;
+import com.sameer.job.exception.NotFoundException;
 import com.sameer.job.mapper.JobSkillMapper;
 import com.sameer.job.modal.JobSkill;
 import com.sameer.job.payload.JobSkillRequest;
@@ -24,7 +26,7 @@ public class JobSkillServiceImpl implements JobSkillService {
     @Override
     public JobSkillResponse createSkill(JobSkillRequest req) throws Exception {
         if (jobSkillRepository.existsByName(req.getName())) {
-            throw new Exception("Skill name already exists");
+            throw new ConflictException("Skill name already exists");
         }
         String slug = generateUniqueSlug(req.getName());
 
@@ -49,7 +51,7 @@ public class JobSkillServiceImpl implements JobSkillService {
     @Override
     public JobSkillResponse getSkillById(Long id) throws Exception {
         JobSkill jobSkill = jobSkillRepository.findById(id)
-                                              .orElseThrow(() -> new Exception("Job skill not found with ID: " + id));
+                                              .orElseThrow(() -> new NotFoundException("Job skill not found with ID: " + id));
 
         return JobSkillMapper.toJobSkillResponse(jobSkill);
 
@@ -58,11 +60,11 @@ public class JobSkillServiceImpl implements JobSkillService {
     @Override
     public JobSkillResponse updateSkills(Long id, JobSkillRequest req) throws Exception {
         JobSkill jobSkill = jobSkillRepository.findById(id)
-                                              .orElseThrow(() -> new Exception("Job skill not found with ID: " + id));
+                                              .orElseThrow(() -> new NotFoundException("Job skill not found with ID: " + id));
 
         if (!jobSkill.getName().equals(req.getName())) {
             if (jobSkillRepository.existsByName(jobSkill.getName())) {
-                throw new Exception("Job skill name already exists");
+                throw new ConflictException("Job skill name already exists");
             }
         }
         jobSkill.setName(req.getName());
@@ -76,7 +78,7 @@ public class JobSkillServiceImpl implements JobSkillService {
     @Override
     public void deleteSkill(Long id) throws Exception {
         JobSkill jobSkill = jobSkillRepository.findById(id)
-                                              .orElseThrow(() -> new Exception("Job skill not found with ID: " + id));
+                                              .orElseThrow(() -> new NotFoundException("Job skill not found with ID: " + id));
         jobSkill.setActive(false);
         jobSkillRepository.save(jobSkill);
     }

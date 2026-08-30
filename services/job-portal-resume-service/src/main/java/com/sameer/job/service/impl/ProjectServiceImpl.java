@@ -1,6 +1,8 @@
 package com.sameer.job.service.impl;
 
 import com.sameer.job.dto.ProjectResponse;
+import com.sameer.job.exception.ForbiddenException;
+import com.sameer.job.exception.NotFoundException;
 import com.sameer.job.mapper.ResumeMapper;
 import com.sameer.job.modal.Project;
 import com.sameer.job.modal.Resume;
@@ -131,13 +133,13 @@ public class ProjectServiceImpl implements ProjectService {
 
         Project project = projectRepository.findById(projectId)
                                            .orElseThrow(() ->
-                                                   new Exception(
+                                                   new NotFoundException(
                                                            "Project not found with ID: " + projectId
                                                    )
                                            );
 
         if (!project.getResume().getId().equals(resumeId)) {
-            throw new Exception(
+            throw new ForbiddenException(
                     "Project does not belong to this resume"
             );
         }
@@ -153,7 +155,7 @@ public class ProjectServiceImpl implements ProjectService {
     ) throws Exception {
 
         if (!resume.getCandidateId().equals(candidateId)) {
-            throw new Exception("Resume not found");
+            throw new NotFoundException("Resume not found");
         }
     }
 }

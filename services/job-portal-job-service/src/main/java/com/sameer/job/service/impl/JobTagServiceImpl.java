@@ -1,6 +1,8 @@
 package com.sameer.job.service.impl;
 
 import com.sameer.job.dto.JobTagResponse;
+import com.sameer.job.exception.ConflictException;
+import com.sameer.job.exception.NotFoundException;
 import com.sameer.job.mapper.JobTagMapper;
 import com.sameer.job.modal.JobTag;
 import com.sameer.job.payload.JobTagRequest;
@@ -23,7 +25,7 @@ public class JobTagServiceImpl implements JobTagService {
     @Override
     public JobTagResponse createTag(JobTagRequest jobTagRequest) throws Exception {
         if (jobTagRepository.existsByName(jobTagRequest.getName())) {
-            throw new Exception("Tag name already exists");
+            throw new ConflictException("Tag name already exists");
         }
         String slug = generateUniqueSlug(jobTagRequest.getName());
         JobTag jobTag = JobTag.builder()
@@ -65,7 +67,7 @@ public class JobTagServiceImpl implements JobTagService {
         JobTag jobTag = getTagEntityById(id);
         if (!jobTag.getName().equals(jobTagRequest.getName())) {
             if (jobTagRepository.existsByName(jobTagRequest.getName())) {
-                throw new Exception("Tag name already exists");
+                throw new ConflictException("Tag name already exists");
             }
         }
         jobTag.setName(jobTagRequest.getName());
@@ -82,7 +84,7 @@ public class JobTagServiceImpl implements JobTagService {
     @Override
     public JobTag getTagEntityById(Long id) throws Exception {
         return jobTagRepository.findById(id)
-                               .orElseThrow(() -> new Exception("Job tag not found with ID: " + id));
+                               .orElseThrow(() -> new NotFoundException("Job tag not found with ID: " + id));
     }
 
     @Override

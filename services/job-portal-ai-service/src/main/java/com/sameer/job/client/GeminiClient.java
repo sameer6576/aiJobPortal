@@ -7,9 +7,13 @@ import com.google.genai.types.GenerateContentConfig;
 import com.google.genai.types.GenerateContentResponse;
 import com.google.genai.types.Part;
 import com.sameer.job.config.GeminiProperties;
+import com.sameer.job.exception.ErrorCodes;
+import com.sameer.job.exception.ServiceUnavailableException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class GeminiClient {
@@ -42,7 +46,8 @@ public class GeminiClient {
             GenerateContentResponse response = genAiClient.models.generateContent(geminiProperties.getModel(), prompt, config);
             return objectMapper.readValue(response.text(), responseType);
         } catch (Exception e) {
-            throw new Exception("Failed to get response from Gemini: " + e.getMessage());
+            log.warn("Gemini JSON generation failed", e);
+            throw new ServiceUnavailableException(ErrorCodes.AI_UNAVAILABLE, "AI service is unavailable");
         }
     }
 
@@ -58,7 +63,8 @@ public class GeminiClient {
             GenerateContentResponse response = genAiClient.models.generateContent(geminiProperties.getModel(), prompt, config);
             return response.text();
         } catch (Exception e) {
-            throw new Exception("Failed to get response from Gemini: " + e.getMessage());
+            log.warn("Gemini text generation failed", e);
+            throw new ServiceUnavailableException(ErrorCodes.AI_UNAVAILABLE, "AI service is unavailable");
         }
     }
 
