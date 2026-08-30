@@ -15,18 +15,21 @@ This document defines the current portfolio walkthrough. A complete runnable req
 2. Sign up an employer and a job seeker through `/auth/signup`.
 3. Log in both users and retain their access tokens.
 4. Create the employer's company.
-5. Create and publish a job.
-6. Create the seeker's structured resume.
-7. Submit an application.
+5. Optional: `POST /api/ai/job/describe`, then create and publish a job.
+6. Create the seeker's structured resume with skills.
+7. Submit an application. The response includes `aiScore` and `aiShortListStatus` when Gemini is configured; otherwise `NOT_SCREENED`.
 8. Verify a duplicate application is rejected.
-9. Change application status as the employer.
-10. If Kafka and mail are configured, inspect notification-service for delivery.
-11. Call a Gemini endpoint with non-sensitive sample content if an API key is configured.
+9. `POST /api/applications/{id}/cover-letter` as the seeker.
+10. Employer `GET /api/applications/company?minAiScore=50`.
+11. Change application status as the employer.
+12. If `docker compose --profile kafka up -d` and mail are configured, inspect notification-service logs for delivery. Status is saved even if Kafka or SMTP fails.
+13. `POST /api/jobs/search/natural` with `{ "query": "remote java jobs in bangalore" }`.
 
 ## Expected limitations
 
-- Application creation does not automatically run Gemini screening yet.
-- Kafka and notification are not included in the core Compose startup.
-- Several authorization checks and consistent error responses remain hardening work.
+- Screening is synchronous and fail-open: a Gemini outage does not block apply.
+- Kafka publish is not in the same transaction as the status update.
+- Several authorization checks and a consistent error contract remain later work.
+- There is no job-alert product; `/api/ai/alert-suggestion` was removed.
 
-The walkthrough intentionally uses the gateway. Direct service calls bypass the current authentication boundary and are not part of the demo.
+The walkthrough uses the gateway. Direct service calls skip JWT verification.

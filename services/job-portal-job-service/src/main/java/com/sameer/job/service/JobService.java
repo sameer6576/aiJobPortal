@@ -14,6 +14,8 @@ public interface JobService {
 
     List<JobResponse> getJobs(JobSearchRequest jobSearchRequest);
 
+    List<JobResponse> searchByNaturalLanguage(String query) throws Exception;
+
     List<JobResponse> getJobsByCompany(Long companyId);
 
     JobResponse updateJob(Long jobId, Long employerId, JobRequest req) throws Exception;

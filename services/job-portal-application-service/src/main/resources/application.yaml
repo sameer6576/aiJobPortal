@@ -6,5 +6,11 @@ spring:
 
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
-#    producer:
-#      key-serializer:
+
+  cloud:
+    openfeign:
+      client:
+        config:
+          JOB-PORTAL-AI-SERVICE:
+            connectTimeout: 5000
+            readTimeout: 15000

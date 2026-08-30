@@ -1,13 +1,19 @@
 package com.sameer.job.service.impl;
 
+import com.sameer.job.ai.AiPromptAssembler;
+import com.sameer.job.client.AiClient;
 import com.sameer.job.client.CompanyClient;
 import com.sameer.job.client.JobClient;
 import com.sameer.job.client.ResumeClient;
 import com.sameer.job.client.UserClient;
+import com.sameer.job.domain.AiShortListStatus;
 import com.sameer.job.domain.ApplicationStatus;
 import com.sameer.job.dto.ApplicationResponse;
 import com.sameer.job.dto.JobResponse;
 import com.sameer.job.dto.ResumeResponse;
+import com.sameer.job.dto.ai.AiTextResponse;
+import com.sameer.job.dto.ai.ScreeningScoreResponse;
+import com.sameer.job.dto.ai.SkillsGapResponse;
 import com.sameer.job.dto.response.CompanyResponse;
 import com.sameer.job.dto.response.UserResponse;
 import com.sameer.job.event.ApplicationEventPublisher;
@@ -22,11 +28,13 @@ import com.sameer.job.repository.ApplicationRepository;
 import com.sameer.job.repository.ApplicationSpecification;
 import com.sameer.job.service.ApplicationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ApplicationServiceImpl implements ApplicationService {
@@ -38,6 +46,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     private final CompanyClient companyClient;
     private final UserClient userClient;
     private final ApplicationEventPublisher applicationEventPublisher;
+    private final AiClient aiClient;
+    private final AiPromptAssembler aiPromptAssembler;
 
     @Override
     public ApplicationResponse createApplication(Long candidateId, CreateApplicationRequest req) throws Exception {
@@ -54,10 +64,9 @@ public class ApplicationServiceImpl implements ApplicationService {
         Application application = ApplicationMapper.toEntity(req, candidateId, companyId, employerId);
 
         Application savedApplication = applicationRepository.save(application);
-
-//        todo: AI screening runs in the background thread, no callback needed
-
-        return buildFullResponse(savedApplication);
+        applyScreening(savedApplication, jobResponse, resumeResponse);
+        Application screened = applicationRepository.save(savedApplication);
+        return buildFullResponse(screened);
     }
 
     @Override
@@ -144,6 +153,51 @@ public class ApplicationServiceImpl implements ApplicationService {
         Application application = getApplicationEntity(applicationId);
         assertCandidate(application, candidateId);
         applicationRepository.delete(application);
+    }
+
+    @Override
+    public ApplicationResponse generateCoverLetter(Long applicationId, Long candidateId) throws Exception {
+        Application application = getApplicationEntity(applicationId);
+        assertCandidate(application, candidateId);
+
+        JobResponse job = jobClient.getJobById(application.getJobId());
+        ResumeResponse resume = resumeClient.getResumeById(application.getResumeId(), candidateId);
+        UserResponse candidate = userClient.getUserById(candidateId);
+        String name = aiPromptAssembler.candidateName(
+                resume,
+                candidate.getFullName() != null ? candidate.getFullName() : "Candidate"
+        );
+
+        AiTextResponse generated = aiClient.generateCoverLetter(
+                aiPromptAssembler.coverLetterRequest(job, resume, name)
+        );
+        application.setCoverLetter(generated.getContent());
+        return buildFullResponse(applicationRepository.save(application));
+    }
+
+    @Override
+    public SkillsGapResponse analyzeSkillsGap(Long applicationId, Long userId) throws Exception {
+        Application application = getApplicationEntity(applicationId);
+        if (!application.getCandidateId().equals(userId) && !application.getEmployerId().equals(userId)) {
+            throw new Exception("You cannot view the skills gap for this application");
+        }
+        JobResponse job = jobClient.getJobById(application.getJobId());
+        ResumeResponse resume = resumeClient.getResumeById(application.getResumeId(), application.getCandidateId());
+        return aiClient.analyzeSkillsGap(aiPromptAssembler.skillsGapRequest(job, resume));
+    }
+
+    private void applyScreening(Application application, JobResponse job, ResumeResponse resume) {
+        try {
+            ScreeningScoreResponse score = aiClient.scoreCandidate(
+                    aiPromptAssembler.screeningRequest(job, resume)
+            );
+            application.setAiScore(score.getScore());
+            application.setAiShortListStatus(aiPromptAssembler.shortListStatus(score.getScore()));
+        } catch (Exception e) {
+            log.error("AI screening failed for application {}", application.getId(), e);
+            application.setAiScore(null);
+            application.setAiShortListStatus(AiShortListStatus.NOT_SCREENED);
+        }
     }
 
     @Override

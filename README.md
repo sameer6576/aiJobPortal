@@ -134,9 +134,10 @@ Detailed commands and database ports are in [Local development](docs/LOCAL_DEVEL
 - `POST /api/companies`, `GET /api/companies/my`
 - `POST /api/jobs`, `GET /api/jobs`, `PATCH /api/jobs/{id}/publish`
 - `POST /api/resumes` and nested resume sections
-- `POST /api/applications`, status, withdrawal, starring, and employer notes
+- `POST /api/applications` with fail-open Gemini screening; cover letter and skills-gap by application id
+- `POST /api/jobs/search/natural`
 - `POST /api/preferences/saved-jobs`
-- Gemini-assisted cover letters, screening, skills-gap analysis, job copy, resume copy, and search interpretation under `/api/ai`
+- Gemini job, resume, and search assistance under `/api/ai`
 
 Use `Authorization: Bearer <token>` for gateway routes outside `/auth/**`. See [API notes](docs/API.md).
 
@@ -147,15 +148,14 @@ Implemented:
 - Service discovery, centralized local configuration, gateway routing, and JWT issuance/verification
 - Database-per-service persistence for six domain services
 - Feign collaboration between job, company, resume, user, and application services
-- Kafka application-status event and SMTP email consumer
-- Gemini prompt endpoints for job, resume, application, and search assistance
+- Kafka application-status event and SMTP email consumer (`docker compose --profile kafka`)
+- Gemini screening on apply, cover letter, skills-gap, and natural-language job search
 - Jib image configuration and Docker Compose infrastructure
 
 Known limitations:
 
 - Service-level authorization is not complete; the gateway is the intended public entry point.
-- AI screening is available as an endpoint but is not yet invoked automatically when an application is created.
-- Kafka and notification are started separately from the core Compose file.
+- Gemini and Kafka failures are logged; apply and status updates still persist.
 - Database schemas use `ddl-auto: update`; migrations are not present.
 - Tests currently provide context-load coverage only.
 - There is no frontend, CI workflow, OpenAPI document, refresh-token flow, resume file parser, search index, or production deployment.

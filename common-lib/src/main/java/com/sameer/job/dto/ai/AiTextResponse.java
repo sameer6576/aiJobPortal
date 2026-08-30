@@ -1,4 +1,4 @@
-package com.sameer.job.payload;
+package com.sameer.job.dto.ai;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

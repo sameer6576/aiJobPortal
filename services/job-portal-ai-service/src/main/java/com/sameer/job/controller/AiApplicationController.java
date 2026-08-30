@@ -1,6 +1,11 @@
 package com.sameer.job.controller;
 
-import com.sameer.job.payload.*;
+import com.sameer.job.dto.ai.CoverLetterRequest;
+import com.sameer.job.dto.ai.ScreeningScoreRequest;
+import com.sameer.job.dto.ai.ScreeningScoreResponse;
+import com.sameer.job.dto.ai.SkillsGapRequest;
+import com.sameer.job.dto.ai.SkillsGapResponse;
+import com.sameer.job.dto.ai.AiTextResponse;
 import com.sameer.job.service.ApplicationAiService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

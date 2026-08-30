@@ -1,6 +1,7 @@
 package com.sameer.job.service.impl;
 
 import com.sameer.job.client.CompanyClient;
+import com.sameer.job.client.JobAiClient;
 import com.sameer.job.domain.JobStatus;
 import com.sameer.job.dto.JobRequest;
 import com.sameer.job.dto.JobResponse;
@@ -12,7 +13,9 @@ import com.sameer.job.modal.JobSkill;
 import com.sameer.job.modal.JobTag;
 import com.sameer.job.modal.embeddable.JobLocation;
 import com.sameer.job.modal.embeddable.SalaryRange;
+import com.sameer.job.dto.ai.SearchEnhanceRequest;
 import com.sameer.job.payload.JobSearchRequest;
+import com.sameer.job.payload.NaturalLanguageSearchMapper;
 import com.sameer.job.repository.JobRepository;
 import com.sameer.job.repository.JobSpecification;
 import com.sameer.job.service.JobCategoryService;
@@ -20,6 +23,7 @@ import com.sameer.job.service.JobService;
 import com.sameer.job.service.JobSkillService;
 import com.sameer.job.service.JobTagService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +33,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -39,6 +44,7 @@ public class JobServiceImpl implements JobService {
     private final JobSkillService jobSkillService;
     private final JobTagService jobTagService;
     private final CompanyClient companyClient;
+    private final JobAiClient jobAiClient;
 
 
     @Override
@@ -100,6 +106,22 @@ public class JobServiceImpl implements JobService {
         return jobs.stream().map(
                 this::convertToResponse
         ).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<JobResponse> searchByNaturalLanguage(String query) throws Exception {
+        JobSearchRequest mapped;
+        try {
+            SearchEnhanceRequest request = SearchEnhanceRequest.builder().query(query).build();
+            mapped = NaturalLanguageSearchMapper.toJobSearchRequest(
+                    jobAiClient.enhanceSearch(request)
+            );
+        } catch (Exception e) {
+            log.error("Natural language search enhancement failed", e);
+            mapped = new JobSearchRequest();
+            mapped.setKeyword(query);
+        }
+        return getJobs(mapped);
     }
 
     @Override

@@ -30,7 +30,7 @@ Only the gateway should be reachable in a deployed environment. Local Compose se
 
 ### Identity header replacement
 
-The gateway currently adds identity headers after validating a token. It does not yet explicitly remove caller-supplied identity headers. That hardening is tracked as the next security change.
+The gateway removes caller-supplied `X-User-Id`, `X-User-Email`, and `X-User-Role` and then sets them from the validated JWT. Forged identity headers on a gateway request are ignored. Direct service ports still accept those headers.
 
 ### Authorization coverage
 

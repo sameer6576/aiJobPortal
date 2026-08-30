@@ -1,4 +1,4 @@
-package com.sameer.job.payload;
+package com.sameer.job.dto.ai;
 
 import lombok.Data;
 
@@ -14,6 +14,7 @@ public class SkillsGapResponse {
     private String overallReadiness;
     private String summary;
 
+    @Data
     public static class LearningRecommendation {
         private String skill;
         private String why;

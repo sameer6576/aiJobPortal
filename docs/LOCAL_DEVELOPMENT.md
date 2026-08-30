@@ -72,13 +72,23 @@ Direct service ports are for local debugging only.
 
 ## Kafka
 
-Start the development broker separately:
+For services running in Compose:
+
+```bash
+docker compose --profile kafka up -d
+```
+
+Containers talk to Kafka at `kafka:29092`. Host-run application and notification services should use `KAFKA_BOOTSTRAP_SERVERS=localhost:9092`.
+
+Host-only broker (IDE processes, no notification container):
 
 ```bash
 docker compose -f docker-compose.dev.yaml up -d
 ```
 
-The current development listener is intended for services running on the host at `localhost:9092`. Notification service is not part of the core Compose stack yet.
+Do not start both Kafka definitions at once; they both bind host port 9092.
+
+If `MAIL_PASSWORD` is unset, notification-service will fail the send and the Kafka consumer will log the error. Application status is still saved.
 
 ## Common failures
 

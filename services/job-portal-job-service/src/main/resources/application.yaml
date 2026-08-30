@@ -1,6 +1,13 @@
-
 spring:
   application:
     name: job-portal-job-service
   config:
     import: optional:configserver:http://localhost:8888
+
+  cloud:
+    openfeign:
+      client:
+        config:
+          JOB-PORTAL-AI-SERVICE:
+            connectTimeout: 5000
+            readTimeout: 15000

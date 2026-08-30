@@ -1,6 +1,6 @@
 package com.sameer.job.controller;
 
-import com.sameer.job.payload.AiTextResponse;
+import com.sameer.job.dto.ai.AiTextResponse;
 import com.sameer.job.payload.JobDescriptionRequest;
 import com.sameer.job.payload.SalaryRangeRequest;
 import com.sameer.job.payload.SalaryRangeResponse;

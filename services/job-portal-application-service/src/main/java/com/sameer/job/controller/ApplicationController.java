@@ -2,6 +2,7 @@ package com.sameer.job.controller;
 
 import com.sameer.job.domain.ApplicationStatus;
 import com.sameer.job.dto.ApplicationResponse;
+import com.sameer.job.dto.ai.SkillsGapResponse;
 import com.sameer.job.dto.response.ApiResponse;
 import com.sameer.job.payload.*;
 import com.sameer.job.service.ApplicationService;
@@ -142,5 +143,25 @@ public class ApplicationController {
         );
 
         return ResponseEntity.ok(new ApiResponse("Application deleted successfully", true));
+    }
+
+    @PostMapping("/{applicationId}/cover-letter")
+    public ResponseEntity<ApplicationResponse> generateCoverLetter(
+            @PathVariable Long applicationId,
+            @RequestHeader("X-User-Id") Long candidateId
+    ) throws Exception {
+        return ResponseEntity.ok(
+                applicationService.generateCoverLetter(applicationId, candidateId)
+        );
+    }
+
+    @GetMapping("/{applicationId}/skills-gap")
+    public ResponseEntity<SkillsGapResponse> analyzeSkillsGap(
+            @PathVariable Long applicationId,
+            @RequestHeader("X-User-Id") Long userId
+    ) throws Exception {
+        return ResponseEntity.ok(
+                applicationService.analyzeSkillsGap(applicationId, userId)
+        );
     }
 }

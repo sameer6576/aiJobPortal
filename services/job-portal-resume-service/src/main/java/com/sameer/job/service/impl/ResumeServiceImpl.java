@@ -58,7 +58,7 @@ public class ResumeServiceImpl implements ResumeService {
     public ResumeResponse getResumeById(Long resumeId, Long candidateId) throws Exception {
         Resume resume = getResumeEntity(resumeId);
         assertOwner(resume, candidateId);
-        return null;
+        return buildFullResponse(resume);
     }
 
     @Transactional(readOnly = true)

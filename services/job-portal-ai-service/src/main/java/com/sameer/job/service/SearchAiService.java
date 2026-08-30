@@ -1,10 +1,8 @@
 package com.sameer.job.service;
 
 import com.sameer.job.client.GeminiClient;
-import com.sameer.job.payload.JobAlertSuggestRequest;
-import com.sameer.job.payload.JobAlertSuggestResponse;
-import com.sameer.job.payload.SearchEnhanceRequest;
-import com.sameer.job.payload.SearchEnhanceResponse;
+import com.sameer.job.dto.ai.SearchEnhanceRequest;
+import com.sameer.job.dto.ai.SearchEnhanceResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -76,89 +74,6 @@ public class SearchAiService {
                 SYSTEM_PROMPT,
                 prompt,
                 SearchEnhanceResponse.class
-        );
-    }
-
-    public JobAlertSuggestResponse suggestJobAlertCriteria(
-            JobAlertSuggestRequest req
-    ) throws Exception {
-
-        String skills = req.getSkills() != null
-                ? String.join(", ", req.getSkills())
-                : "Not Provided";
-
-        String previousJobTitles = req.getPreviousJobTitles() != null
-                ? String.join(", ", req.getPreviousJobTitles())
-                : "Not Provided";
-
-        String education = req.getEducations() != null
-                ? String.join(", ", req.getEducations())
-                : "Not Provided";
-
-        String prompt = """
-                Based on this candidate's profile, suggest optimal job alert
-                criteria to find the best matching jobs.
-
-                Candidate Profile:
-                - Skills: %s
-                - Experience Level: %s
-                - Previous Job Titles: %s
-                - Education: %s
-
-                Valid jobTypes:
-                FULL_TIME, PART_TIME, CONTRACT, INTERNSHIP, FREELANCE
-
-                Valid workModes:
-                REMOTE, HYBRID, ON_SITE
-
-                Valid experienceLevels:
-                ENTRY, MID, SENIOR, LEAD, EXECUTIVE
-
-                Return JSON using exactly this structure:
-
-                {
-                  "suggestedKeywords": [
-                    "keyword1",
-                    "keyword2"
-                  ],
-                  "suggestedLocations": [
-                    "city1",
-                    "city2"
-                  ],
-                  "suggestedJobTypes": [
-                    "FULL_TIME"
-                  ],
-                  "suggestedWorkModes": [
-                    "REMOTE",
-                    "HYBRID"
-                  ],
-                  "suggestedExperienceLevels": [
-                    "MID"
-                  ],
-                  "suggestedIndustries": [
-                    "Technology",
-                    "Finance"
-                  ],
-                  "reasoning":
-                    "Brief explanation of why these criteria were chosen"
-                }
-
-                Rules:
-                - Base recommendations only on the candidate's profile.
-                - Do not invent candidate skills, experience, or education.
-                - Use only the exact enum values provided above.
-                - Prefer realistic and relevant job alert criteria.
-                """.formatted(
-                skills,
-                req.getExperienceLevel(),
-                previousJobTitles,
-                education
-        );
-
-        return geminiClient.generateJson(
-                SYSTEM_PROMPT,
-                prompt,
-                JobAlertSuggestResponse.class
         );
     }
 }

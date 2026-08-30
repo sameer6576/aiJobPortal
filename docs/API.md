@@ -42,6 +42,7 @@ Signup accepts `ROLE_JOB_SEEKER` or `ROLE_EMPLOYER`. Self-registration as `ROLE_
 - `POST /api/jobs`
 - `GET /api/jobs/{id}`
 - `GET /api/jobs` with query filters
+- `POST /api/jobs/search/natural` with `{ "query": "..." }`
 - `PATCH /api/jobs/{id}/publish`
 - `PATCH /api/jobs/{id}/close`
 - categories, skills, and tags under their own resources
@@ -63,6 +64,10 @@ Resumes are structured records; PDF or DOC upload is not implemented.
 - `GET /api/applications/my`
 - `GET /api/applications/company`
 - status, withdrawal, starring, deletion, and employer notes
+- `POST /api/applications/{applicationId}/cover-letter`
+- `GET /api/applications/{applicationId}/skills-gap`
+
+`POST /api/applications` stores `aiScore` and `aiShortListStatus` when Gemini screening succeeds (`>=80` AUTO_SHORTLISTED, `>=50` REVIEW_RECOMMENDED, otherwise LOW_MATCH). Gemini failure leaves `NOT_SCREENED` and does not reject the apply.
 
 An application can be submitted once per candidate/job pair.
 
@@ -79,7 +84,7 @@ The AI service exposes:
 - resume summary, experience bullet, improvement, and career feedback assistance
 - search enhancement
 
-These endpoints currently accept domain context in their request body. Automatic screening during application creation is not implemented.
+Application-service and job-service assemble job/resume context and call these over Feign. Direct `/api/ai/**` calls still accept the same payloads in the request body. `GET /api/ai/{prompt}` and `/api/ai/alert-suggestion` are removed.
 
 ## Current API constraints
 

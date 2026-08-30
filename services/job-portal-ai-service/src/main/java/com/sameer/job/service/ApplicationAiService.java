@@ -1,7 +1,7 @@
 package com.sameer.job.service;
 
 import com.sameer.job.client.GeminiClient;
-import com.sameer.job.payload.*;
+import com.sameer.job.dto.ai.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

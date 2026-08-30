@@ -3,6 +3,7 @@ package com.sameer.job.controller;
 import com.sameer.job.dto.JobRequest;
 import com.sameer.job.dto.JobResponse;
 import com.sameer.job.dto.response.ApiResponse;
+import com.sameer.job.dto.ai.SearchEnhanceRequest;
 import com.sameer.job.payload.JobSearchRequest;
 import com.sameer.job.service.JobService;
 import jakarta.validation.Valid;
@@ -39,6 +40,13 @@ public class JobController {
             @ModelAttribute JobSearchRequest jobSearchRequest
     ) throws Exception {
         return ResponseEntity.ok(jobService.getJobs(jobSearchRequest));
+    }
+
+    @PostMapping("/search/natural")
+    public ResponseEntity<List<JobResponse>> searchByNaturalLanguage(
+            @Valid @RequestBody SearchEnhanceRequest request
+    ) throws Exception {
+        return ResponseEntity.ok(jobService.searchByNaturalLanguage(request.getQuery()));
     }
 
     @GetMapping("/company/{companyId}")

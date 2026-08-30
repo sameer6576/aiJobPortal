@@ -25,6 +25,14 @@ public class JobSpecification {
 
             predicates.add(cb.equal(root.get("status"), status));
 
+            if (req.getKeyword() != null && !req.getKeyword().isBlank()) {
+                String pattern = "%" + req.getKeyword().toLowerCase() + "%";
+                predicates.add(cb.or(
+                        cb.like(cb.lower(root.get("title")), pattern),
+                        cb.like(cb.lower(root.get("description")), pattern)
+                ));
+            }
+
             if (req.getJobType() != null) {
                 predicates.add(cb.equal(root.get("jobType"), req.getJobType()));
             }

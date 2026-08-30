@@ -1,5 +1,6 @@
 package com.sameer.job.dto;
 
+import com.sameer.job.domain.AiShortListStatus;
 import com.sameer.job.domain.ApplicationStatus;
 import com.sameer.job.dto.response.CompanyResponse;
 import com.sameer.job.dto.response.UserResponse;
@@ -34,6 +35,9 @@ public class ApplicationResponse {
 
     private Boolean isStarred;
 
+    private Integer aiScore;
+    private AiShortListStatus aiShortListStatus;
+
     private List<ApplicationNoteResponse> notes;
 
     private LocalDateTime withdrawnAt;
@@ -41,8 +45,4 @@ public class ApplicationResponse {
 
     private LocalDateTime appliedAt;
     private LocalDateTime updatedAt;
-
-    // Todo AI screening result
-//       private ApplicationScreeningResponse screening;
-
 }

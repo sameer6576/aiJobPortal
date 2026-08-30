@@ -1,6 +1,7 @@
-package com.sameer.job.payload;
+package com.sameer.job.dto.ai;
 
 import lombok.Data;
+
 import java.util.List;
 
 @Data

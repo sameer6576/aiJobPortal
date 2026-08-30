@@ -1,7 +1,7 @@
 package com.sameer.job.service;
 
 import com.sameer.job.client.GeminiClient;
-import com.sameer.job.payload.AiTextResponse;
+import com.sameer.job.dto.ai.AiTextResponse;
 import com.sameer.job.payload.JobDescriptionRequest;
 import com.sameer.job.payload.SalaryRangeRequest;
 import com.sameer.job.payload.SalaryRangeResponse;

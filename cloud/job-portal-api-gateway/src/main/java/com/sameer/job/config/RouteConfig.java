@@ -151,9 +151,20 @@ public class RouteConfig {
         Long userId = jwtUtil.extractUserId(token);
 
         return ServerRequest.from(request)
-                            .header("X-User-Id", String.valueOf(userId))
-                            .header("X-User-Email", email)
-                            .header("X-User-Role", authorities)
+                            .headers(headers -> {
+                                headers.remove("X-User-Id");
+                                headers.remove("X-User-Email");
+                                headers.remove("X-User-Role");
+                                if (userId != null) {
+                                    headers.set("X-User-Id", String.valueOf(userId));
+                                }
+                                if (email != null) {
+                                    headers.set("X-User-Email", email);
+                                }
+                                if (authorities != null) {
+                                    headers.set("X-User-Role", authorities);
+                                }
+                            })
                             .build();
     }
 

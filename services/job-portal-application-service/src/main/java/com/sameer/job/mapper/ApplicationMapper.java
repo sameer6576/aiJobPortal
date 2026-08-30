@@ -1,5 +1,6 @@
 package com.sameer.job.mapper;
 
+import com.sameer.job.domain.AiShortListStatus;
 import com.sameer.job.domain.ApplicationStatus;
 import com.sameer.job.dto.ApplicationNoteResponse;
 import com.sameer.job.dto.ApplicationResponse;
@@ -26,6 +27,7 @@ public class ApplicationMapper {
                           .expectedSalary(req.getExpectedSalary())
                           .availableFrom(req.getAvailableFrom())
                           .status(ApplicationStatus.PENDING)
+                          .aiShortListStatus(AiShortListStatus.NOT_SCREENED)
                           .build();
     }
 
@@ -35,7 +37,6 @@ public class ApplicationMapper {
             JobResponse job,
             CompanyResponse company,
             UserResponse candidate
-//            ApplicationScreening screening
     ) {
         if (application == null) return null;
 
@@ -50,12 +51,13 @@ public class ApplicationMapper {
                                   .expectedSalary(application.getExpectedSalary())
                                   .availableFrom(application.getAvailableFrom())
                                   .isStarred(application.getIsStarred())
+                                  .aiScore(application.getAiScore())
+                                  .aiShortListStatus(application.getAiShortListStatus())
                                   .notes(notes.stream().map(ApplicationMapper::toNoteResponse).toList())
                                   .withdrawnAt(application.getWithdrawnAt())
                                   .withdrawnReason(application.getWithdrawnReason())
                                   .appliedAt(application.getAppliedAt())
                                   .updatedAt(application.getUpdatedAt())
-//                .screening(toScreeningResponse(scree))
                                   .build();
     }
 

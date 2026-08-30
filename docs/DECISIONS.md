@@ -30,7 +30,7 @@
 
 **Decision:** Keep prompts and model parsing in AI service. Do not give AI service a database or ownership of domain records.
 
-**Consequence:** Current AI endpoints receive context in their request. A later application workflow can assemble job and resume data and call AI over Feign without moving ownership.
+**Consequence:** Application and job services own orchestration. Gemini outages do not roll back an application row; screening fields stay `NOT_SCREENED`.
 
 ## 5. Native Config Server for local evaluation
 

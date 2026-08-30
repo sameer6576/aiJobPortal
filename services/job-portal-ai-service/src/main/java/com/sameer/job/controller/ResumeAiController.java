@@ -1,5 +1,6 @@
 package com.sameer.job.controller;
 
+import com.sameer.job.dto.ai.AiTextResponse;
 import com.sameer.job.payload.*;
 import com.sameer.job.service.ResumeAiService;
 import lombok.RequiredArgsConstructor;

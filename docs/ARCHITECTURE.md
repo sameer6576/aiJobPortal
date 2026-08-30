@@ -20,6 +20,8 @@ flowchart TB
   Application --> Company
   Application --> Job
   Application --> Resume
+  Application --> AI
+  Job --> AI
   Job --> Company
   Application --> Kafka[KafkaTopic]
   Kafka --> Notification[NotificationService]
@@ -54,10 +56,11 @@ Services store foreign identifiers rather than cross-database relationships. For
 ## Synchronous collaboration
 
 - job-service calls company-service to resolve the employer's company.
-- application-service calls user, company, job, and resume services.
+- application-service calls user, company, job, resume, and AI services.
+- job-service calls AI for natural-language search interpretation.
 - Eureka service names are used by OpenFeign and the gateway load balancer.
 
-This keeps ownership clear but makes application response assembly dependent on several services. Timeouts, retries, and graceful degradation remain future reliability work.
+Application screening and natural-language search fail open if Gemini is unavailable. Cover-letter and skills-gap requests surface the AI error. Feign read timeout for AI is 15 seconds.
 
 ## Asynchronous collaboration
 
@@ -73,6 +76,4 @@ Compose is the port and database-name reference. Host-run services connect to th
 
 ## AI boundary
 
-AI service is a stateless Gemini adapter. It contains prompts and typed response parsing but does not own user, job, resume, or application data. Application-time orchestration is not implemented yet; current endpoints accept the context they need in the request body.
-
-This boundary keeps external-model concerns separate from transactional services and makes model failure visible rather than part of a database transaction.
+AI service is a stateless Gemini adapter. Shared request/response types live in `common-lib` (`com.sameer.job.dto.ai`). Application-service and job-service assemble domain context and call AI over Feign; AI still does not own user, job, resume, or application rows.

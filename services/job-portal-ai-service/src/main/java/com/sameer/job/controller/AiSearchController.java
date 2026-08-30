@@ -1,9 +1,7 @@
 package com.sameer.job.controller;
 
-import com.sameer.job.payload.JobAlertSuggestRequest;
-import com.sameer.job.payload.JobAlertSuggestResponse;
-import com.sameer.job.payload.SearchEnhanceRequest;
-import com.sameer.job.payload.SearchEnhanceResponse;
+import com.sameer.job.dto.ai.SearchEnhanceRequest;
+import com.sameer.job.dto.ai.SearchEnhanceResponse;
 import com.sameer.job.service.SearchAiService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,11 +23,5 @@ public class AiSearchController {
     public ResponseEntity<SearchEnhanceResponse> enhanceSearch(
             @Valid @RequestBody SearchEnhanceRequest request) throws Exception {
         return ResponseEntity.ok(searchAiService.enhanceSearch(request));
-    }
-
-    @PostMapping("/alert-suggestion")
-    public ResponseEntity<JobAlertSuggestResponse> suggestAlertCriteria(
-            @Valid @RequestBody JobAlertSuggestRequest request) throws Exception {
-        return ResponseEntity.ok(searchAiService.suggestJobAlertCriteria(request));
     }
 }
