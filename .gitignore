@@ -2,6 +2,8 @@
 **/.env
 !.env.example
 !**/.env.example
+docker/local-native.env
+docker/local-hybrid.env
 
 **/target/
 *.log

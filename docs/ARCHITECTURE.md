@@ -72,7 +72,7 @@ The database update and Kafka publish are not atomic. An outbox would be appropr
 
 The Config Server uses the native backend and reads `job-portal-config/`. Docker mounts that directory read-only at `/config`; host execution can override `CONFIG_REPOSITORY_PATH`.
 
-Compose is the port and database-name reference. Host-run services connect to the published PostgreSQL ports; container-run services override datasource URLs with Docker service names.
+Datasource host and port are not defaults in Config Server. Host-run services supply `DB_HOST` and `*_DB_PORT` (see `docker/local-native.env.example` and `docker/local-hybrid.env.example`). Container-run services override the JDBC URL with Docker service names via `SPRING_DATASOURCE_URL`.
 
 ## AI boundary
 

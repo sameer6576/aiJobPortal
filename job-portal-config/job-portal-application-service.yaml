@@ -12,7 +12,7 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${APPLICATION_DB_PORT:5436}/job_portal_application
+    url: jdbc:postgresql://${DB_HOST}:${APPLICATION_DB_PORT}/job_portal_application
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver

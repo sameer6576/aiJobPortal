@@ -6,7 +6,7 @@ This document is the walkthrough. Runnable requests are in [demo.http](http/demo
 
 - Eureka: `http://localhost:8761`
 - Config Server: `http://localhost:8888`
-- Gateway: `http://localhost:5007`
+- Gateway: `http://localhost:5007` (IntelliJ) or `http://localhost:5050` (full Compose). How to start each stack: [RUN_MODES.md](RUN_MODES.md).
 - PostgreSQL: Docker Compose ports listed in `LOCAL_DEVELOPMENT.md`
 
 ## Walkthrough

@@ -125,7 +125,7 @@ Set `DB_PASSWORD`, `JWT_SECRET`, and optional integration variables in each proc
 | Notification | 5011 |
 | Kafka | 9092 |
 
-Detailed commands and database ports are in [Local development](docs/LOCAL_DEVELOPMENT.md).
+Detailed commands and database ports are in [Local development](docs/LOCAL_DEVELOPMENT.md). Step-by-step for native IntelliJ, hybrid (IntelliJ + Compose DBs), and full Compose: [Run modes](docs/RUN_MODES.md).
 
 ## API highlights
 
