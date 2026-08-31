@@ -1,6 +1,7 @@
 package com.sameer.job.service.impl;
 
 import com.sameer.job.dto.ResumeSkillResponse;
+import com.sameer.job.exception.ForbiddenException;
 import com.sameer.job.exception.NotFoundException;
 import com.sameer.job.mapper.ResumeMapper;
 import com.sameer.job.modal.Resume;
@@ -75,7 +76,7 @@ public class ResumeSkillServiceImpl implements ResumeSkillService {
 
     private void assertOwner(Resume resume, Long candidateId) throws Exception {
         if (!resume.getCandidateId().equals(candidateId)) {
-            throw new NotFoundException("Resume not found");
+            throw new ForbiddenException("This resume does not belong to this candidate");
         }
     }
 }

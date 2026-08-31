@@ -28,14 +28,17 @@ public class Resume {
     @Column(nullable = false)
     private String title;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ResumeTemplate template = ResumeTemplate.PROFESSIONAL;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ResumeVisibility visibility = ResumeVisibility.PUBLIC;
 
+    @Builder.Default
     @Column(nullable = false)
     private Boolean isDefault = false;
 
@@ -44,9 +47,11 @@ public class Resume {
 
     private String summary;
 
+    @Builder.Default
     private Integer completionScore = 0;
 
-    private Boolean isActive=true;
+    @Builder.Default
+    private Boolean isActive = true;
 
     @CreationTimestamp
     @Column(updatable = false, nullable = false)

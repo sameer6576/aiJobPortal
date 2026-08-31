@@ -27,8 +27,9 @@ public class ResumeSkill {
 
     private String skillName;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
-    private ProficiencyLevel proficiencyLevel=ProficiencyLevel.BEGINNER;
+    private ProficiencyLevel proficiencyLevel = ProficiencyLevel.BEGINNER;
 
     private Integer yearsOfExperience;
 

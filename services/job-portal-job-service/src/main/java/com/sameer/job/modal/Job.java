@@ -13,6 +13,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -50,11 +51,13 @@ public class Job {
     @ManyToOne
     private JobCategory category;
 
+    @Builder.Default
     @ManyToMany
-    private Set<JobSkill> skills;
+    private Set<JobSkill> skills = new HashSet<>();
 
+    @Builder.Default
     @ManyToMany
-    private Set<JobTag> tags;
+    private Set<JobTag> tags = new HashSet<>();
 
     @Embedded
     private JobLocation location;

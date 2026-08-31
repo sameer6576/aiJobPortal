@@ -60,7 +60,8 @@ public class Company {
     @Enumerated(EnumType.STRING)
     private CompanyStatus status;
 
-    private boolean isVerified=false;
+    @Builder.Default
+    private boolean isVerified = false;
 
     @Column(unique = true)
     private String registrationNumber;
@@ -68,10 +69,11 @@ public class Company {
     @Column(nullable = false, unique = true)
     private Long ownerId;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection
     @Builder.Default
     private List<SocialLink> socialLinks = new ArrayList<>();
 
+    @Builder.Default
     private Boolean active = true;
 
     @Column(nullable = false, updatable = false)

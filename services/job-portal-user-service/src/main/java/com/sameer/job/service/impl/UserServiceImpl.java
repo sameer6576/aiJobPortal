@@ -24,62 +24,71 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public User getUserByEmail(String email) throws Exception{
-        User user = userRepository.findByEmail(email);
-        if(user == null){
-            throw new NotFoundException("User not found with email: "+email);
-        }
-        return user;
+    public UserResponse getUserByEmail(String email) throws Exception {
+        return UserMapper.toDTO(requireByEmail(email));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public User getUserById(Long id) throws Exception{
-        return userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found with id: "+id));
+    public UserResponse getUserById(Long id) throws Exception {
+        return UserMapper.toDTO(requireById(id));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<UserResponse> getAllUsers() {
+        return UserMapper.toDTOList(userRepository.findAll());
     }
 
     @Override
-    public UserResponse updateProfile(String email, UpdateUserRequest req) throws Exception{
-        User user = getUserByEmail(email);
-        if(req.getFullName()!=null){
+    public UserResponse updateProfile(String email, UpdateUserRequest req) throws Exception {
+        User user = requireByEmail(email);
+        if (req.getFullName() != null) {
             user.setFullName(req.getFullName());
         }
-        if(req.getPhone()!=null){
+        if (req.getPhone() != null) {
             user.setPhone(req.getPhone());
         }
-        if(req.getProfileImage()!=null){
+        if (req.getProfileImage() != null) {
             user.setProfileImage(req.getProfileImage());
         }
         return UserMapper.toDTO(userRepository.save(user));
     }
 
     @Override
-    public UserResponse suspendUser(Long id) throws Exception{
-        User user = getUserById(id);
+    public UserResponse suspendUser(Long id) throws Exception {
+        User user = requireById(id);
         user.setStatus(UserStatus.SUSPENDED);
         user.setSuspendedAt(LocalDateTime.now());
         return UserMapper.toDTO(userRepository.save(user));
     }
 
     @Override
-    public UserResponse activateUser(Long id) throws Exception{
-        User user = getUserById(id);
+    public UserResponse activateUser(Long id) throws Exception {
+        User user = requireById(id);
         user.setStatus(UserStatus.ACTIVE);
         user.setSuspendedAt(null);
         return UserMapper.toDTO(userRepository.save(user));
     }
 
     @Override
-    public UserResponse deleteUser(Long id) throws Exception{
-        User user = getUserById(id);
+    public UserResponse deleteUser(Long id) throws Exception {
+        User user = requireById(id);
         user.setStatus(UserStatus.DELETED);
         user.setDeletedAt(LocalDateTime.now());
         return UserMapper.toDTO(userRepository.save(user));
+    }
+
+    private User requireByEmail(String email) {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new NotFoundException("User not found with email: " + email);
+        }
+        return user;
+    }
+
+    private User requireById(Long id) {
+        return userRepository.findById(id)
+                             .orElseThrow(() -> new NotFoundException("User not found with id: " + id));
     }
 }

@@ -135,7 +135,7 @@ public class LanguageServiceImpl implements LanguageService {
     ) throws Exception {
 
         if (!resume.getCandidateId().equals(candidateId)) {
-            throw new NotFoundException("Resume not found");
+            throw new ForbiddenException("This resume does not belong to this candidate");
         }
     }
 }

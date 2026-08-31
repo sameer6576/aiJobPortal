@@ -49,6 +49,7 @@ public class Application {
 
     private LocalDate availableFrom;
 
+    @Builder.Default
     private Boolean isStarred = false;
 
     private Integer aiScore;

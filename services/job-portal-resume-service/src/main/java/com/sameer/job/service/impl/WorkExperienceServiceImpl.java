@@ -102,7 +102,7 @@ public class WorkExperienceServiceImpl implements WorkExperienceService {
 
     private void assertOwner(Resume resume, Long candidateId) throws Exception {
         if (!resume.getCandidateId().equals(candidateId)) {
-            throw new NotFoundException("Resume not found");
+            throw new ForbiddenException("This resume does not belong to this candidate");
         }
     }
 

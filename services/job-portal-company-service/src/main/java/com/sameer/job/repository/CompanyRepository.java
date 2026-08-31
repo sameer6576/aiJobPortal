@@ -4,15 +4,21 @@ import com.sameer.job.domain.CompanyStatus;
 import com.sameer.job.domain.CompanyType;
 import com.sameer.job.domain.IndustryType;
 import com.sameer.job.modal.Company;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface CompanyRepository extends JpaRepository<Company, Long> {
+
+    @EntityGraph(attributePaths = "socialLinks")
+    @Override
+    Optional<Company> findById(Long id);
+
+    @EntityGraph(attributePaths = "socialLinks")
     Optional<Company> findByOwnerId(Long ownerId);
 
     boolean existsByOwnerId(Long ownerId);
@@ -23,6 +29,7 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
 
     boolean existsByRegistrationNumber(String registrationNumber);
 
+    @EntityGraph(attributePaths = "socialLinks")
     @Query("select c from Company c where" +
             "(:companyType Is NULL OR c.companyType=:companyType) AND" +
             "(:industryType Is NULL OR c.industryType = :industryType) AND" +

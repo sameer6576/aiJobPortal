@@ -31,6 +31,7 @@ public class Project {
 
     private String description;
 
+    @Builder.Default
     @ElementCollection
     private List<String> technologies = new ArrayList<>();
 

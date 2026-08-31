@@ -1,8 +1,6 @@
 package com.sameer.job.controller;
 
 import com.sameer.job.dto.response.UserResponse;
-import com.sameer.job.mapper.UserMapper;
-import com.sameer.job.modal.User;
 import com.sameer.job.payload.UpdateUserRequest;
 import com.sameer.job.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +17,7 @@ public class UserController {
 
     @GetMapping("/api/users/profile")
     public ResponseEntity<UserResponse> getProfile(@RequestHeader("X-User-Email") String email) throws Exception {
-        User user = userService.getUserByEmail(email);
-        return ResponseEntity.ok(UserMapper.toDTO(user));
+        return ResponseEntity.ok(userService.getUserByEmail(email));
     }
 
     @PutMapping("/api/users/profile")
@@ -33,14 +30,12 @@ public class UserController {
 
     @GetMapping("/api/users/{userId}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable Long userId) throws Exception {
-        User user = userService.getUserById(userId);
-        return ResponseEntity.ok(UserMapper.toDTO(user));
+        return ResponseEntity.ok(userService.getUserById(userId));
     }
 
     @GetMapping("/api/users")
     public ResponseEntity<List<UserResponse>> getAllUsers() {
-        List<User> user = userService.getAllUsers();
-        return ResponseEntity.ok(UserMapper.toDTOList(user));
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @PatchMapping("/api/users/{userId}/suspend")

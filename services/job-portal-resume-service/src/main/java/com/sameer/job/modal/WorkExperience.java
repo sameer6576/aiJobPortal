@@ -46,16 +46,19 @@ public class WorkExperience {
     private LocalDate startDate;
     private LocalDate endDate;
 
+    @Builder.Default
     @Column(nullable = false)
     private Boolean isCurrentJob = false;
 
     private String description;
 
+    @Builder.Default
     @ElementCollection
     private List<String> technologies = new ArrayList<>();
 
+    @Builder.Default
     @Column(nullable = false)
-    private Integer displayOrder=0;
+    private Integer displayOrder = 0;
 
     @CreationTimestamp
     @Column(updatable = false, nullable = false)
