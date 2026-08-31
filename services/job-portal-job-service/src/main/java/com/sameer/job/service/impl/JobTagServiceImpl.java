@@ -11,6 +11,7 @@ import com.sameer.job.service.JobTagService;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class JobTagServiceImpl implements JobTagService {
 
     private final JobTagRepository jobTagRepository;
@@ -50,6 +52,7 @@ public class JobTagServiceImpl implements JobTagService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<JobTagResponse> getAllTags() {
         return jobTagRepository.findAll()
                                .stream().map(JobTagMapper::toJobTagResponse)
@@ -57,6 +60,7 @@ public class JobTagServiceImpl implements JobTagService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public JobTagResponse getById(Long id) throws Exception {
         JobTag jobTag = getTagEntityById(id);
         return JobTagMapper.toJobTagResponse(jobTag);

@@ -11,11 +11,13 @@ import com.sameer.job.service.ResumeService;
 import com.sameer.job.service.ResumeSkillService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ResumeSkillServiceImpl implements ResumeSkillService {
 
     private final ResumeSkillRepository resumeSkillRepository;
@@ -38,6 +40,7 @@ public class ResumeSkillServiceImpl implements ResumeSkillService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ResumeSkillResponse> getSkills(Long resumeId, Long candidateId) throws Exception {
         Resume resume = resumeService.getResumeEntity(resumeId);
         assertOwner(resume, candidateId);

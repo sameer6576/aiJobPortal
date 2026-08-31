@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Transactional
 public class ResumeServiceImpl implements ResumeService {
 
     private final ResumeRepository resumeRepository;
@@ -55,6 +56,7 @@ public class ResumeServiceImpl implements ResumeService {
         return buildFullResponse(saved);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public ResumeResponse getResumeById(Long resumeId, Long candidateId) throws Exception {
         Resume resume = getResumeEntity(resumeId);

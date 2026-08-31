@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "JobMate",
-    "description": "Gateway API for JobMate. Import into Postman (IntelliJ Community has no HTTP Client).\n\n1. Set baseUrl to http://localhost:5007 (IDE) or http://localhost:5050 (Docker Compose).\n2. Run Auth signups then logins — Tests scripts store JWTs.\n3. adminToken only works for an existing ROLE_ADMIN; signup cannot create admins.\n4. Do not send X-User-Id; the gateway sets identity from the JWT.",
+    "description": "Gateway API. Payloads include every DTO field.\n\n1. baseUrl: http://localhost:5007 (IntelliJ) or http://localhost:5050 (Compose).\n2. Run Auth signups then logins — Tests store JWTs.\n3. adminToken only works for an existing ROLE_ADMIN; signup cannot create admins.\n4. Do not send X-User-Id; the gateway sets identity from the JWT.\n5. After create company/job/resume, copy ids into collection variables (or edit the Tests tab).",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -84,10 +84,10 @@
   ],
   "item": [
     {
-      "name": "Auth (public)",
+      "name": "Auth",
       "item": [
         {
-          "name": "Signup seeker",
+          "name": "Signup job seeker",
           "request": {
             "method": "POST",
             "header": [
@@ -96,31 +96,27 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/auth/signup",
-            "description": "",
-            "auth": {
-              "type": "noauth"
+            "url": {
+              "raw": "{{baseUrl}}/auth/signup",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "signup"
+              ]
             },
+            "description": "SignupRequest: fullName, email, password (min 8), phone, role",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"fullName\": \"Sam Seeker\",\n  \"email\": \"sam.seeker@example.com\",\n  \"password\": \"SeekPass1\",\n  \"phone\": \"9000000001\",\n  \"role\": \"ROLE_JOB_SEEKER\"\n}"
-            }
-          },
-          "response": [],
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "if (pm.response.code === 200 || pm.response.code === 201) {",
-                  "  const j = pm.response.json();",
-                  "  if (j.jwt) pm.collectionVariables.set(\"seekerToken\", j.jwt);",
-                  "}"
-                ]
+              "raw": "{\n  \"fullName\": \"Sam Seeker\",\n  \"email\": \"sam.seeker@example.com\",\n  \"password\": \"SeekPass1\",\n  \"phone\": \"9000000001\",\n  \"role\": \"ROLE_JOB_SEEKER\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
               }
             }
-          ]
+          }
         },
         {
           "name": "Signup employer",
@@ -132,34 +128,29 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/auth/signup",
-            "description": "",
-            "auth": {
-              "type": "noauth"
+            "url": {
+              "raw": "{{baseUrl}}/auth/signup",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "signup"
+              ]
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"fullName\": \"Erin Employer\",\n  \"email\": \"erin.employer@example.com\",\n  \"password\": \"EmpPass1\",\n  \"phone\": \"9000000002\",\n  \"role\": \"ROLE_EMPLOYER\"\n}"
-            }
-          },
-          "response": [],
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "if (pm.response.code === 200 || pm.response.code === 201) {",
-                  "  const j = pm.response.json();",
-                  "  if (j.jwt) pm.collectionVariables.set(\"employerToken\", j.jwt);",
-                  "}"
-                ]
+              "raw": "{\n  \"fullName\": \"Erin Employer\",\n  \"email\": \"erin.employer@example.com\",\n  \"password\": \"EmpPass1\",\n  \"phone\": \"9000000002\",\n  \"role\": \"ROLE_EMPLOYER\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
               }
             }
-          ]
+          }
         },
         {
-          "name": "Login seeker",
+          "name": "Login job seeker",
           "request": {
             "method": "POST",
             "header": [
@@ -168,27 +159,36 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/auth/login",
-            "description": "",
-            "auth": {
-              "type": "noauth"
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
             },
+            "description": "LoginRequest: email, password. Tests save seekerToken.",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"sam.seeker@example.com\",\n  \"password\": \"SeekPass1\"\n}"
+              "raw": "{\n  \"email\": \"sam.seeker@example.com\",\n  \"password\": \"SeekPass1\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           },
-          "response": [],
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "if (pm.response.code === 200 || pm.response.code === 201) {",
-                  "  const j = pm.response.json();",
-                  "  if (j.jwt) pm.collectionVariables.set(\"seekerToken\", j.jwt);",
-                  "}"
+                  "const json = pm.response.json();",
+                  "if (json.jwt) pm.collectionVariables.set(\"seekerToken\", json.jwt);",
+                  "if (json.userId) pm.collectionVariables.set(\"userId\", String(json.userId));"
                 ]
               }
             }
@@ -204,34 +204,42 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/auth/login",
-            "description": "",
-            "auth": {
-              "type": "noauth"
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"erin.employer@example.com\",\n  \"password\": \"EmpPass1\"\n}"
+              "raw": "{\n  \"email\": \"erin.employer@example.com\",\n  \"password\": \"EmpPass1\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           },
-          "response": [],
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "if (pm.response.code === 200 || pm.response.code === 201) {",
-                  "  const j = pm.response.json();",
-                  "  if (j.jwt) pm.collectionVariables.set(\"employerToken\", j.jwt);",
-                  "}"
+                  "const json = pm.response.json();",
+                  "if (json.jwt) pm.collectionVariables.set(\"employerToken\", json.jwt);",
+                  "if (json.userId) pm.collectionVariables.set(\"userId\", String(json.userId));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Login admin (existing ROLE_ADMIN only)",
+          "name": "Login admin",
           "request": {
             "method": "POST",
             "header": [
@@ -240,27 +248,36 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/auth/login",
-            "description": "Self-signup as ROLE_ADMIN is rejected.",
-            "auth": {
-              "type": "noauth"
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
             },
+            "description": "Use an existing ROLE_ADMIN. Signup cannot create admins.",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"AdminPass1\"\n}"
+              "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"AdminPass1\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           },
-          "response": [],
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "if (pm.response.code === 200 || pm.response.code === 201) {",
-                  "  const j = pm.response.json();",
-                  "  if (j.jwt) pm.collectionVariables.set(\"adminToken\", j.jwt);",
-                  "}"
+                  "const json = pm.response.json();",
+                  "if (json.jwt) pm.collectionVariables.set(\"adminToken\", json.jwt);",
+                  "if (json.userId) pm.collectionVariables.set(\"userId\", String(json.userId));"
                 ]
               }
             }
@@ -275,21 +292,25 @@
           "name": "Get my profile",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/users/profile",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "profile"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Update my profile",
@@ -297,68 +318,84 @@
             "method": "PUT",
             "header": [
               {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/users/profile",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/users/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "profile"
               ]
             },
+            "description": "UpdateUserRequest: fullName, phone, profileImage",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"fullName\": \"Sam Seeker\",\n  \"phone\": \"9000000001\",\n  \"profileImage\": \"https://example.com/sam.png\"\n}"
+              "raw": "{\n  \"fullName\": \"Sam Seeker\",\n  \"phone\": \"9000000099\",\n  \"profileImage\": \"https://cdn.example.com/avatars/sam.png\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Get user by id",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/users/{{userId}}",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{employerToken}}",
-                  "type": "string"
-                }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/{{userId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{userId}}"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "List users (admin)",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/users",
-            "description": "Gateway requires ROLE_ADMIN.",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{adminToken}}",
-                  "type": "string"
-                }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Suspend user (admin)",
@@ -366,24 +403,24 @@
             "method": "PATCH",
             "header": [
               {
-                "key": "Content-Type",
-                "value": "application/json"
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
               }
             ],
-            "url": "{{baseUrl}}/api/users/{{userId}}/suspend",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{adminToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/users/{{userId}}/suspend",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{userId}}",
+                "suspend"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Activate user (admin)",
@@ -391,44 +428,49 @@
             "method": "PATCH",
             "header": [
               {
-                "key": "Content-Type",
-                "value": "application/json"
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
               }
             ],
-            "url": "{{baseUrl}}/api/users/{{userId}}/activate",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{adminToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/users/{{userId}}/activate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{userId}}",
+                "activate"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "Soft-delete user (admin)",
+          "name": "Delete user (admin)",
           "request": {
             "method": "DELETE",
-            "header": [],
-            "url": "{{baseUrl}}/api/users/{{userId}}/delete",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{adminToken}}",
-                  "type": "string"
-                }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/{{userId}}/delete",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{userId}}",
+                "delete"
               ]
             }
-          },
-          "response": []
+          }
         }
       ]
     },
@@ -441,38 +483,45 @@
             "method": "POST",
             "header": [
               {
+                "key": "Authorization",
+                "value": "Bearer {{employerToken}}",
+                "type": "text"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/companies",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{employerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/companies",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "companies"
               ]
             },
+            "description": "CompanyRequest: name, tagline, description, logoUrl, coverImageUrl, website, email, phone, foundedYear, companySize, companyType, industryType, registrationNumber, socialLinks[{platform,url}]",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Acme Labs\",\n  \"website\": \"https://acme.example\",\n  \"email\": \"jobs@acme.example\",\n  \"companySize\": \"SMALL\",\n  \"companyType\": \"PRIVATE\",\n  \"industryType\": \"TECHNOLOGY\"\n}"
+              "raw": "{\n  \"name\": \"Acme Labs\",\n  \"tagline\": \"Hiring engineers who ship\",\n  \"description\": \"Product studio building marketplace software.\",\n  \"logoUrl\": \"https://cdn.example.com/acme-logo.png\",\n  \"coverImageUrl\": \"https://cdn.example.com/acme-cover.png\",\n  \"website\": \"https://acme.example\",\n  \"email\": \"jobs@acme.example\",\n  \"phone\": \"08040000000\",\n  \"foundedYear\": 2018,\n  \"companySize\": \"SMALL\",\n  \"companyType\": \"PRIVATE\",\n  \"industryType\": \"TECHNOLOGY\",\n  \"registrationNumber\": \"U72900KA2018PTC000001\",\n  \"socialLinks\": [\n    {\n      \"platform\": \"LINKEDIN\",\n      \"url\": \"https://linkedin.com/company/acme-labs\"\n    },\n    {\n      \"platform\": \"GITHUB\",\n      \"url\": \"https://github.com/acme-labs\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           },
-          "response": [],
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "if (pm.response.code === 200 || pm.response.code === 201) {",
-                  "  const j = pm.response.json();",
-                  "  if (j.id != null) pm.collectionVariables.set(\"companyId\", String(j.id));",
-                  "}"
+                  "const json = pm.response.json();",
+                  "const id = json.id ?? json.userId;",
+                  "if (id != null) pm.collectionVariables.set(\"companyId\", String(id));"
                 ]
               }
             }
@@ -482,61 +531,87 @@
           "name": "Get company by id",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/companies/{{companyId}}",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{employerToken}}",
-                  "type": "string"
-                }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/companies/{{companyId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "companies",
+                "{{companyId}}"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Get my company",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/companies/my",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{employerToken}}",
-                  "type": "string"
-                }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/companies/my",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "companies",
+                "my"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "List companies",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/companies",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/companies?companyType=PRIVATE&industryType=TECHNOLOGY",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "companies"
+              ],
+              "query": [
                 {
-                  "key": "token",
-                  "value": "{{employerToken}}",
-                  "type": "string"
+                  "key": "companyType",
+                  "value": "PRIVATE"
+                },
+                {
+                  "key": "industryType",
+                  "value": "TECHNOLOGY"
+                },
+                {
+                  "key": "companyStatus",
+                  "value": "ACTIVE",
+                  "disabled": true
                 }
               ]
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Update company",
@@ -544,28 +619,36 @@
             "method": "PUT",
             "header": [
               {
+                "key": "Authorization",
+                "value": "Bearer {{employerToken}}",
+                "type": "text"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/companies/{{companyId}}",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{employerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/companies/{{companyId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "companies",
+                "{{companyId}}"
               ]
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Acme Labs\",\n  \"website\": \"https://acme.example\",\n  \"email\": \"jobs@acme.example\",\n  \"tagline\": \"Hiring builders\",\n  \"companySize\": \"SMALL\",\n  \"companyType\": \"PRIVATE\",\n  \"industryType\": \"TECHNOLOGY\"\n}"
+              "raw": "{\n  \"name\": \"Acme Labs\",\n  \"tagline\": \"Hiring engineers who ship\",\n  \"description\": \"Product studio building marketplace software.\",\n  \"logoUrl\": \"https://cdn.example.com/acme-logo.png\",\n  \"coverImageUrl\": \"https://cdn.example.com/acme-cover.png\",\n  \"website\": \"https://acme.example\",\n  \"email\": \"jobs@acme.example\",\n  \"phone\": \"08040000000\",\n  \"foundedYear\": 2018,\n  \"companySize\": \"SMALL\",\n  \"companyType\": \"PRIVATE\",\n  \"industryType\": \"TECHNOLOGY\",\n  \"registrationNumber\": \"U72900KA2018PTC000001\",\n  \"socialLinks\": [\n    {\n      \"platform\": \"LINKEDIN\",\n      \"url\": \"https://linkedin.com/company/acme-labs\"\n    },\n    {\n      \"platform\": \"GITHUB\",\n      \"url\": \"https://github.com/acme-labs\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Verify company (admin)",
@@ -573,24 +656,24 @@
             "method": "PATCH",
             "header": [
               {
-                "key": "Content-Type",
-                "value": "application/json"
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
               }
             ],
-            "url": "{{baseUrl}}/api/companies/{{companyId}}/verify",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{adminToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/companies/{{companyId}}/verify",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "companies",
+                "{{companyId}}",
+                "verify"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Deactivate company (admin)",
@@ -598,49 +681,48 @@
             "method": "PATCH",
             "header": [
               {
-                "key": "Content-Type",
-                "value": "application/json"
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
               }
             ],
-            "url": "{{baseUrl}}/api/companies/{{companyId}}/deactivate",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{adminToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/companies/{{companyId}}/deactivate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "companies",
+                "{{companyId}}",
+                "deactivate"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "Delete company (owner)",
+          "name": "Delete company",
           "request": {
             "method": "PATCH",
             "header": [
               {
-                "key": "Content-Type",
-                "value": "application/json"
+                "key": "Authorization",
+                "value": "Bearer {{employerToken}}",
+                "type": "text"
               }
             ],
-            "url": "{{baseUrl}}/api/companies/{{companyId}}",
-            "description": "PATCH /api/companies/{id} is owner delete.",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{employerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/companies/{{companyId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "companies",
+                "{{companyId}}"
               ]
             }
-          },
-          "response": []
+          }
         }
       ]
     },
@@ -648,43 +730,50 @@
       "name": "Job taxonomy",
       "item": [
         {
-          "name": "Create category (employer/admin)",
+          "name": "Create category",
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employerToken}}",
+                "type": "text"
+              },
               {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/job-categories",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{employerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/job-categories",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "job-categories"
               ]
             },
+            "description": "JobCategoryRequest: name, description, iconUrl, parentId",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Engineering\",\n  \"description\": \"Software roles\"\n}"
+              "raw": "{\n  \"name\": \"Engineering\",\n  \"description\": \"Software and infrastructure roles\",\n  \"iconUrl\": \"https://cdn.example.com/icons/eng.svg\",\n  \"parentId\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           },
-          "response": [],
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "if (pm.response.code === 200 || pm.response.code === 201) {",
-                  "  const j = pm.response.json();",
-                  "  if (j.id != null) pm.collectionVariables.set(\"categoryId\", String(j.id));",
-                  "}"
+                  "const json = pm.response.json();",
+                  "const id = json.id ?? json.userId;",
+                  "if (id != null) pm.collectionVariables.set(\"categoryId\", String(id));"
                 ]
               }
             }
@@ -694,129 +783,155 @@
           "name": "List categories",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/job-categories",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/job-categories",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "job-categories"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Get category",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/job-categories/{{categoryId}}",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/job-categories/{{categoryId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "job-categories",
+                "{{categoryId}}"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "Update category (employer/admin)",
+          "name": "Update category",
           "request": {
             "method": "PUT",
             "header": [
               {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": "{{baseUrl}}/api/job-categories/{{categoryId}}",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{employerToken}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Engineering\",\n  \"description\": \"Software and data\"\n}"
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Delete category (employer/admin)",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": "{{baseUrl}}/api/job-categories/{{categoryId}}",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{employerToken}}",
-                  "type": "string"
-                }
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Create job skill (employer/admin)",
-          "request": {
-            "method": "POST",
-            "header": [
+                "key": "Authorization",
+                "value": "Bearer {{employerToken}}",
+                "type": "text"
+              },
               {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/job-skills",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{employerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/job-categories/{{categoryId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "job-categories",
+                "{{categoryId}}"
               ]
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Java\",\n  \"category\": \"PROGRAMMING_LANGUAGE\"\n}"
+              "raw": "{\n  \"name\": \"Engineering\",\n  \"description\": \"Updated description\",\n  \"iconUrl\": \"https://cdn.example.com/icons/eng.svg\",\n  \"parentId\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Delete category",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/job-categories/{{categoryId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "job-categories",
+                "{{categoryId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create job skill",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employerToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/job-skills",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "job-skills"
+              ]
+            },
+            "description": "JobSkillRequest: name, category (SkillCategory enum)",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Java\",\n  \"category\": \"PROGRAMMING_LANGUAGE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           },
-          "response": [],
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "if (pm.response.code === 200 || pm.response.code === 201) {",
-                  "  const j = pm.response.json();",
-                  "  if (j.id != null) pm.collectionVariables.set(\"jobSkillId\", String(j.id));",
-                  "}"
+                  "const json = pm.response.json();",
+                  "const id = json.id ?? json.userId;",
+                  "if (id != null) pm.collectionVariables.set(\"jobSkillId\", String(id));"
                 ]
               }
             }
@@ -826,129 +941,154 @@
           "name": "List job skills",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/job-skills",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/job-skills",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "job-skills"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Get job skill",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/job-skills/{{jobSkillId}}",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/job-skills/{{jobSkillId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "job-skills",
+                "{{jobSkillId}}"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "Update job skill (employer/admin)",
+          "name": "Update job skill",
           "request": {
             "method": "PUT",
             "header": [
               {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": "{{baseUrl}}/api/job-skills/{{jobSkillId}}",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{employerToken}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Java\",\n  \"category\": \"PROGRAMMING_LANGUAGE\"\n}"
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Delete job skill (employer/admin)",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": "{{baseUrl}}/api/job-skills/{{jobSkillId}}",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{employerToken}}",
-                  "type": "string"
-                }
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Create job tag (employer/admin)",
-          "request": {
-            "method": "POST",
-            "header": [
+                "key": "Authorization",
+                "value": "Bearer {{employerToken}}",
+                "type": "text"
+              },
               {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/job-tags",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{employerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/job-skills/{{jobSkillId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "job-skills",
+                "{{jobSkillId}}"
               ]
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"backend\"\n}"
+              "raw": "{\n  \"name\": \"Java\",\n  \"category\": \"PROGRAMMING_LANGUAGE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Delete job skill",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/job-skills/{{jobSkillId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "job-skills",
+                "{{jobSkillId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create job tag",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employerToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/job-tags",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "job-tags"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Remote-friendly\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           },
-          "response": [],
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "if (pm.response.code === 200 || pm.response.code === 201) {",
-                  "  const j = pm.response.json();",
-                  "  if (j.id != null) pm.collectionVariables.set(\"jobTagId\", String(j.id));",
-                  "}"
+                  "const json = pm.response.json();",
+                  "const id = json.id ?? json.userId;",
+                  "if (id != null) pm.collectionVariables.set(\"jobTagId\", String(id));"
                 ]
               }
             }
@@ -958,90 +1098,109 @@
           "name": "List job tags",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/job-tags",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/job-tags",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "job-tags"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Get job tag",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/job-tags/{{jobTagId}}",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/job-tags/{{jobTagId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "job-tags",
+                "{{jobTagId}}"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "Update job tag (employer/admin)",
+          "name": "Update job tag",
           "request": {
             "method": "PUT",
             "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employerToken}}",
+                "type": "text"
+              },
               {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/job-tags/{{jobTagId}}",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{employerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/job-tags/{{jobTagId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "job-tags",
+                "{{jobTagId}}"
               ]
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"backend\"\n}"
+              "raw": "{\n  \"name\": \"Remote-friendly\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "Delete job tag (employer/admin)",
+          "name": "Delete job tag",
           "request": {
             "method": "DELETE",
-            "header": [],
-            "url": "{{baseUrl}}/api/job-tags/{{jobTagId}}",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{employerToken}}",
-                  "type": "string"
-                }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/job-tags/{{jobTagId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "job-tags",
+                "{{jobTagId}}"
               ]
             }
-          },
-          "response": []
+          }
         }
       ]
     },
@@ -1054,38 +1213,45 @@
             "method": "POST",
             "header": [
               {
+                "key": "Authorization",
+                "value": "Bearer {{employerToken}}",
+                "type": "text"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/jobs",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{employerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "jobs"
               ]
             },
+            "description": "JobRequest: title, description, requirements, responsibilities, benefits, categoryId, skillIds, tagIds, address, city, state, country, zipCode, minSalary, maxSalary, jobType, workMode, experienceLevel, openings, applicationDeadline, expiresAt",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Java backend engineer\",\n  \"description\": \"Build job application APIs.\",\n  \"requirements\": \"Java 21 and Spring Boot\",\n  \"categoryId\": \"{{categoryId}}\",\n  \"city\": \"Bengaluru\",\n  \"country\": \"India\",\n  \"jobType\": \"FULL_TIME\",\n  \"workMode\": \"HYBRID\",\n  \"experienceLevel\": \"MID_LEVEL\",\n  \"openings\": 2\n}"
+              "raw": "{\n  \"title\": \"Java backend engineer\",\n  \"description\": \"Build job application APIs and screening pipelines.\",\n  \"requirements\": \"Java 21, Spring Boot, PostgreSQL\",\n  \"responsibilities\": \"Own application-service APIs and Feign clients.\",\n  \"benefits\": \"Hybrid work, learning budget\",\n  \"categoryId\": \"{{categoryId}}\",\n  \"skillIds\": [\n    \"{{jobSkillId}}\"\n  ],\n  \"tagIds\": [\n    \"{{jobTagId}}\"\n  ],\n  \"address\": \"Koramangala\",\n  \"city\": \"Bengaluru\",\n  \"state\": \"Karnataka\",\n  \"country\": \"India\",\n  \"zipCode\": \"560034\",\n  \"minSalary\": 1800000,\n  \"maxSalary\": 2800000,\n  \"jobType\": \"FULL_TIME\",\n  \"workMode\": \"HYBRID\",\n  \"experienceLevel\": \"MID_LEVEL\",\n  \"openings\": 2,\n  \"applicationDeadline\": \"2026-12-31\",\n  \"expiresAt\": \"2027-01-31\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           },
-          "response": [],
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "if (pm.response.code === 200 || pm.response.code === 201) {",
-                  "  const j = pm.response.json();",
-                  "  if (j.id != null) pm.collectionVariables.set(\"jobId\", String(j.id));",
-                  "}"
+                  "const json = pm.response.json();",
+                  "const id = json.id ?? json.userId;",
+                  "if (id != null) pm.collectionVariables.set(\"jobId\", String(id));"
                 ]
               }
             }
@@ -1095,41 +1261,112 @@
           "name": "Get job",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/jobs/{{jobId}}",
-            "description": "Drafts return 404 unless employer or admin.",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs/{{jobId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "jobs",
+                "{{jobId}}"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "Search jobs",
+          "name": "List / search jobs",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/jobs?categoryId={{categoryId}}",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs?keyword=java&skillIds={{jobSkillId}}&tagIds={{jobTagId}}&companyId={{companyId}}&categoryId={{categoryId}}&location=Bengaluru&minSalary=1000000&maxSalary=4000000&jobType=FULL_TIME&workMode=HYBRID&experienceLevel=MID_LEVEL&status=OPEN&minOpenings=1&maxOpenings=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "jobs"
+              ],
+              "query": [
                 {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
+                  "key": "keyword",
+                  "value": "java"
+                },
+                {
+                  "key": "id",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "skillIds",
+                  "value": "{{jobSkillId}}"
+                },
+                {
+                  "key": "tagIds",
+                  "value": "{{jobTagId}}"
+                },
+                {
+                  "key": "companyId",
+                  "value": "{{companyId}}"
+                },
+                {
+                  "key": "categoryId",
+                  "value": "{{categoryId}}"
+                },
+                {
+                  "key": "location",
+                  "value": "Bengaluru"
+                },
+                {
+                  "key": "minSalary",
+                  "value": "1000000"
+                },
+                {
+                  "key": "maxSalary",
+                  "value": "4000000"
+                },
+                {
+                  "key": "jobType",
+                  "value": "FULL_TIME"
+                },
+                {
+                  "key": "workMode",
+                  "value": "HYBRID"
+                },
+                {
+                  "key": "experienceLevel",
+                  "value": "MID_LEVEL"
+                },
+                {
+                  "key": "status",
+                  "value": "OPEN"
+                },
+                {
+                  "key": "minOpenings",
+                  "value": "1"
+                },
+                {
+                  "key": "maxOpenings",
+                  "value": "10"
                 }
               ]
-            }
-          },
-          "response": []
+            },
+            "description": "JobSearchRequest as query params (GET @ModelAttribute)"
+          }
         },
         {
           "name": "Natural language search",
@@ -1137,68 +1374,86 @@
             "method": "POST",
             "header": [
               {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/jobs/search/natural",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs/search/natural",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "jobs",
+                "search",
+                "natural"
               ]
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"query\": \"remote java jobs in bangalore\"\n}"
+              "raw": "{\n  \"query\": \"remote java jobs in bangalore\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "Jobs by company (OPEN only)",
+          "name": "Jobs by company",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/jobs/company/{{companyId}}",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs/company/{{companyId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "jobs",
+                "company",
+                "{{companyId}}"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "All jobs admin",
+          "name": "List all jobs (admin)",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/jobs/admin",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{adminToken}}",
-                  "type": "string"
-                }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs/admin",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "jobs",
+                "admin"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Update job",
@@ -1206,28 +1461,36 @@
             "method": "PUT",
             "header": [
               {
+                "key": "Authorization",
+                "value": "Bearer {{employerToken}}",
+                "type": "text"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/jobs/{{jobId}}",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{employerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs/{{jobId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "jobs",
+                "{{jobId}}"
               ]
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Java backend engineer\",\n  \"description\": \"Build job application APIs.\",\n  \"requirements\": \"Java 21 and Spring Boot\",\n  \"categoryId\": \"{{categoryId}}\",\n  \"city\": \"Bengaluru\",\n  \"country\": \"India\",\n  \"jobType\": \"FULL_TIME\",\n  \"workMode\": \"HYBRID\",\n  \"experienceLevel\": \"MID_LEVEL\",\n  \"openings\": 2\n}"
+              "raw": "{\n  \"title\": \"Java backend engineer\",\n  \"description\": \"Build job application APIs and screening pipelines.\",\n  \"requirements\": \"Java 21, Spring Boot, PostgreSQL\",\n  \"responsibilities\": \"Own application-service APIs and Feign clients.\",\n  \"benefits\": \"Hybrid work, learning budget\",\n  \"categoryId\": \"{{categoryId}}\",\n  \"skillIds\": [\n    \"{{jobSkillId}}\"\n  ],\n  \"tagIds\": [\n    \"{{jobTagId}}\"\n  ],\n  \"address\": \"Koramangala\",\n  \"city\": \"Bengaluru\",\n  \"state\": \"Karnataka\",\n  \"country\": \"India\",\n  \"zipCode\": \"560034\",\n  \"minSalary\": 1800000,\n  \"maxSalary\": 2800000,\n  \"jobType\": \"FULL_TIME\",\n  \"workMode\": \"HYBRID\",\n  \"experienceLevel\": \"MID_LEVEL\",\n  \"openings\": 2,\n  \"applicationDeadline\": \"2026-12-31\",\n  \"expiresAt\": \"2027-01-31\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Publish job",
@@ -1235,24 +1498,24 @@
             "method": "PATCH",
             "header": [
               {
-                "key": "Content-Type",
-                "value": "application/json"
+                "key": "Authorization",
+                "value": "Bearer {{employerToken}}",
+                "type": "text"
               }
             ],
-            "url": "{{baseUrl}}/api/jobs/{{jobId}}/publish",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{employerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs/{{jobId}}/publish",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "jobs",
+                "{{jobId}}",
+                "publish"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Close job",
@@ -1260,44 +1523,48 @@
             "method": "PATCH",
             "header": [
               {
-                "key": "Content-Type",
-                "value": "application/json"
+                "key": "Authorization",
+                "value": "Bearer {{employerToken}}",
+                "type": "text"
               }
             ],
-            "url": "{{baseUrl}}/api/jobs/{{jobId}}/close",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{employerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs/{{jobId}}/close",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "jobs",
+                "{{jobId}}",
+                "close"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Delete job",
           "request": {
             "method": "DELETE",
-            "header": [],
-            "url": "{{baseUrl}}/api/jobs/{{jobId}}",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{employerToken}}",
-                  "type": "string"
-                }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs/{{jobId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "jobs",
+                "{{jobId}}"
               ]
             }
-          },
-          "response": []
+          }
         }
       ]
     },
@@ -1310,38 +1577,45 @@
             "method": "POST",
             "header": [
               {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/resumes",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/resumes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "resumes"
               ]
             },
+            "description": "CreateResumeRequest: title, template, visibility, isDefault",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Sam backend resume\",\n  \"isDefault\": true\n}"
+              "raw": "{\n  \"title\": \"Sam backend resume\",\n  \"template\": \"PROFESSIONAL\",\n  \"visibility\": \"PRIVATE\",\n  \"isDefault\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           },
-          "response": [],
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "if (pm.response.code === 200 || pm.response.code === 201) {",
-                  "  const j = pm.response.json();",
-                  "  if (j.id != null) pm.collectionVariables.set(\"resumeId\", String(j.id));",
-                  "}"
+                  "const json = pm.response.json();",
+                  "const id = json.id ?? json.userId;",
+                  "if (id != null) pm.collectionVariables.set(\"resumeId\", String(id));"
                 ]
               }
             }
@@ -1351,41 +1625,49 @@
           "name": "Get resume",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/resumes/{{resumeId}}",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/resumes/{{resumeId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "resumes",
+                "{{resumeId}}"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "List my resumes",
+          "name": "My resumes",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/resumes/my",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/resumes/my",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "resumes",
+                "my"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Update personal info",
@@ -1393,28 +1675,38 @@
             "method": "PUT",
             "header": [
               {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/resumes/{{resumeId}}/personal-info",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/resumes/{{resumeId}}/personal-info",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "resumes",
+                "{{resumeId}}",
+                "personal-info"
               ]
             },
+            "description": "PersonalInfoResponse used as request body",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"firstName\": \"Sam\",\n  \"lastName\": \"Seeker\",\n  \"headline\": \"Java developer\",\n  \"email\": \"sam.seeker@example.com\",\n  \"city\": \"Bengaluru\",\n  \"country\": \"India\"\n}"
+              "raw": "{\n  \"firstName\": \"Sam\",\n  \"lastName\": \"Seeker\",\n  \"headline\": \"Java backend engineer\",\n  \"email\": \"sam.seeker@example.com\",\n  \"phone\": \"9000000001\",\n  \"city\": \"Bengaluru\",\n  \"country\": \"India\",\n  \"linkedinUrl\": \"https://linkedin.com/in/sam-seeker\",\n  \"githubUrl\": \"https://github.com/sam-seeker\",\n  \"portfolioUrl\": \"https://sam.example\",\n  \"websiteUrl\": \"https://sam.example\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Update summary",
@@ -1422,28 +1714,38 @@
             "method": "PUT",
             "header": [
               {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/resumes/{{resumeId}}/summary",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/resumes/{{resumeId}}/summary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "resumes",
+                "{{resumeId}}",
+                "summary"
               ]
             },
+            "description": "Raw JSON string body (@RequestBody String summary)",
             "body": {
               "mode": "raw",
-              "raw": "\"Backend engineer focused on Spring Boot APIs.\""
+              "raw": "\"Backend engineer with 4 years building Spring Boot APIs, PostgreSQL, and Kafka consumers.\"",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Set default resume",
@@ -1451,44 +1753,48 @@
             "method": "PUT",
             "header": [
               {
-                "key": "Content-Type",
-                "value": "application/json"
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
               }
             ],
-            "url": "{{baseUrl}}/api/resumes/{{resumeId}}/default",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/resumes/{{resumeId}}/default",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "resumes",
+                "{{resumeId}}",
+                "default"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Delete resume",
           "request": {
             "method": "DELETE",
-            "header": [],
-            "url": "{{baseUrl}}/api/resumes/{{resumeId}}",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/resumes/{{resumeId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "resumes",
+                "{{resumeId}}"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Add education",
@@ -1496,62 +1802,75 @@
             "method": "POST",
             "header": [
               {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/resumes/{{resumeId}}/educations",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/resumes/{{resumeId}}/educations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "resumes",
+                "{{resumeId}}",
+                "educations"
               ]
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"institutionName\": \"Example University\",\n  \"degree\": \"B.Tech\",\n  \"fieldOfStudy\": \"Computer Science\",\n  \"startDate\": \"2018-08-01\",\n  \"endDate\": \"2022-05-31\",\n  \"isCurrentlyStudying\": false\n}"
+              "raw": "{\n  \"institutionName\": \"NITK Surathkal\",\n  \"degree\": \"B.Tech\",\n  \"fieldOfStudy\": \"Computer Science\",\n  \"grade\": \"8.2 CGPA\",\n  \"startDate\": \"2016-08-01\",\n  \"endDate\": \"2020-05-31\",\n  \"isCurrentlyStudying\": false,\n  \"description\": \"Coursework in distributed systems.\",\n  \"displayOrder\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           },
-          "response": [],
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "if (pm.response.code === 200 || pm.response.code === 201) {",
-                  "  const j = pm.response.json();",
-                  "  if (j.id != null) pm.collectionVariables.set(\"educationId\", String(j.id));",
-                  "}"
+                  "const json = pm.response.json();",
+                  "const id = json.id ?? json.userId;",
+                  "if (id != null) pm.collectionVariables.set(\"educationId\", String(id));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "List education",
+          "name": "List educations",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/resumes/{{resumeId}}/educations",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/resumes/{{resumeId}}/educations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "resumes",
+                "{{resumeId}}",
+                "educations"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Update education",
@@ -1559,48 +1878,64 @@
             "method": "PUT",
             "header": [
               {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/resumes/{{resumeId}}/educations/{{educationId}}",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/resumes/{{resumeId}}/educations/{{educationId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "resumes",
+                "{{resumeId}}",
+                "educations",
+                "{{educationId}}"
               ]
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"institutionName\": \"Example University\",\n  \"degree\": \"B.Tech\",\n  \"fieldOfStudy\": \"Computer Science\",\n  \"startDate\": \"2018-08-01\",\n  \"endDate\": \"2022-05-31\",\n  \"isCurrentlyStudying\": false\n}"
+              "raw": "{\n  \"institutionName\": \"NITK Surathkal\",\n  \"degree\": \"B.Tech\",\n  \"fieldOfStudy\": \"Computer Science\",\n  \"grade\": \"8.4 CGPA\",\n  \"startDate\": \"2016-08-01\",\n  \"endDate\": \"2020-05-31\",\n  \"isCurrentlyStudying\": false,\n  \"description\": \"Updated notes.\",\n  \"displayOrder\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Delete education",
           "request": {
             "method": "DELETE",
-            "header": [],
-            "url": "{{baseUrl}}/api/resumes/{{resumeId}}/educations/{{educationId}}",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/resumes/{{resumeId}}/educations/{{educationId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "resumes",
+                "{{resumeId}}",
+                "educations",
+                "{{educationId}}"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Add work experience",
@@ -1608,62 +1943,75 @@
             "method": "POST",
             "header": [
               {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/resumes/{{resumeId}}/work-experiences",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/resumes/{{resumeId}}/work-experiences",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "resumes",
+                "{{resumeId}}",
+                "work-experiences"
               ]
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"companyName\": \"Example Corp\",\n  \"jobTitle\": \"Software engineer\",\n  \"employmentType\": \"FULL_TIME\",\n  \"location\": \"Bengaluru\",\n  \"startDate\": \"2022-06-01\",\n  \"isCurrentJob\": true,\n  \"description\": \"Built REST APIs.\",\n  \"technologies\": [\n    \"Java\",\n    \"Spring Boot\"\n  ]\n}"
+              "raw": "{\n  \"companyName\": \"Acme Labs\",\n  \"companyLogoUrl\": \"https://cdn.example.com/acme-logo.png\",\n  \"jobTitle\": \"Software engineer\",\n  \"employmentType\": \"FULL_TIME\",\n  \"location\": \"Bengaluru\",\n  \"startDate\": \"2021-06-01\",\n  \"endDate\": null,\n  \"isCurrentJob\": true,\n  \"technologies\": [\n    \"Java\",\n    \"Spring Boot\",\n    \"PostgreSQL\"\n  ],\n  \"displayOrder\": 1,\n  \"description\": \"Built REST APIs for hiring workflows.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           },
-          "response": [],
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "if (pm.response.code === 200 || pm.response.code === 201) {",
-                  "  const j = pm.response.json();",
-                  "  if (j.id != null) pm.collectionVariables.set(\"workExperienceId\", String(j.id));",
-                  "}"
+                  "const json = pm.response.json();",
+                  "const id = json.id ?? json.userId;",
+                  "if (id != null) pm.collectionVariables.set(\"workExperienceId\", String(id));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "List work experience",
+          "name": "List work experiences",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/resumes/{{resumeId}}/work-experiences",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/resumes/{{resumeId}}/work-experiences",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "resumes",
+                "{{resumeId}}",
+                "work-experiences"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Update work experience",
@@ -1671,48 +2019,64 @@
             "method": "PUT",
             "header": [
               {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/resumes/{{resumeId}}/work-experiences/{{workExperienceId}}",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/resumes/{{resumeId}}/work-experiences/{{workExperienceId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "resumes",
+                "{{resumeId}}",
+                "work-experiences",
+                "{{workExperienceId}}"
               ]
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"companyName\": \"Example Corp\",\n  \"jobTitle\": \"Software engineer\",\n  \"employmentType\": \"FULL_TIME\",\n  \"startDate\": \"2022-06-01\",\n  \"isCurrentJob\": true,\n  \"description\": \"Built REST APIs.\"\n}"
+              "raw": "{\n  \"companyName\": \"Acme Labs\",\n  \"companyLogoUrl\": \"https://cdn.example.com/acme-logo.png\",\n  \"jobTitle\": \"Senior software engineer\",\n  \"employmentType\": \"FULL_TIME\",\n  \"location\": \"Bengaluru\",\n  \"startDate\": \"2021-06-01\",\n  \"endDate\": null,\n  \"isCurrentJob\": true,\n  \"technologies\": [\n    \"Java\",\n    \"Spring Boot\",\n    \"Kafka\"\n  ],\n  \"displayOrder\": 1,\n  \"description\": \"Owned application-service.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Delete work experience",
           "request": {
             "method": "DELETE",
-            "header": [],
-            "url": "{{baseUrl}}/api/resumes/{{resumeId}}/work-experiences/{{workExperienceId}}",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/resumes/{{resumeId}}/work-experiences/{{workExperienceId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "resumes",
+                "{{resumeId}}",
+                "work-experiences",
+                "{{workExperienceId}}"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Add project",
@@ -1720,38 +2084,46 @@
             "method": "POST",
             "header": [
               {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/resumes/{{resumeId}}/projects",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/resumes/{{resumeId}}/projects",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "resumes",
+                "{{resumeId}}",
+                "projects"
               ]
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Job portal\",\n  \"description\": \"Spring Cloud marketplace backend\",\n  \"technologies\": [\n    \"Java\",\n    \"Spring\"\n  ],\n  \"isOngoing\": true\n}"
+              "raw": "{\n  \"title\": \"JobMate\",\n  \"description\": \"Spring Cloud job portal\",\n  \"technologies\": [\n    \"Java\",\n    \"Spring Cloud\",\n    \"PostgreSQL\"\n  ],\n  \"projectUrl\": \"https://jobmate.example\",\n  \"sourceCodeUrl\": \"https://github.com/example/jobmate\",\n  \"startDate\": \"2025-01-01\",\n  \"endDate\": null,\n  \"isOngoing\": true,\n  \"displayOrder\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           },
-          "response": [],
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "if (pm.response.code === 200 || pm.response.code === 201) {",
-                  "  const j = pm.response.json();",
-                  "  if (j.id != null) pm.collectionVariables.set(\"projectId\", String(j.id));",
-                  "}"
+                  "const json = pm.response.json();",
+                  "const id = json.id ?? json.userId;",
+                  "if (id != null) pm.collectionVariables.set(\"projectId\", String(id));"
                 ]
               }
             }
@@ -1761,21 +2133,26 @@
           "name": "List projects",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/resumes/{{resumeId}}/projects",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/resumes/{{resumeId}}/projects",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "resumes",
+                "{{resumeId}}",
+                "projects"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Update project",
@@ -1783,48 +2160,64 @@
             "method": "PUT",
             "header": [
               {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/resumes/{{resumeId}}/projects/{{projectId}}",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/resumes/{{resumeId}}/projects/{{projectId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "resumes",
+                "{{resumeId}}",
+                "projects",
+                "{{projectId}}"
               ]
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Job portal\",\n  \"description\": \"Spring Cloud marketplace backend\",\n  \"isOngoing\": true\n}"
+              "raw": "{\n  \"title\": \"JobMate\",\n  \"description\": \"Updated description\",\n  \"technologies\": [\n    \"Java\",\n    \"Spring Cloud\"\n  ],\n  \"projectUrl\": \"https://jobmate.example\",\n  \"sourceCodeUrl\": \"https://github.com/example/jobmate\",\n  \"startDate\": \"2025-01-01\",\n  \"endDate\": null,\n  \"isOngoing\": true,\n  \"displayOrder\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Delete project",
           "request": {
             "method": "DELETE",
-            "header": [],
-            "url": "{{baseUrl}}/api/resumes/{{resumeId}}/projects/{{projectId}}",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/resumes/{{resumeId}}/projects/{{projectId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "resumes",
+                "{{resumeId}}",
+                "projects",
+                "{{projectId}}"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Add resume skill",
@@ -1832,38 +2225,46 @@
             "method": "POST",
             "header": [
               {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/resumes/{{resumeId}}/skills",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/resumes/{{resumeId}}/skills",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "resumes",
+                "{{resumeId}}",
+                "skills"
               ]
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"skillName\": \"Java\",\n  \"proficiencyLevel\": \"ADVANCED\",\n  \"yearsOfExperience\": 4\n}"
+              "raw": "{\n  \"skillName\": \"Java\",\n  \"proficiencyLevel\": \"ADVANCED\",\n  \"yearsOfExperience\": 4,\n  \"displayOrder\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           },
-          "response": [],
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "if (pm.response.code === 200 || pm.response.code === 201) {",
-                  "  const j = pm.response.json();",
-                  "  if (j.id != null) pm.collectionVariables.set(\"resumeSkillId\", String(j.id));",
-                  "}"
+                  "const json = pm.response.json();",
+                  "const id = json.id ?? json.userId;",
+                  "if (id != null) pm.collectionVariables.set(\"resumeSkillId\", String(id));"
                 ]
               }
             }
@@ -1873,21 +2274,26 @@
           "name": "List resume skills",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/resumes/{{resumeId}}/skills",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/resumes/{{resumeId}}/skills",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "resumes",
+                "{{resumeId}}",
+                "skills"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Update resume skill",
@@ -1895,48 +2301,64 @@
             "method": "PUT",
             "header": [
               {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/resumes/{{resumeId}}/skills/{{resumeSkillId}}",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/resumes/{{resumeId}}/skills/{{resumeSkillId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "resumes",
+                "{{resumeId}}",
+                "skills",
+                "{{resumeSkillId}}"
               ]
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"skillName\": \"Java\",\n  \"proficiencyLevel\": \"ADVANCED\",\n  \"yearsOfExperience\": 4\n}"
+              "raw": "{\n  \"skillName\": \"Java\",\n  \"proficiencyLevel\": \"EXPERT\",\n  \"yearsOfExperience\": 5,\n  \"displayOrder\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Delete resume skill",
           "request": {
             "method": "DELETE",
-            "header": [],
-            "url": "{{baseUrl}}/api/resumes/{{resumeId}}/skills/{{resumeSkillId}}",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/resumes/{{resumeId}}/skills/{{resumeSkillId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "resumes",
+                "{{resumeId}}",
+                "skills",
+                "{{resumeSkillId}}"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Add language",
@@ -1944,38 +2366,46 @@
             "method": "POST",
             "header": [
               {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/resumes/{{resumeId}}/languages",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/resumes/{{resumeId}}/languages",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "resumes",
+                "{{resumeId}}",
+                "languages"
               ]
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"languageName\": \"English\",\n  \"proficiency\": \"PROFESSIONAL\"\n}"
+              "raw": "{\n  \"languageName\": \"English\",\n  \"proficiency\": \"PROFESSIONAL\",\n  \"displayOrder\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           },
-          "response": [],
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "if (pm.response.code === 200 || pm.response.code === 201) {",
-                  "  const j = pm.response.json();",
-                  "  if (j.id != null) pm.collectionVariables.set(\"languageId\", String(j.id));",
-                  "}"
+                  "const json = pm.response.json();",
+                  "const id = json.id ?? json.userId;",
+                  "if (id != null) pm.collectionVariables.set(\"languageId\", String(id));"
                 ]
               }
             }
@@ -1985,21 +2415,26 @@
           "name": "List languages",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/resumes/{{resumeId}}/languages",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/resumes/{{resumeId}}/languages",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "resumes",
+                "{{resumeId}}",
+                "languages"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Update language",
@@ -2007,48 +2442,64 @@
             "method": "PUT",
             "header": [
               {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/resumes/{{resumeId}}/languages/{{languageId}}",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/resumes/{{resumeId}}/languages/{{languageId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "resumes",
+                "{{resumeId}}",
+                "languages",
+                "{{languageId}}"
               ]
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"languageName\": \"English\",\n  \"proficiency\": \"FLUENT\"\n}"
+              "raw": "{\n  \"languageName\": \"English\",\n  \"proficiency\": \"FLUENT\",\n  \"displayOrder\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Delete language",
           "request": {
             "method": "DELETE",
-            "header": [],
-            "url": "{{baseUrl}}/api/resumes/{{resumeId}}/languages/{{languageId}}",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/resumes/{{resumeId}}/languages/{{languageId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "resumes",
+                "{{resumeId}}",
+                "languages",
+                "{{languageId}}"
               ]
             }
-          },
-          "response": []
+          }
         }
       ]
     },
@@ -2061,151 +2512,173 @@
             "method": "POST",
             "header": [
               {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/applications",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/applications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "applications"
               ]
             },
+            "description": "CreateApplicationRequest: jobId, resumeId, coverLetter, expectedSalary, availableFrom",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"jobId\": \"{{jobId}}\",\n  \"resumeId\": \"{{resumeId}}\"\n}"
+              "raw": "{\n  \"jobId\": \"{{jobId}}\",\n  \"resumeId\": \"{{resumeId}}\",\n  \"coverLetter\": \"I am excited to apply for this Java backend role.\",\n  \"expectedSalary\": 2200000,\n  \"availableFrom\": \"2026-10-01\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           },
-          "response": [],
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "if (pm.response.code === 200 || pm.response.code === 201) {",
-                  "  const j = pm.response.json();",
-                  "  if (j.id != null) pm.collectionVariables.set(\"applicationId\", String(j.id));",
-                  "}"
+                  "const json = pm.response.json();",
+                  "const id = json.id ?? json.userId;",
+                  "if (id != null) pm.collectionVariables.set(\"applicationId\", String(id));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Duplicate apply (expect ALREADY_APPLIED)",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": "{{baseUrl}}/api/applications",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"jobId\": \"{{jobId}}\",\n  \"resumeId\": \"{{resumeId}}\"\n}"
-            }
-          },
-          "response": []
-        },
-        {
           "name": "Get application",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/applications/{{applicationId}}",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/applications/{{applicationId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "applications",
+                "{{applicationId}}"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "My applications",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/applications/my",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/applications/my",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "applications",
+                "my"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Company applications",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/applications/company?minAiScore=50",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/applications/company?jobId={{jobId}}&status=PENDING&isStarred=false&aiShortListStatus=NOT_SCREENED&minAiScore=50&sortBy=aiScore",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "applications",
+                "company"
+              ],
+              "query": [
                 {
-                  "key": "token",
-                  "value": "{{employerToken}}",
-                  "type": "string"
+                  "key": "jobId",
+                  "value": "{{jobId}}"
+                },
+                {
+                  "key": "status",
+                  "value": "PENDING"
+                },
+                {
+                  "key": "isStarred",
+                  "value": "false"
+                },
+                {
+                  "key": "aiShortListStatus",
+                  "value": "NOT_SCREENED"
+                },
+                {
+                  "key": "minAiScore",
+                  "value": "50"
+                },
+                {
+                  "key": "sortBy",
+                  "value": "aiScore"
                 }
               ]
-            }
-          },
-          "response": []
+            },
+            "description": "CompanyApplicationFilterRequest as query params"
+          }
         },
         {
           "name": "Applications for job",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/applications/job/{{jobId}}",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{employerToken}}",
-                  "type": "string"
-                }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/applications/job/{{jobId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "applications",
+                "job",
+                "{{jobId}}"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Update status",
@@ -2213,28 +2686,37 @@
             "method": "PATCH",
             "header": [
               {
+                "key": "Authorization",
+                "value": "Bearer {{employerToken}}",
+                "type": "text"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/applications/{{applicationId}}/status",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{employerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/applications/{{applicationId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "applications",
+                "{{applicationId}}",
+                "status"
               ]
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"status\": \"REVIEWING\"\n}"
+              "raw": "{\n  \"status\": \"REVIEWING\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Withdraw",
@@ -2242,28 +2724,37 @@
             "method": "PATCH",
             "header": [
               {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/applications/{{applicationId}}/withdraw",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/applications/{{applicationId}}/withdraw",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "applications",
+                "{{applicationId}}",
+                "withdraw"
               ]
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Sam Seeker\",\n  \"reason\": \"Accepted another offer\"\n}"
+              "raw": "{\n  \"name\": \"Sam Seeker\",\n  \"reason\": \"Accepted another offer\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Toggle star",
@@ -2271,89 +2762,75 @@
             "method": "PATCH",
             "header": [
               {
-                "key": "Content-Type",
-                "value": "application/json"
+                "key": "Authorization",
+                "value": "Bearer {{employerToken}}",
+                "type": "text"
               }
             ],
-            "url": "{{baseUrl}}/api/applications/{{applicationId}}/star",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{employerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/applications/{{applicationId}}/star",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "applications",
+                "{{applicationId}}",
+                "star"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "Delete application",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": "{{baseUrl}}/api/applications/{{applicationId}}",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Generate cover letter (fail-open)",
+          "name": "Generate cover letter (application)",
           "request": {
             "method": "POST",
             "header": [
               {
-                "key": "Content-Type",
-                "value": "application/json"
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
               }
             ],
-            "url": "{{baseUrl}}/api/applications/{{applicationId}}/cover-letter",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/applications/{{applicationId}}/cover-letter",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "applications",
+                "{{applicationId}}",
+                "cover-letter"
               ]
-            }
-          },
-          "response": []
+            },
+            "description": "No body; server loads job + resume."
+          }
         },
         {
-          "name": "Skills gap",
+          "name": "Skills gap (application)",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/applications/{{applicationId}}/skills-gap",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/applications/{{applicationId}}/skills-gap",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "applications",
+                "{{applicationId}}",
+                "skills-gap"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Add note",
@@ -2361,38 +2838,46 @@
             "method": "POST",
             "header": [
               {
+                "key": "Authorization",
+                "value": "Bearer {{employerToken}}",
+                "type": "text"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/applications/{{applicationId}}/notes",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{employerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/applications/{{applicationId}}/notes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "applications",
+                "{{applicationId}}",
+                "notes"
               ]
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"content\": \"Strong Java background\"\n}"
+              "raw": "{\n  \"content\": \"Strong Spring Boot background. Schedule a screen.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           },
-          "response": [],
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "if (pm.response.code === 200 || pm.response.code === 201) {",
-                  "  const j = pm.response.json();",
-                  "  if (j.id != null) pm.collectionVariables.set(\"noteId\", String(j.id));",
-                  "}"
+                  "const json = pm.response.json();",
+                  "const id = json.id ?? json.userId;",
+                  "if (id != null) pm.collectionVariables.set(\"noteId\", String(id));"
                 ]
               }
             }
@@ -2402,41 +2887,76 @@
           "name": "List notes",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/applications/{{applicationId}}/notes",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{employerToken}}",
-                  "type": "string"
-                }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/applications/{{applicationId}}/notes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "applications",
+                "{{applicationId}}",
+                "notes"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Delete note",
           "request": {
             "method": "DELETE",
-            "header": [],
-            "url": "{{baseUrl}}/api/applications/{{applicationId}}/notes/{{noteId}}",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{employerToken}}",
-                  "type": "string"
-                }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/applications/{{applicationId}}/notes/{{noteId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "applications",
+                "{{applicationId}}",
+                "notes",
+                "{{noteId}}"
               ]
             }
-          },
-          "response": []
+          }
+        },
+        {
+          "name": "Delete application",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/applications/{{applicationId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "applications",
+                "{{applicationId}}"
+              ]
+            }
+          }
         }
       ]
     },
@@ -2449,107 +2969,134 @@
             "method": "POST",
             "header": [
               {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/preferences/saved-jobs",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/preferences/saved-jobs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "preferences",
+                "saved-jobs"
               ]
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"jobId\": \"{{jobId}}\"\n}"
+              "raw": "{\n  \"jobId\": \"{{jobId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           },
-          "response": [],
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "if (pm.response.code === 200 || pm.response.code === 201) {",
-                  "  const j = pm.response.json();",
-                  "  if (j.id != null) pm.collectionVariables.set(\"savedJobId\", String(j.id));",
-                  "}"
+                  "const json = pm.response.json();",
+                  "const id = json.id ?? json.userId;",
+                  "if (id != null) pm.collectionVariables.set(\"savedJobId\", String(id));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "List saved jobs",
+          "name": "My saved jobs",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/preferences/saved-jobs",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/preferences/saved-jobs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "preferences",
+                "saved-jobs"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "Check saved",
+          "name": "Is job saved",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/preferences/saved-jobs/check?jobId={{jobId}}",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/preferences/saved-jobs/check?jobId={{jobId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "preferences",
+                "saved-jobs",
+                "check"
+              ],
+              "query": [
                 {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
+                  "key": "jobId",
+                  "value": "{{jobId}}"
                 }
               ]
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Unsave job",
           "request": {
             "method": "DELETE",
-            "header": [],
-            "url": "{{baseUrl}}/api/preferences/saved-jobs/{{savedJobId}}",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/preferences/saved-jobs/{{savedJobId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "preferences",
+                "saved-jobs",
+                "{{savedJobId}}"
               ]
             }
-          },
-          "response": []
+          }
         }
       ]
     },
     {
-      "name": "AI (direct Gemini adapters)",
+      "name": "AI",
       "item": [
         {
           "name": "Job describe",
@@ -2557,48 +3104,72 @@
             "method": "POST",
             "header": [
               {
+                "key": "Authorization",
+                "value": "Bearer {{employerToken}}",
+                "type": "text"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/ai/job/describe",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{employerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/ai/job/describe",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ai",
+                "job",
+                "describe"
               ]
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"jobTitle\": \"Java backend engineer\",\n  \"skills\": [\n    \"Java\",\n    \"Spring Boot\"\n  ],\n  \"experienceLevel\": \"MID_LEVEL\",\n  \"jobType\": \"FULL_TIME\",\n  \"workMode\": \"HYBRID\",\n  \"category\": \"Engineering\"\n}"
+              "raw": "{\n  \"jobTitle\": \"Java backend engineer\",\n  \"skills\": [\n    \"Java\",\n    \"Spring Boot\",\n    \"PostgreSQL\"\n  ],\n  \"experienceLevel\": \"MID_LEVEL\",\n  \"jobType\": \"FULL_TIME\",\n  \"workMode\": \"HYBRID\",\n  \"category\": \"Engineering\",\n  \"additionalContext\": \"Marketplace domain, Feign between services\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Job requirements",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/ai/job/requirements?title=Java backend engineer&category=Engineering",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ai/job/requirements?title=Java backend engineer&category=Engineering",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ai",
+                "job",
+                "requirements"
+              ],
+              "query": [
                 {
-                  "key": "token",
-                  "value": "{{employerToken}}",
-                  "type": "string"
+                  "key": "title",
+                  "value": "Java backend engineer"
+                },
+                {
+                  "key": "category",
+                  "value": "Engineering"
                 }
               ]
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Salary suggestion",
@@ -2606,108 +3177,181 @@
             "method": "POST",
             "header": [
               {
+                "key": "Authorization",
+                "value": "Bearer {{employerToken}}",
+                "type": "text"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/ai/job/salary-suggestion",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{employerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/ai/job/salary-suggestion",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ai",
+                "job",
+                "salary-suggestion"
               ]
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Java backend engineer\",\n  \"skills\": [\n    \"Java\",\n    \"Spring Boot\"\n  ],\n  \"experienceLevel\": \"MID_LEVEL\",\n  \"jobType\": \"FULL_TIME\",\n  \"location\": \"Bengaluru\"\n}"
+              "raw": "{\n  \"title\": \"Java backend engineer\",\n  \"skills\": [\n    \"Java\",\n    \"Spring Boot\"\n  ],\n  \"experienceLevel\": \"MID_LEVEL\",\n  \"jobType\": \"FULL_TIME\",\n  \"location\": \"Bengaluru\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Skills recommendation",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/ai/job/skills-recommendation?title=Java backend engineer&category=Engineering",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ai/job/skills-recommendation?title=Java backend engineer&category=Engineering",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ai",
+                "job",
+                "skills-recommendation"
+              ],
+              "query": [
                 {
-                  "key": "token",
-                  "value": "{{employerToken}}",
-                  "type": "string"
+                  "key": "title",
+                  "value": "Java backend engineer"
+                },
+                {
+                  "key": "category",
+                  "value": "Engineering"
                 }
               ]
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "Responsibilities",
+          "name": "Job responsibilities",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/ai/job/responsibilities?title=Java backend engineer&category=Engineering",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ai/job/responsibilities?title=Java backend engineer&category=Engineering",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ai",
+                "job",
+                "responsibilities"
+              ],
+              "query": [
                 {
-                  "key": "token",
-                  "value": "{{employerToken}}",
-                  "type": "string"
+                  "key": "title",
+                  "value": "Java backend engineer"
+                },
+                {
+                  "key": "category",
+                  "value": "Engineering"
                 }
               ]
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "Benefits",
+          "name": "Job benefits",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/ai/job/benefits?title=Java backend engineer&category=Engineering&jobType=FULL_TIME",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ai/job/benefits?title=Java backend engineer&category=Engineering&jobType=FULL_TIME",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ai",
+                "job",
+                "benefits"
+              ],
+              "query": [
                 {
-                  "key": "token",
-                  "value": "{{employerToken}}",
-                  "type": "string"
+                  "key": "title",
+                  "value": "Java backend engineer"
+                },
+                {
+                  "key": "category",
+                  "value": "Engineering"
+                },
+                {
+                  "key": "jobType",
+                  "value": "FULL_TIME"
                 }
               ]
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Tags recommendation",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/ai/job/tags-recommendation?title=Java backend engineer&description=Build APIs",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employerToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ai/job/tags-recommendation?title=Java backend engineer&description=Spring Boot APIs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ai",
+                "job",
+                "tags-recommendation"
+              ],
+              "query": [
                 {
-                  "key": "token",
-                  "value": "{{employerToken}}",
-                  "type": "string"
+                  "key": "title",
+                  "value": "Java backend engineer"
+                },
+                {
+                  "key": "description",
+                  "value": "Spring Boot APIs"
                 }
               ]
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Resume summary",
@@ -2715,28 +3359,37 @@
             "method": "POST",
             "header": [
               {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/ai/resume/summary",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/ai/resume/summary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ai",
+                "resume",
+                "summary"
               ]
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"targetJobTitle\": \"Java backend engineer\",\n  \"skills\": [\n    \"Java\"\n  ],\n  \"yearsOfExperience\": 4,\n  \"workExperiences\": [\n    {\n      \"jobTitle\": \"SDE\",\n      \"companyName\": \"Example\",\n      \"description\": \"APIs\"\n    }\n  ]\n}"
+              "raw": "{\n  \"targetJobTitle\": \"Java backend engineer\",\n  \"workExperiences\": [\n    {\n      \"jobTitle\": \"Software engineer\",\n      \"companyName\": \"Acme Labs\",\n      \"description\": \"Built REST APIs\"\n    }\n  ],\n  \"skills\": [\n    \"Java\",\n    \"Spring Boot\"\n  ],\n  \"educations\": [\n    {\n      \"degree\": \"B.Tech\",\n      \"fieldOfStudy\": \"Computer Science\",\n      \"institutionName\": \"NITK\"\n    }\n  ],\n  \"yearsOfExperience\": 4\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Experience bullets",
@@ -2744,28 +3397,37 @@
             "method": "POST",
             "header": [
               {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/ai/resume/experience-bullets",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/ai/resume/experience-bullets",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ai",
+                "resume",
+                "experience-bullets"
               ]
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"jobTitle\": \"Software engineer\",\n  \"company\": \"Example Corp\",\n  \"rawDescription\": \"Worked on Spring Boot services\"\n}"
+              "raw": "{\n  \"jobTitle\": \"Software engineer\",\n  \"company\": \"Acme Labs\",\n  \"rawDescription\": \"Worked on APIs and databases\",\n  \"achievementsHint\": \"Reduced p95 latency\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Resume improvements",
@@ -2773,28 +3435,37 @@
             "method": "POST",
             "header": [
               {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/ai/resume/improvements",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/ai/resume/improvements",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ai",
+                "resume",
+                "improvements"
               ]
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"resumeContent\": \"Java developer with Spring Boot experience.\",\n  \"targetJobTitle\": \"Java backend engineer\"\n}"
+              "raw": "{\n  \"resumeContent\": \"Java developer with Spring Boot experience.\",\n  \"targetJobTitle\": \"Java backend engineer\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          },
-          "response": []
+          }
         },
         {
           "name": "Career feedback",
@@ -2802,115 +3473,151 @@
             "method": "POST",
             "header": [
               {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": "{{baseUrl}}/api/ai/resume/career-feedback",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"resumeContent\": \"Java developer with Spring Boot experience.\",\n  \"targetJobTitle\": \"Java backend engineer\"\n}"
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Cover letter (raw AI)",
-          "request": {
-            "method": "POST",
-            "header": [
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              },
               {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/ai/application/cover-letter",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/ai/resume/career-feedback",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ai",
+                "resume",
+                "career-feedback"
               ]
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"jobTitle\": \"Java backend engineer\",\n  \"candidateName\": \"Sam Seeker\",\n  \"candidateSkills\": [\n    \"Java\"\n  ],\n  \"targetCompanyName\": \"Acme Labs\"\n}"
+              "raw": "{\n  \"resumeContent\": \"Java developer with Spring Boot experience.\",\n  \"targetJobTitle\": \"Staff engineer\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "Screening score (path is screening-core)",
+          "name": "Cover letter (AI)",
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              },
               {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/ai/application/screening-core",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{employerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/ai/application/cover-letter",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ai",
+                "application",
+                "cover-letter"
               ]
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"jobTitle\": \"Java backend engineer\",\n  \"requiredSkills\": [\n    \"Java\"\n  ],\n  \"candidateSkills\": [\n    \"Java\",\n    \"Spring Boot\"\n  ]\n}"
+              "raw": "{\n  \"jobTitle\": \"Java backend engineer\",\n  \"jobDescription\": \"Build application APIs.\",\n  \"candidateName\": \"Sam Seeker\",\n  \"candidateSummary\": \"4 years Spring Boot\",\n  \"candidateSkills\": [\n    \"Java\",\n    \"Spring Boot\"\n  ],\n  \"candidateExperience\": [\n    \"Built REST APIs at Acme\"\n  ],\n  \"targetCompanyName\": \"Acme Labs\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "Skills gap (raw AI)",
+          "name": "Screening score (AI)",
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employerToken}}",
+                "type": "text"
+              },
               {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/ai/application/skills-gap",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/ai/application/screening-core",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ai",
+                "application",
+                "screening-core"
               ]
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"jobTitle\": \"Java backend engineer\",\n  \"candidateSkills\": [\n    \"Java\"\n  ],\n  \"requiredSkills\": [\n    \"Java\",\n    \"Kafka\"\n  ]\n}"
+              "raw": "{\n  \"jobTitle\": \"Java backend engineer\",\n  \"experienceLevel\": \"MID_LEVEL\",\n  \"requiredSkills\": [\n    \"Java\",\n    \"Spring Boot\"\n  ],\n  \"responsibilities\": \"Own APIs\",\n  \"candidateSummary\": \"4 years backend\",\n  \"candidateSkills\": [\n    \"Java\",\n    \"PostgreSQL\"\n  ],\n  \"candidateExperience\": [\n    \"Spring Boot at Acme\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          },
-          "response": []
+          }
+        },
+        {
+          "name": "Skills gap (AI)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ai/application/skills-gap",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ai",
+                "application",
+                "skills-gap"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jobTitle\": \"Java backend engineer\",\n  \"candidateSkills\": [\n    \"Java\",\n    \"Spring Boot\"\n  ],\n  \"requiredSkills\": [\n    \"Java\",\n    \"Kafka\",\n    \"Kubernetes\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
         },
         {
           "name": "Search enhance",
@@ -2918,28 +3625,37 @@
             "method": "POST",
             "header": [
               {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "url": "{{baseUrl}}/api/ai/search/enhance",
-            "description": "",
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{seekerToken}}",
-                  "type": "string"
-                }
+            "url": {
+              "raw": "{{baseUrl}}/api/ai/search/enhance",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ai",
+                "search",
+                "enhance"
               ]
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"query\": \"remote java jobs in bangalore\"\n}"
+              "raw": "{\n  \"query\": \"remote java jobs in bangalore\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          },
-          "response": []
+          }
         }
       ]
     }

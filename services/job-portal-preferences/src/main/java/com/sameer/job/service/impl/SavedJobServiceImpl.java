@@ -11,11 +11,13 @@ import com.sameer.job.repository.SavedJobRepository;
 import com.sameer.job.service.SavedJobService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class SavedJobServiceImpl implements SavedJobService {
 
     private final SavedJobRepository savedJobRepository;
@@ -48,6 +50,7 @@ public class SavedJobServiceImpl implements SavedJobService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<SavedJobResponse> getMySavedJob(Long candidateId) {
         return savedJobRepository.findByCandidateId(candidateId)
                 .stream().map(
@@ -56,6 +59,7 @@ public class SavedJobServiceImpl implements SavedJobService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean isSaved(Long candidateId, Long jobId) {
         return savedJobRepository.existsByCandidateIdAndJobId(candidateId, jobId);
     }

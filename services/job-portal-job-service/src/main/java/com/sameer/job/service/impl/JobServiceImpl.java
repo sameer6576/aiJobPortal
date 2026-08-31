@@ -94,6 +94,7 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public JobResponse getJobById(Long id, Long userId, String role) throws Exception {
         Job job = jobRepository.findById(id).orElseThrow(
                 () -> new NotFoundException("Job not found with ID: " + id)
@@ -105,6 +106,7 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<JobResponse> getJobs(JobSearchRequest jobSearchRequest) {
         List<Job> jobs = jobRepository.findAll(JobSpecification.build(jobSearchRequest));
 
@@ -114,6 +116,7 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<JobResponse> searchByNaturalLanguage(String query) throws Exception {
         JobSearchRequest mapped;
         try {
@@ -130,6 +133,7 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<JobResponse> getJobsByCompany(Long companyId) {
         List<Job> jobs = jobRepository.findByCompanyId(companyId);
 
@@ -229,6 +233,7 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<JobResponse> getAllJobsAdmin() {
         return jobRepository.findAll().stream().map(
                 this::convertToResponse

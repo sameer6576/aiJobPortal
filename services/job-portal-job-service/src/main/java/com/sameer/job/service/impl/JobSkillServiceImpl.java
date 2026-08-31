@@ -12,6 +12,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class JobSkillServiceImpl implements JobSkillService {
 
     private final JobSkillRepository jobSkillRepository;
@@ -42,6 +44,7 @@ public class JobSkillServiceImpl implements JobSkillService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<JobSkillResponse> getAllSkills() {
         return jobSkillRepository.findByActiveTrue().stream().map(
                 JobSkillMapper::toJobSkillResponse
@@ -49,6 +52,7 @@ public class JobSkillServiceImpl implements JobSkillService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public JobSkillResponse getSkillById(Long id) throws Exception {
         JobSkill jobSkill = jobSkillRepository.findById(id)
                                               .orElseThrow(() -> new NotFoundException("Job skill not found with ID: " + id));

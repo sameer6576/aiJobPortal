@@ -24,6 +24,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -39,6 +40,7 @@ public class AuthServiceImpl implements AuthService {
 
 
     @Override
+    @Transactional
     public AuthResponse signup(SignupRequest req) throws Exception {
         if(userRepository.existsByEmail(req.getEmail())){
             throw new ConflictException(ErrorCodes.EMAIL_REGISTERED, "Email already registered");
@@ -86,6 +88,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public AuthResponse login(LoginRequest req) throws Exception {
         Authentication authentication = authenticate(
                 req.getEmail(), req.getPassword()

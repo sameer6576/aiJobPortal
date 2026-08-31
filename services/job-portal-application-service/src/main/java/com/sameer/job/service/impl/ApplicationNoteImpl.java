@@ -13,11 +13,13 @@ import com.sameer.job.service.ApplicationNoteService;
 import com.sameer.job.service.ApplicationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ApplicationNoteImpl implements ApplicationNoteService {
 
     private final ApplicationRepository applicationRepository;
@@ -42,6 +44,7 @@ public class ApplicationNoteImpl implements ApplicationNoteService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ApplicationNoteResponse> getNotesByApplication(Long applicationId, Long employerId) throws Exception {
         Application application = applicationService.getApplicationEntity(applicationId);
         assertEmployer(application, employerId);

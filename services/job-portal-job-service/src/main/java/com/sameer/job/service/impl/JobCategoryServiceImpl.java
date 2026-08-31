@@ -12,11 +12,13 @@ import com.sameer.job.service.JobCategoryService;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class JobCategoryServiceImpl implements JobCategoryService {
 
     private final JobCategoryRepository jobCategoryRepository;
@@ -50,6 +52,7 @@ public class JobCategoryServiceImpl implements JobCategoryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<JobCategoryResponse> getAllCategories() {
         return jobCategoryRepository.findByActiveTrue().stream().map(
                 jobCategory -> JobCategoryMapper.toJobCategoryResponse(jobCategory, false)
@@ -57,6 +60,7 @@ public class JobCategoryServiceImpl implements JobCategoryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public JobCategoryResponse getCategoryById(Long id) throws Exception {
         JobCategory jobCategory = getCategoryEntityById(id);
         return JobCategoryMapper.toJobCategoryResponse(jobCategory, true);

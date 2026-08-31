@@ -10,17 +10,20 @@ import com.sameer.job.repository.UserRepository;
 import com.sameer.job.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public User getUserByEmail(String email) throws Exception{
         User user = userRepository.findByEmail(email);
         if(user == null){
@@ -30,11 +33,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public User getUserById(Long id) throws Exception{
         return userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found with id: "+id));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }

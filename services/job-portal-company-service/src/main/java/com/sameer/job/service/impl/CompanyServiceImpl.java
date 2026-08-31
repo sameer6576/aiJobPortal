@@ -17,6 +17,7 @@ import com.sameer.job.service.CompanyService;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CompanyServiceImpl implements CompanyService {
 
     private final CompanyRepository companyRepository;
@@ -91,6 +93,7 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CompanyResponse getCompanyById(Long id) throws Exception {
         Company company = companyRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Company not found with ID: " + id));
@@ -98,6 +101,7 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CompanyResponse getMyCompany(Long ownerId) throws Exception {
         Company company = companyRepository.findByOwnerId(ownerId)
                 .orElseThrow(() -> new NotFoundException("Company not found for owner: " + ownerId));
@@ -105,6 +109,7 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CompanyResponse> getAllCompanies(CompanyType companyType,
                                                  IndustryType industryType,
                                                  CompanyStatus companyStatus) {
