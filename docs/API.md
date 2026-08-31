@@ -1,25 +1,32 @@
 # API notes
 
-The API is exposed through the gateway. There is no generated OpenAPI document. A clone walkthrough is in [demo.http](http/demo.http). Import [JobMate.postman_collection.json](http/JobMate.postman_collection.json) into Postman for every gateway route.
+The HTTP API is the gateway. There is no `/v1` prefix, no pagination on list endpoints, and no generated OpenAPI document. These notes are a contract sketch, not a DTO catalog.
 
-## Authentication
+Runnable walkthrough: [demo.http](http/demo.http). Every gateway route: [JobMate.postman_collection.json](http/JobMate.postman_collection.json) (import into Postman).
 
-Public endpoints:
+## Gateway
 
-| Method | Path |
+Public (no JWT): `/auth/**` → user-service.
+
+Protected (`Authorization: Bearer <access-token>`). The gateway validates the JWT, then replaces `X-User-Id`, `X-User-Email`, and `X-User-Role` from claims (`email`, `authorities`, `userId`) before forwarding:
+
+| Prefix | Service |
 |---|---|
-| POST | `/auth/signup` |
-| POST | `/auth/login` |
+| `/api/users/**` | user-service |
+| `/api/companies/**` | company-service |
+| `/api/jobs/**`, `/api/job-categories/**`, `/api/job-skills/**`, `/api/job-tags/**` | job-service |
+| `/api/applications/**` | application-service |
+| `/api/resumes/**` | resume-service |
+| `/api/preferences/**` | preferences |
+| `/api/ai/**` | AI service |
 
-Configured `/api/**` gateway routes require:
+Access tokens are issued by user-service, expire after 24 hours, and include the user's role in `authorities`. Self-registration as `ROLE_ADMIN` is rejected. Passwords must be at least 8 characters. Suspended and deleted accounts cannot log in.
 
-```http
-Authorization: Bearer <access-token>
-```
+## Admin and taxonomy (gateway role checks)
 
-Signup JWT includes the user's role in `authorities`. Self-registration as `ROLE_ADMIN` is rejected.
+These paths are matched before the prefix routes. Direct service ports do not apply these checks.
 
-Admin-only through the gateway (`ROLE_ADMIN`):
+Admin only (`ROLE_ADMIN`):
 
 | Method | Path |
 |---|---|
@@ -31,101 +38,105 @@ Admin-only through the gateway (`ROLE_ADMIN`):
 | PATCH | `/api/companies/{id}/deactivate` |
 | GET | `/api/jobs/admin` |
 
-Employer or admin through the gateway:
+Taxonomy writes (`ROLE_ADMIN` or `ROLE_EMPLOYER`). GET on the same resources is authenticated but not role-gated at the gateway:
 
 | Method | Path |
 |---|---|
-| POST/PUT/DELETE | `/api/job-categories` |
-| POST/PUT/DELETE | `/api/job-skills` |
-| POST/PUT/DELETE | `/api/job-tags` |
-
-Passwords must be at least 8 characters. Suspended and deleted accounts cannot log in. Access tokens expire after 24 hours.
+| POST | `/api/job-categories` |
+| PUT, DELETE | `/api/job-categories/{id}` |
+| POST | `/api/job-skills` |
+| PUT, DELETE | `/api/job-skills/{id}` |
+| POST | `/api/job-tags` |
+| PUT, DELETE | `/api/job-tags/{id}` |
 
 ## Main resources
 
 ### User
 
-- `GET /api/users/profile`
-- `PUT /api/users/profile`
-- `GET /api/users/{userId}`
-- `GET /api/users`
-- suspend, activate, and soft-delete endpoints (admin through the gateway)
+- `GET` / `PUT /api/users/profile`
+- `GET /api/users/{userId}` (any authenticated caller; application-service uses this over Feign)
+- Admin list, suspend, activate, and soft-delete as in the table above
 
 ### Company
 
 - `POST /api/companies`
 - `GET /api/companies/{id}`
 - `GET /api/companies/my`
-- `GET /api/companies`
-- update, verify, deactivate, and delete endpoints
+- `GET /api/companies` — optional `companyType`, `industryType`, `companyStatus`
+- `PUT /api/companies/{id}` — owner
+- `PATCH /api/companies/{id}` — owner delete (not `DELETE`)
+- Admin verify and deactivate as in the table above
 
 ### Job
 
 - `POST /api/jobs`
-- `GET /api/jobs/{id}` (HTTP 200; drafts are hidden unless the employer or an admin)
-- `GET /api/jobs` with query filters (`categoryId` matches the category, openings use the `opening` column)
-- `GET /api/jobs/company/{companyId}` (open jobs only)
-- `POST /api/jobs/search/natural` with `{ "query": "..." }`
-- `GET /api/jobs/admin` (admin through the gateway)
-- `PATCH /api/jobs/{id}/publish`
-- `PATCH /api/jobs/{id}/close`
-- categories, skills, and tags under their own resources
+- `GET /api/jobs/{id}` — drafts return `NOT_FOUND` unless the employer or an admin
+- `GET /api/jobs` — optional `keyword`, `companyId`, `categoryId` (category entity id), `location` (city/state/country contains), `minSalary`, `maxSalary`, `jobType`, `workMode`, `experienceLevel`, `status` (defaults to `OPEN`), `minOpenings`, `maxOpenings` (column `opening`). `skillIds` and `tagIds` are on the request type but are not applied
+- `GET /api/jobs/company/{companyId}` — open jobs only
+- `POST /api/jobs/search/natural` with `{ "query": "..." }` — AI mapping fail-opens to a keyword search
+- `GET /api/jobs/admin`
+- `PUT /api/jobs/{id}`, `PATCH /api/jobs/{id}/publish`, `PATCH /api/jobs/{id}/close`, `DELETE /api/jobs/{id}` — posting employer
+- Categories, skills, and tags under `/api/job-categories`, `/api/job-skills`, `/api/job-tags`
 
 ### Resume
 
-- `POST /api/resumes`
-- `GET /api/resumes/{resumeId}`
-- `GET /api/resumes/my`
-- personal information, summary, default selection, and deletion
-- nested education, work experience, project, skill, and language resources
+Structured JSON records. PDF or DOC upload is not implemented.
 
-Resumes are structured records; PDF or DOC upload is not implemented.
+- `POST /api/resumes`
+- `GET /api/resumes/{resumeId}`, `GET /api/resumes/my`
+- `PUT /api/resumes/{resumeId}/personal-info`, `/summary`, `/default`
+- `DELETE /api/resumes/{resumeId}`
+- Nested owner-scoped resources: `/educations`, `/work-experiences`, `/projects`, `/skills`, `/languages`
 
 ### Application
 
 - `POST /api/applications`
-- `GET /api/applications/{applicationId}`
+- `GET /api/applications/{applicationId}` — candidate or employer on that row
 - `GET /api/applications/my`
-- `GET /api/applications/company`
-- status, withdrawal, starring, deletion, and employer notes
+- `GET /api/applications/company` — employer; optional `jobId`, `status`, `isStarred`, `aiShortListStatus`, `minAiScore`; `sortBy` `AI_SCORE_DESC` / `AI_SCORE_ASC` (otherwise `appliedAt` descending)
+- `GET /api/applications/job/{jobId}` — that job's employer
+- `PATCH /api/applications/{applicationId}/status`, `/star` — employer
+- `PATCH /api/applications/{applicationId}/withdraw`, `DELETE /api/applications/{applicationId}` — candidate
+- Notes: `/api/applications/{applicationId}/notes` — employer
 - `POST /api/applications/{applicationId}/cover-letter`
 - `GET /api/applications/{applicationId}/skills-gap`
 
-`POST /api/applications` stores `aiScore` and `aiShortListStatus` when Gemini screening succeeds (`>=80` AUTO_SHORTLISTED, `>=50` REVIEW_RECOMMENDED, otherwise LOW_MATCH). Gemini failure leaves `NOT_SCREENED` and does not reject the apply. Cover-letter generation is also fail-open.
-
-`GET /api/applications/{applicationId}` is limited to the candidate or employer on that row. `GET /api/applications/job/{jobId}` is limited to the job's employer.
+On apply, when Gemini screening succeeds, `aiScore` is stored and `aiShortListStatus` is `AUTO_SHORTLISTED` (`>=80`), `REVIEW_RECOMMENDED` (`>=50`), or `LOW_MATCH`. Gemini failure leaves `aiScore` null and `NOT_SCREENED`; the application is still created. Cover-letter generation is fail-open: Gemini failure returns the stored application without updating the letter. Skills-gap does not fail open; AI errors propagate (`AI_UNAVAILABLE` when Gemini is down).
 
 ### Preferences
 
-- save, list, check, and remove saved jobs under `/api/preferences/saved-jobs`
+Under `/api/preferences/saved-jobs`: `POST`, `GET`, `GET /check?jobId=`, `DELETE /{savedJobId}`.
 
 ### AI
 
-The AI service exposes:
+Authenticated `/api/ai/**`. Application-service and job-service assemble context and call these over Feign; the same payloads work if the body is sent directly.
 
-- application cover-letter, screening-score, and skills-gap prompts
-- job description, requirements, salary, skills, responsibilities, benefits, and tag assistance
-- resume summary, experience bullet, improvement, and career feedback assistance
-- search enhancement
+- `POST /api/ai/application/cover-letter`, `/screening-core`, `/skills-gap`
+- Job: `POST /api/ai/job/describe`, `/salary-suggestion`; `GET /api/ai/job/requirements`, `/skills-recommendation`, `/responsibilities`, `/benefits`, `/tags-recommendation`
+- Resume: `POST /api/ai/resume/summary`, `/experience-bullets`, `/improvements`, `/career-feedback`
+- `POST /api/ai/search/enhance`
 
-Application-service and job-service assemble job/resume context and call these over Feign. Direct `/api/ai/**` calls still accept the same payloads in the request body. `GET /api/ai/{prompt}` and `/api/ai/alert-suggestion` are removed.
+`GET /api/ai/{prompt}` and `/api/ai/alert-suggestion` are not present.
 
 ## Errors
 
-Failed requests return a JSON body (not a wrapper around successes):
+Service failures use a body (successes are not wrapped):
 
 ```json
 { "code": "NOT_FOUND", "message": "Job not found with ID: 12" }
 ```
 
-HTTP status comes from the exception type (`404`, `403`, `409`, `400`, `401`, `503`). Unexpected failures log the cause and return `INTERNAL_ERROR` with `"An unexpected error occurred"`.
+HTTP status follows the exception type (`404`, `403`, `409`, `400`, `401`, `503`). Unexpected failures log the cause and return `INTERNAL_ERROR` with `"An unexpected error occurred"`.
 
 Stable codes: `NOT_FOUND`, `FORBIDDEN`, `CONFLICT`, `BAD_REQUEST`, `UNAUTHORIZED`, `VALIDATION_FAILED`, `INTERNAL_ERROR`, `AI_UNAVAILABLE`, `ALREADY_APPLIED`, `JOB_NOT_OPEN`, `EMAIL_REGISTERED`, `ADMIN_SELF_SIGNUP`, `ACCOUNT_DISABLED`, `INVALID_CREDENTIALS`.
+
+Gateway missing/invalid JWT and role denials use Spring `ResponseStatusException` (typically `401` / `403`). They are not this `{code,message}` body.
+
+Direct service ports still trust identity headers and skip gateway role checks.
 
 ## Current API constraints
 
 - No `/v1` version prefix
 - No pagination on list endpoints
 - No generated OpenAPI specification
-- Direct service ports still trust identity headers
 - Resume AI is `POST /api/ai/resume/...`

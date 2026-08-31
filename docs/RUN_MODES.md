@@ -1,14 +1,16 @@
 # Run the stack in three modes
 
-Pick **one** mode per machine session. Do not mix them: they compete for Eureka (`8761`), Config Server (`8888`), gateway (`5007` vs Compose `5050`), and Postgres host ports.
+This file is the canonical startup guide. Pick **one** mode per machine session. Do not mix them: they compete for Eureka (`8761`), Config Server (`8888`), gateway (`5007` vs Compose `5050`), and Postgres host ports.
+
+Environment topology and IDE troubleshooting: [LOCAL_DEVELOPMENT.md](LOCAL_DEVELOPMENT.md). Reviewer API walkthrough: [DEMO.md](DEMO.md). Tests: [TESTING.md](TESTING.md).
 
 | Mode | Java processes | PostgreSQL | Kafka (optional) | Gateway URL |
 |---|---|---|---|---|
-| 1. Native | IntelliJ | Homebrew / local on `5432` | Local broker on `9092` | `http://localhost:5007` |
+| 1. Native | IntelliJ | Homebrew / local installer on `5432` | Local broker on `9092` | `http://localhost:5007` |
 | 2. Hybrid | IntelliJ | Compose DB containers | `docker-compose.dev.yaml` or local broker | `http://localhost:5007` |
 | 3. Full Compose | None (images) | Compose | `--profile kafka` | `http://localhost:5050` |
 
-Commands below assume the repo root is `job-portal-system` and a Unix shell. From `docker/` on Windows PowerShell, the same `docker compose` lines apply.
+Commands assume the repo root is `job-portal-system`. Unix examples use bash. From `docker/` on Windows PowerShell, the same `docker compose` lines apply; PowerShell equivalents are shown where the Unix form differs.
 
 ---
 
@@ -19,6 +21,13 @@ Commands below assume the repo root is `job-portal-system` and a Unix shell. Fro
 ```bash
 cd docker
 cp .env.example .env
+```
+
+PowerShell:
+
+```powershell
+Set-Location docker
+Copy-Item .env.example .env
 ```
 
 Edit `docker/.env`: set `DB_PASSWORD` (Postgres `postgres` role) and `JWT_SECRET` (at least 32 bytes). Optional: `GEMINI_API_KEY`, `MAIL_USERNAME`, `MAIL_PASSWORD`.
@@ -74,7 +83,9 @@ brew services start postgresql@17
 pg_isready -h localhost -p 5432
 ```
 
-If `postmaster.pid` is stale and nothing listens on `5432`, remove the pid file only after `lsof -nP -iTCP:5432 -sTCP:LISTEN` is empty, then start the service again. Do not `initdb` over an existing data directory.
+On Windows, start the PostgreSQL Windows service (or the installer stack) so something listens on `5432`, then use `pg_isready` / `psql` from the PostgreSQL `bin` directory if it is on `PATH`.
+
+If `postmaster.pid` is stale and nothing listens on `5432`, remove the pid file only after you confirm the port is free, then start the service again. Do not `initdb` over an existing data directory.
 
 Create databases (skip any that already exist):
 
@@ -90,6 +101,13 @@ CREATE DATABASE job_portal_resume;
 SQL
 ```
 
+PowerShell (SQL file or `-c` per database):
+
+```powershell
+psql -h localhost -p 5432 -U postgres -d postgres -c "CREATE DATABASE job_portal_user;"
+# repeat for company, job, application, preference, resume
+```
+
 Set the `postgres` password to the same value as `DB_PASSWORD`:
 
 ```bash
@@ -100,6 +118,10 @@ psql -h localhost -p 5432 -U postgres -c "ALTER USER postgres PASSWORD 'your-loc
 
 ```bash
 cp docker/local-native.env.example docker/local-native.env
+```
+
+```powershell
+Copy-Item docker\local-native.env.example docker\local-native.env
 ```
 
 Set `DB_PASSWORD` and `JWT_SECRET` in `docker/local-native.env` (same `JWT_SECRET` as you will use on the gateway).
@@ -116,29 +138,29 @@ Check Config Server:
 curl -s http://localhost:8888/job-portal-user-service/default | head
 ```
 
+```powershell
+curl.exe -s http://localhost:8888/job-portal-user-service/default
+```
+
 `propertySources` must be non-empty.
 
 ### 4. Optional Kafka + notification (still no Docker)
 
-Stop any container bound to `9092`. Then either Homebrew Kafka or the Apache tarball (KRaft, no ZooKeeper), as in `docs/LOCAL_DEVELOPMENT.md`. Confirm:
-
-```bash
-lsof -nP -iTCP:9092 -sTCP:LISTEN
-```
+Stop any container bound to `9092`. Then either Homebrew Kafka or the Apache tarball (KRaft, no ZooKeeper). Confirm something listens on `9092`.
 
 Start notification-service. Application-service already defaults to `KAFKA_BOOTSTRAP_SERVERS=localhost:9092`.
 
 ### 5. Call the API
 
-```text
-http://localhost:5007
-```
+Gateway: **`http://localhost:5007`**
 
 Eureka: `http://localhost:8761`
 
+Config: `http://localhost:8888`
+
 ### Stop
 
-Stop IntelliJ run configurations. Stop Kafka if you started it. Optionally `brew services stop postgresql@17` if you want Postgres down too.
+Stop IntelliJ run configurations. Stop Kafka if you started it. Optionally stop the local PostgreSQL service if you want Postgres down too.
 
 ---
 
@@ -175,13 +197,17 @@ pg_isready -h localhost -p 5434
 cp docker/local-hybrid.env.example docker/local-hybrid.env
 ```
 
+```powershell
+Copy-Item docker\local-hybrid.env.example docker\local-hybrid.env
+```
+
 Set `DB_PASSWORD` and `JWT_SECRET` to match `docker/.env` (and the password baked into the DB volumes).
 
 EnvFile → `docker/local-hybrid.env` on DB-backed services. Gateway: same `JWT_SECRET`.
 
 ### 4. Run the apps
 
-Same IntelliJ order as mode 1. Gateway: `http://localhost:5007`.
+Same IntelliJ order as mode 1. Gateway: **`http://localhost:5007`**.
 
 ### 5. Optional Kafka for IntelliJ notification-service
 
@@ -208,7 +234,9 @@ Stop IntelliJ processes.
 
 ## Mode 3 — Full Docker Compose
 
-No IntelliJ for the backend. Images must exist (`sameer9599/job-portal-*:latest` or rebuild with Jib). From `docker/`:
+No IntelliJ for the backend. Images must already exist as `sameer9599/job-portal-*:latest` (local or pulled) **or** you must rebuild them with Jib (`jib:dockerBuild`). Compose does not compile source.
+
+From `docker/`:
 
 ```bash
 cd docker
@@ -218,20 +246,34 @@ docker compose up -d
 docker compose ps
 ```
 
-Gateway on the host: **`http://localhost:5050`** (maps to container `5007`).
+Gateway on the host: **`http://localhost:5050`** (maps container `5007` → host `5050`).
 
 Eureka: `http://localhost:8761`. Config: `http://localhost:8888`.
 
 Containers use `SPRING_DATASOURCE_URL` like `jdbc:postgresql://companydb:5432/job_portal_company`. Do not set `DB_HOST=localhost` on those containers.
 
-### Kafka + notification in Compose
+### Compose profiles
+
+Default `docker compose up -d` starts discovery, config-server, gateway, domain services, AI, and the six Postgres containers. It does **not** start Kafka or notification-service.
+
+`kafka` and `notification-service` are declared with `profiles: ["kafka"]`. They start only with:
 
 ```bash
 cd docker
 docker compose --profile kafka up -d
 ```
 
-Notification uses `KAFKA_BOOTSTRAP_SERVERS=kafka:29092`. Do not also run `docker-compose.dev.yaml`.
+Notification then uses `KAFKA_BOOTSTRAP_SERVERS=kafka:29092`. Do not also run `docker-compose.dev.yaml`.
+
+**Warning:** `application-service` is configured with `KAFKA_BOOTSTRAP_SERVERS=kafka:29092` in Compose even when profile `kafka` is not started. A status change still persists in the database. The Kafka publish can fail after about 3 seconds (`max.block.ms` default 3000 in `KafkaProducerConfig`) because hostname `kafka` is not there.
+
+To get email events, start with `--profile kafka` **and** set SMTP in `docker/.env`. Application status is saved even if Kafka or SMTP fails.
+
+### Discovery and Config Server health checks
+
+Compose `discovery` and `config-server` health checks call `http://localhost:8761/actuator/health` and `http://localhost:8888/actuator/health`. The **source** POMs for `job-portal-service-registry` and `job-portal-config-server` do not include `spring-boot-starter-actuator`. Whether a prebuilt `sameer9599/job-portal-*` image serves those actuator paths is unverified. If those checks never become healthy, inspect the image and logs rather than assuming the current source tree matches the image.
+
+Gateway and user-service source POMs do include actuator; Compose does not health-check those containers the same way.
 
 ### Rebuild images (when you change code)
 
@@ -267,8 +309,8 @@ Add `-v` only if you intend to wipe Postgres volumes.
 |---|---|---|
 | Eureka UI | `http://localhost:8761` | same |
 | Config | `curl http://localhost:8888/job-portal-user-service/default` | same |
-| Gateway health / login | `http://localhost:5007` | `http://localhost:5050` |
-| API walkthrough | [DEMO.md](DEMO.md), Postman `docs/http/JobMate.postman_collection.json` | set `baseUrl` to `http://localhost:5050` |
+| Gateway | `http://localhost:5007` | `http://localhost:5050` |
+| API walkthrough | [DEMO.md](DEMO.md), [demo.http](http/demo.http), Postman [JobMate.postman_collection.json](http/JobMate.postman_collection.json) | set `baseUrl` / `@gateway` to `http://localhost:5050` |
 
 ---
 
@@ -277,8 +319,10 @@ Add `-v` only if you intend to wipe Postgres volumes.
 - Placeholder `DB_HOST` / `USER_DB_PORT`: IntelliJ is missing `local-native.env` or `local-hybrid.env`.
 - `Connection refused` on `5432`: native Postgres is down (mode 1).
 - `Connection refused` on `5434` / `5436`: hybrid DBs are not up, or you loaded native env while expecting Docker ports.
-- `password authentication failed`: IntelliJ `DB_PASSWORD` ≠ volume or Homebrew role. Postgres Docker only reads `POSTGRES_PASSWORD` on first volume init.
+- `password authentication failed`: IntelliJ `DB_PASSWORD` ≠ volume or local role. Postgres Docker only reads `POSTGRES_PASSWORD` on first volume init.
 - `JWT_SECRET must contain at least 32 bytes`: gateway or user-service missing the secret.
 - Port already in use: another mode still running.
+- Mode 3 status update slow / Kafka error in application-service logs: profile `kafka` not started; DB status can still persist (see warning above).
+- Mode 3 discovery/config never healthy: actuator health URLs vs image contents (see above).
 
 More detail: [LOCAL_DEVELOPMENT.md](LOCAL_DEVELOPMENT.md).

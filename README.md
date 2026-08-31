@@ -1,8 +1,24 @@
 # JobMate Backend
 
-JobMate is a Java 21 job-marketplace backend built as Spring Cloud services. It covers identity, employer companies, job publishing, structured resumes, applications, saved jobs, Gemini-assisted content, and Kafka-driven email notifications.
+JobMate is a **backend-only** job-marketplace API: identity, employer companies, job publishing, structured resumes, applications, saved jobs, Gemini-assisted content, and optional Kafka-driven email. It is a local portfolio system, not a production or Naukri-scale deployment. There is no frontend.
 
-This repository contains the backend only. It is a portfolio system intended for local evaluation, not a claim of Naukri-scale deployment.
+## Documentation
+
+| Doc | Use |
+|---|---|
+| [Run modes](docs/RUN_MODES.md) | Canonical how to start (native IntelliJ, hybrid DBs, full Compose) |
+| [Demo](docs/DEMO.md) | 15-minute walkthrough; `docs/http/demo.http` and Postman |
+| [API notes](docs/API.md) | Gateway routes, auth, error codes |
+| [Architecture](docs/ARCHITECTURE.md) | Boundaries, Feign, Kafka, AI |
+| [Request flows](docs/FLOWS.md) | Signup, publishing, apply, review, search, saved jobs, admin |
+| [Domain model](docs/DOMAIN.md) | Roles, states, ownership, invariants |
+| [Decisions](docs/DECISIONS.md) | Why MVC gateway, DB-per-service, fail-open AI |
+| [Limitations](docs/LIMITATIONS.md) | Non-goals and current gaps |
+| [Portfolio](docs/PORTFOLIO.md) | Recruiter-facing summary |
+| [Local development](docs/LOCAL_DEVELOPMENT.md) | Env files, DB ports, Config Server path |
+| [Testing](docs/TESTING.md) | Existing coverage, commands, CI scope, gaps |
+| [Security](docs/SECURITY.md) | JWT, header trust, secrets handling |
+| [Contributing](CONTRIBUTING.md) | Ownership, identity headers, tests |
 
 ## Architecture
 
@@ -29,148 +45,91 @@ flowchart LR
   User --> Config[ConfigServer]
 ```
 
-See [Architecture](docs/ARCHITECTURE.md) and [technical decisions](docs/DECISIONS.md) for boundaries and trade-offs.
+Six domain services each own a PostgreSQL database. Kafka and SMTP are optional (`docker compose --profile kafka`). Gemini is optional; apply still persists if screening fails.
 
 ## Modules
 
 | Path | Responsibility |
 |---|---|
-| `cloud/job-portal-service-registry` | Eureka service registry |
-| `cloud/job-portal-config-server` | Native Spring Cloud Config Server |
-| `cloud/job-portal-api-gateway` | Routing and JWT verification |
+| `cloud/job-portal-service-registry` | Eureka |
+| `cloud/job-portal-config-server` | Native Spring Cloud Config Server (`job-portal-config/`) |
+| `cloud/job-portal-api-gateway` | Spring MVC gateway: JWT verify, identity headers, path-based admin |
 | `services/job-portal-user-service` | Signup, login, profiles, user administration |
 | `services/job-portal-company-service` | Employer-owned company profiles |
-| `services/job-portal-job-service` | Jobs, categories, skills, tags, and filtering |
+| `services/job-portal-job-service` | Jobs, categories, skills, tags, filters, natural-language search |
 | `services/job-portal-resume-service` | Structured resumes and nested sections |
-| `services/job-portal-application-service` | Application lifecycle and employer notes |
+| `services/job-portal-application-service` | Application lifecycle, notes, screening orchestration |
 | `services/job-portal-preferences` | Saved jobs |
-| `services/job-portal-ai-service` | Gemini job, resume, search, and application assistance |
-| `services/job-portal-notification-service` | Kafka consumer and SMTP email delivery |
-| `common-lib` | Shared DTOs, enums, and event contracts |
+| `services/job-portal-ai-service` | Stateless Gemini adapter |
+| `services/job-portal-notification-service` | Kafka consumer and SMTP |
+| `common-lib` | Shared DTOs, enums, event contracts |
 | `job-portal-config` | Sanitized local Config Server properties |
 | `docker` | PostgreSQL, cloud, and service Compose definitions |
 
 ## Stack
 
 - Java 21, Maven, Spring Boot 4.0.5, Spring Cloud 2025.1.1
-- Spring MVC Gateway, Eureka, Config Server, OpenFeign
+- Spring MVC Gateway (not WebFlux), Eureka, native Config Server, OpenFeign
 - Spring Security, BCrypt, JJWT
-- Spring Data JPA, Hibernate, PostgreSQL 16
-- Apache Kafka, JavaMail
-- Google Gen AI SDK
+- Spring Data JPA, Hibernate (`ddl-auto: update`), six PostgreSQL databases (Compose uses Postgres 16)
+- Optional Apache Kafka and JavaMail
+- Google Gen AI SDK (Gemini)
 - Docker Compose and Jib
 
-## Prerequisites
+## Prerequisites and configuration
 
-- JDK 21
-- Maven 3.9 or a module Maven wrapper
-- Docker Desktop
-- A JWT secret of at least 32 bytes
-- Optional Gemini API key and SMTP credentials
+- JDK 21, Maven 3.9+ (no wrapper at repo root; wrappers exist in executable modules)
+- Docker Desktop for Compose databases (and optional Kafka)
+- Runtime env: `JWT_SECRET` (≥ 32 bytes), `DB_PASSWORD`; optional `GEMINI_API_KEY`, `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`
 
-There is no Maven wrapper at the repository root; wrappers are present inside executable modules.
+Copy `docker/.env.example` → `docker/.env`. Never commit `.env` files or secret values. Placeholders and Config Server layout: [Local development](docs/LOCAL_DEVELOPMENT.md).
 
-## Configuration
+## How to run and demo
 
-Copy `docker/.env.example` to `docker/.env` and supply local values:
+Start instructions live in **[docs/RUN_MODES.md](docs/RUN_MODES.md)** (pick one mode; do not mix). Walkthrough: **[docs/DEMO.md](docs/DEMO.md)**.
 
-```dotenv
-DB_PASSWORD=
-JWT_SECRET=
-GEMINI_API_KEY=
-MAIL_USERNAME=
-MAIL_PASSWORD=
-```
-
-Never commit `docker/.env`. Configuration files use environment placeholders and the Config Server reads `job-portal-config/`.
-
-## Local startup
-
-Start PostgreSQL:
-
-```bash
-cd docker
-docker compose up -d userdb companydb jobdb applicationdb preferencedb resumedb
-```
-
-Build the reactor from the repository root:
-
-```bash
-mvn clean install
-```
-
-Run applications from the IDE or their module wrappers in this order:
-
-1. `job-portal-service-registry`
-2. `job-portal-config-server`
-3. `job-portal-api-gateway`
-4. `job-portal-user-service`
-5. Company, job, resume, application, preferences, and AI services
-6. Kafka and notification service when testing email events
-
-Set `DB_PASSWORD`, `JWT_SECRET`, and optional integration variables in each process environment. The gateway listens on `5007` when run locally. Docker maps it to `5050`.
-
-| Component | Local port |
-|---|---:|
-| Eureka | 8761 |
-| Config Server | 8888 |
-| Gateway | 5007 |
-| User | 5001 |
-| Company | 5002 |
-| Job | 5003 |
-| Application | 5004 |
-| Preferences | 5005 |
-| Resume | 5009 |
-| AI | 5010 |
-| Notification | 5011 |
-| Kafka | 9092 |
-
-Detailed commands and database ports are in [Local development](docs/LOCAL_DEVELOPMENT.md). Step-by-step for native IntelliJ, hybrid (IntelliJ + Compose DBs), and full Compose: [Run modes](docs/RUN_MODES.md).
+Gateway: `http://localhost:5007` (host Java) or `http://localhost:5050` (full Compose). Eureka `8761`, Config Server `8888`.
 
 ## API highlights
+
+Call the **gateway**. Use `Authorization: Bearer <token>` except `/auth/**`.
 
 - `POST /auth/signup`, `POST /auth/login`
 - `GET /api/users/profile`
 - `POST /api/companies`, `GET /api/companies/my`
 - `POST /api/jobs`, `GET /api/jobs`, `PATCH /api/jobs/{id}/publish`
 - `POST /api/resumes` and nested resume sections
-- `POST /api/applications` with fail-open Gemini screening; cover letter and skills-gap by application id
+- `POST /api/applications` (fail-open Gemini screening); cover letter and skills-gap by application id
 - `POST /api/jobs/search/natural`
 - `POST /api/preferences/saved-jobs`
-- Gemini job, resume, and search assistance under `/api/ai`
+- Gemini helpers under `/api/ai`
 
-Use `Authorization: Bearer <token>` for gateway routes outside `/auth/**`. See [API notes](docs/API.md).
+See [API notes](docs/API.md). There is no generated OpenAPI spec; maintain `docs/http/gen_postman.mjs` / `JobMate.postman_collection.json` when routes change.
 
 ## Current status
 
-Implemented:
+Implemented for local evaluation:
 
-- Service discovery, centralized local configuration, gateway routing, and JWT issuance/verification
-- Database-per-service persistence for six domain services
-- Feign collaboration between job, company, resume, user, and application services
-- Kafka application-status event and SMTP email consumer (`docker compose --profile kafka`)
-- Gemini screening on apply, cover letter, skills-gap, and natural-language job search
-- Gateway `ROLE_ADMIN` on administrative user, company, and job routes; employer/admin taxonomy writes; application GET ownership
-- Company update, resume nested GETs, and application notes check the owner or employer
-- Apply is limited to `OPEN` jobs; drafts are not listed on public company job lists
+- Eureka, native Config Server, user-service JWT issuance, and MVC gateway verification/header rewrite
+- Database-per-service persistence; Hibernate `ddl-auto: update` (no Flyway/Liquibase)
+- Feign between job, company, resume, user, application, and AI
+- Optional Kafka `application.status.changed` + SMTP (`docker compose --profile kafka`)
+- Gemini screening on apply, cover letter (fail-open), skills-gap, natural-language job search
+- Gateway `ROLE_ADMIN` on listed admin routes; employer/admin taxonomy writes; application GET ownership
+- Company update, resume nested GETs, and application notes check owner or employer
+- Apply only to `OPEN` jobs; drafts omitted from public company job lists
 - Login rejects `SUSPENDED` and `DELETED` accounts
-- Unit coverage for signup JWT roles, suspended login, job search filters, apply-time screening, and draft-job apply rejection
-- Jib image configuration and Docker Compose infrastructure
+- Unit tests for signup JWT roles, suspended login, job search filters, apply-time screening, draft-job apply rejection, plus context-load smoke tests
+- Jib images and Compose infrastructure
 
-Known limitations:
-
-- Service-level authorization is not complete; the gateway is the intended public entry point.
-- Gemini and Kafka failures are logged; apply and status updates still persist.
-- Database schemas use `ddl-auto: create`; migrations are not present.
-- Tests cover a few domain paths plus context-load smoke tests.
-- There is no frontend, OpenAPI document, refresh-token flow, resume file parser, search index, or production deployment.
+Gaps and non-goals: [Limitations](docs/LIMITATIONS.md). In short: services trust identity headers on direct ports; no outbox; no frontend, refresh tokens, file parsing, search index, Kubernetes, or production deployment.
 
 ## Security
 
-Secrets are supplied at runtime. If older copies of this project were shared, rotate the previous JWT, database, SMTP, and Gemini credentials because removing them from the working tree does not remove Git history.
+Secrets are environment variables only. Rotate JWT, database, SMTP, and Gemini credentials if older copies of this project were shared; removing them from the tree does not erase Git history.
 
-Read [Security](docs/SECURITY.md) before exposing any service.
+Read [Security](docs/SECURITY.md) before exposing any port.
 
 ## License
 
-No redistribution license has been granted. This repository is currently source-available for portfolio review.
+No redistribution license has been granted. Source-available for portfolio review.
