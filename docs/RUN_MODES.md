@@ -10,6 +10,12 @@ Environment topology and IDE troubleshooting: [LOCAL_DEVELOPMENT.md](LOCAL_DEVEL
 | 2. Hybrid | IntelliJ | Compose DB containers | `docker-compose.dev.yaml` or local broker | `http://localhost:5007` |
 | 3. Full Compose | None (images) | Compose | `--profile kafka` | `http://localhost:5050` |
 
+Companion frontend:
+[ai-job-portal-frontend](https://github.com/sameer6576/ai-job-portal-frontend).
+Run `npm run dev` for modes 1–2 (proxy target `5007`) or
+`npm run dev:docker` for mode 3 (proxy target `5050`). The frontend does not
+need backend secrets.
+
 Commands assume the repo root is `job-portal-system`. Unix examples use bash. From `docker/` on Windows PowerShell, the same `docker compose` lines apply; PowerShell equivalents are shown where the Unix form differs.
 
 ---

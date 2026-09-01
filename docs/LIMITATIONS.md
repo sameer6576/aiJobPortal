@@ -2,13 +2,15 @@
 
 Recruiter-readable inventory of what JobMate **does not try to be** and what is **unfinished in the current code**. Cross-links: [Architecture](ARCHITECTURE.md), [Decisions](DECISIONS.md), [Security](SECURITY.md), [API notes](API.md), [Portfolio](PORTFOLIO.md).
 
-This system is a **local backend** for portfolio review. It is not a deployed marketplace and does not claim production operations, Kubernetes, or scale.
+This system and its companion React client are intended for local portfolio
+review. They are not a deployed marketplace and do not claim production
+operations, Kubernetes, or scale.
 
 ## Intentional non-goals
 
 | Area | What is out of scope |
 |---|---|
-| Client | No frontend, mobile app, or public SEO pages. |
+| Client | A separate React SPA exists, but there is no mobile app, server-side rendering, or public SEO rendering. |
 | Identity product | No OAuth2/OIDC, Keycloak, refresh tokens, token revocation, or session store. Access tokens expire (24 hours in API notes); they cannot be revoked early. |
 | Documents | Resumes are structured JSON/JPA records. No PDF/DOC upload or parsing. |
 | Search | Job list filters and Gemini-interpreted natural language. No Elasticsearch/OpenSearch, ranking, or recruiter resume search. |
@@ -30,7 +32,7 @@ There is no service-to-service JWT or mTLS. Feign callers can be spoofed if thos
 
 ### AI is fail-open on the hiring write path
 
-Gemini outage or Feign failure: apply still persists with `NOT_SCREENED`; cover-letter endpoint returns the stored application. Status updates persist if Kafka or SMTP fail. Skills-gap (and some direct AI routes) can still fail the HTTP call. There is no prompt-injection control, rate limit, or data-retention policy for content sent to Gemini.
+Gemini outage or Feign failure: apply still persists with `NOT_SCREENED`; cover-letter endpoint returns the stored application. Status updates persist if Kafka or SMTP fail. Skills-gap (and some direct AI routes) can still fail the HTTP call. The frontend exposes optional user instructions for content-generation endpoints; there is no prompt-injection control, rate limit, or data-retention policy for content sent to Gemini.
 
 ### Messaging is not transactional
 

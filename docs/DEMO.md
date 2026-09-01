@@ -27,6 +27,15 @@ Optional integrations:
 
 Use `Authorization: Bearer <token>` on `/api/**`. Call the gateway, not service ports (direct ports skip JWT).
 
+### Optional UI walkthrough
+
+Start the companion frontend with `npm run dev` for gateway port `5007`, or
+`npm run dev:docker` for port `5050`. Open the Vite URL (normally
+`http://localhost:5173`) and walk through public job browsing, seeker signup,
+resume editing and AI prompts, saving/applying to a job, then employer
+application review. Password recovery displays a local reset link only when
+`PASSWORD_RESET_EXPOSE_TOKEN` is enabled; no recovery email is sent.
+
 ## Walkthrough
 
 ### 1. Health of the mesh (~1 min)

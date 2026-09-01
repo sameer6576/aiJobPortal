@@ -46,6 +46,14 @@ Services do not load `.env` files themselves.
 - **Terminal (bash):** `set -a && source docker/.env && source docker/local-native.env && set +a` (or `local-hybrid.env`).
 - **Terminal (PowerShell):** set the same keys on the process (`$env:DB_PASSWORD = '...'`, `$env:JWT_SECRET = '...'`, plus topology vars from the copied file). Do not paste real secrets into committed files.
 
+### Frontend environment
+
+The companion React app only needs the gateway address. Use `npm run dev`
+(`VITE_GATEWAY_URL=http://localhost:5007`) for native/hybrid mode or
+`npm run dev:docker` (`http://localhost:5050`) for full Compose. It does not
+read `docker/.env`, and backend secrets must never be copied into `VITE_*`
+variables because those values are exposed to the browser.
+
 Config Server looks for `job-portal-config/` relative to the process working directory (module, repo root). Override with `CONFIG_REPOSITORY_PATH` if needed (Compose uses `file:/config`).
 
 `job-portal-config/` inside this repo is the only source of truth. A second checkout next to `job-portal-system/` can shadow it.

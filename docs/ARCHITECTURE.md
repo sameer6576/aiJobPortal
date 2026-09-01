@@ -8,7 +8,7 @@ JobMate models a local evaluation path from signup through an employer applicati
 
 Out of scope (not implemented):
 
-- Frontend, generated OpenAPI, `/v1` versioning, pagination
+- Mobile/SSR clients, generated OpenAPI, `/v1` versioning, pagination
 - Recruiter resume search, payments, public SEO pages
 - Resume PDF/DOC upload or parsing
 - Search index, ranking, or job-alert product (`/api/ai/alert-suggestion` was removed)
@@ -22,7 +22,7 @@ Direct service ports exist for local debugging. Only the API Gateway is the publ
 
 ```mermaid
 flowchart TB
-  Client[HTTP client]
+  Client["React/Vite SPA or HTTP client"]
   Gateway["API Gateway\n5007 local / host 5050 → 5007 Compose"]
   Eureka["Eureka 8761"]
   Config["Config Server 8888\nnative / job-portal-config"]

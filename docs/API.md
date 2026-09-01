@@ -137,6 +137,12 @@ Authenticated `/api/ai/**`. Application-service and job-service assemble context
 - Resume: `POST /api/ai/resume/summary`, `/experience-bullets`, `/improvements`, `/career-feedback`
 - `POST /api/ai/search/enhance`
 
+Optional user instructions are accepted as `additionalContext` by cover-letter,
+job-description, resume-summary, resume-improvement, and career-feedback
+requests. Work-experience bullets use `achievementsHint` for the same purpose.
+Structured candidate/job fields remain the primary context; instructions must
+not be treated as permission to invent experience or qualifications.
+
 `GET /api/ai/{prompt}` and `/api/ai/alert-suggestion` are not present.
 
 ## Errors

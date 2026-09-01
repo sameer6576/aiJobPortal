@@ -1,6 +1,14 @@
 # JobMate Backend
 
-JobMate is a **backend-only** job-marketplace API: identity, employer companies, job publishing, structured resumes, applications, saved jobs, Gemini-assisted content, and optional Kafka-driven email. It is a local portfolio system, not a production or Naukri-scale deployment. There is no frontend.
+JobMate is a job-marketplace backend for identity, employer companies, job
+publishing, structured resumes, applications, saved jobs, Gemini-assisted
+content, and optional Kafka-driven email. It is a local portfolio system, not a
+production or Naukri-scale deployment.
+
+The companion React frontend is
+[ai-job-portal-frontend](https://github.com/sameer6576/ai-job-portal-frontend).
+It uses the gateway on port `5007` in native/hybrid mode or `5050` in full
+Compose mode.
 
 ## Documentation
 
@@ -19,6 +27,7 @@ JobMate is a **backend-only** job-marketplace API: identity, employer companies,
 | [Testing](docs/TESTING.md) | Existing coverage, commands, CI scope, gaps |
 | [Security](docs/SECURITY.md) | JWT, header trust, secrets handling |
 | [Contributing](CONTRIBUTING.md) | Ownership, identity headers, tests |
+| [Frontend README](https://github.com/sameer6576/ai-job-portal-frontend#readme) | Client install, gateway proxy, UI features, and environment |
 
 ## Architecture
 

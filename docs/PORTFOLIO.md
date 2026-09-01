@@ -1,12 +1,18 @@
 # JobMate — portfolio notes
 
-Backend-only job-marketplace API for local evaluation. Not a product launch, not Kubernetes, not production ops. Companion: [README](../README.md), [Architecture](ARCHITECTURE.md), [Decisions](DECISIONS.md), [Limitations](LIMITATIONS.md).
+Full-stack job marketplace for local evaluation: this Spring backend plus the
+companion [React frontend](https://github.com/sameer6576/ai-job-portal-frontend).
+Not a product launch, not Kubernetes, and not production operations. Companion:
+[README](../README.md), [Architecture](ARCHITECTURE.md),
+[Decisions](DECISIONS.md), [Limitations](LIMITATIONS.md).
 
 ## Product
 
 JobMate models the server path from account creation to an employer’s application decision. A job seeker signs up, maintains a **structured** resume (sections in the database, not a parsed PDF), saves jobs, and applies to **OPEN** postings. An employer owns a company, publishes jobs, lists applicants (including optional Gemini scores), writes notes, and changes status. Optional Kafka + SMTP notify the candidate when status changes. Gemini can draft job copy, interpret a natural-language search into filters, score an apply, generate a cover letter, and report a skills gap. The public edge is a Spring MVC API gateway that verifies JWTs issued by user-service.
 
-Scope stops there: no web UI, no recruiter resume search product, no payments, no SEO site, no file ingest, no search index, no job-alert product.
+The React SPA provides seeker, employer, and admin workflows. Scope excludes
+mobile apps, SSR/SEO rendering, recruiter resume search, payments, file ingest,
+a search index, and job alerts.
 
 ## Why this shape (and the cheaper alternative)
 
