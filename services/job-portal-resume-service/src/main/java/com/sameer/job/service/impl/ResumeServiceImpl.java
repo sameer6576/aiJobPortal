@@ -7,6 +7,7 @@ import com.sameer.job.mapper.WorkExperienceMapper;
 import com.sameer.job.modal.PersonalInfo;
 import com.sameer.job.modal.Resume;
 import com.sameer.job.payload.CreateResumeRequest;
+import com.sameer.job.payload.UpdateResumeTitleRequest;
 import com.sameer.job.repository.*;
 import com.sameer.job.service.ResumeService;
 import org.springframework.stereotype.Service;
@@ -24,19 +25,25 @@ public class ResumeServiceImpl implements ResumeService {
     private final ResumeSkillRepository resumeSkillRepository;
     private final ProjectRepository projectRepository;
     private final LanguageRepository languageRepository;
+    private final AwardRepository awardRepository;
+    private final CertificationRepository certificationRepository;
 
     public ResumeServiceImpl(ResumeRepository resumeRepository,
                              WorkExperienceRepository workExperienceRepository,
                              EducationRepository educationRepository,
                              ResumeSkillRepository resumeSkillRepository,
                              ProjectRepository projectRepository,
-                             LanguageRepository languageRepository) {
+                             LanguageRepository languageRepository,
+                             AwardRepository awardRepository,
+                             CertificationRepository certificationRepository) {
         this.resumeRepository = resumeRepository;
         this.workExperienceRepository = workExperienceRepository;
         this.educationRepository = educationRepository;
         this.resumeSkillRepository = resumeSkillRepository;
         this.projectRepository = projectRepository;
         this.languageRepository = languageRepository;
+        this.awardRepository = awardRepository;
+        this.certificationRepository = certificationRepository;
     }
 
     @Override
@@ -149,6 +156,16 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
+    public ResumeResponse updateTitle(Long resumeId, Long candidateId, UpdateResumeTitleRequest request) throws Exception {
+        Resume resume = getResumeEntity(resumeId);
+        assertOwner(resume, candidateId);
+
+        resume.setTitle(request.getTitle().trim());
+        Resume updated = resumeRepository.save(resume);
+        return buildFullResponse(updated);
+    }
+
+    @Override
     public ResumeResponse setDefaultResume(Long resumeId, Long candidateId) throws Exception {
         Resume resume = getResumeEntity(resumeId);
         assertOwner(resume, candidateId);
@@ -200,7 +217,24 @@ public class ResumeServiceImpl implements ResumeService {
                 .stream().map(ResumeMapper::toLanguageResponse)
                 .toList();
 
-        return ResumeMapper.toResponse(resume,workExperienceResponses,educationResponses,resumeSkillResponses,projectResponses,languageResponses);
+        List<AwardResponse> awardResponses = awardRepository.findByResume_IdOrderByDisplayOrderAsc(resumeId)
+                .stream().map(ResumeMapper::toAwardResponse)
+                .toList();
+
+        List<CertificationResponse> certificationResponses = certificationRepository.findByResume_IdOrderByDisplayOrderAsc(resumeId)
+                .stream().map(ResumeMapper::toCertificationResponse)
+                .toList();
+
+        return ResumeMapper.toResponse(
+                resume,
+                workExperienceResponses,
+                educationResponses,
+                resumeSkillResponses,
+                projectResponses,
+                languageResponses,
+                awardResponses,
+                certificationResponses
+        );
     }
 
     private void assertOwner(Resume resume, Long candidateId) throws Exception {

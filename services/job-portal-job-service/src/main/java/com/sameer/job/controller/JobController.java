@@ -28,6 +28,13 @@ public class JobController {
                 .body(jobService.createJob(employerId, jobRequest));
     }
 
+    @GetMapping("/my")
+    public ResponseEntity<List<JobResponse>> getMyJobs(
+            @RequestHeader("X-User-Id") Long employerId
+    ) {
+        return ResponseEntity.ok(jobService.getMyJobs(employerId));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<JobResponse> getJobById(
             @PathVariable Long id,

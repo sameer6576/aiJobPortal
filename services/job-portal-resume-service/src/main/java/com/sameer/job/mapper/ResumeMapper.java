@@ -35,7 +35,9 @@ public final class ResumeMapper {
                                             List<EducationResponse> educations,
                                             List<ResumeSkillResponse> skills,
                                             List<ProjectResponse> projects,
-                                            List<LanguageResponse> languages) {
+                                            List<LanguageResponse> languages,
+                                            List<AwardResponse> awards,
+                                            List<CertificationResponse> certifications) {
 
         if (resume == null) return null;
 
@@ -56,6 +58,8 @@ public final class ResumeMapper {
                              .languages(languages)
                              .projects(projects)
                              .skills(skills)
+                             .awards(awards)
+                             .certifications(certifications)
                              .build();
     }
 
@@ -126,7 +130,41 @@ public final class ResumeMapper {
                                .id(language.getId())
                                .languageName(language.getLanguageName())
                                .proficiency(language.getProficiency())
-                               .displayOrder(language.getDisplayOrder())
-                               .build();
+                              .displayOrder(language.getDisplayOrder())
+                              .build();
+    }
+
+    public static AwardResponse toAwardResponse(Award award) {
+
+        if (award == null) {
+            return null;
+        }
+
+        return AwardResponse.builder()
+                            .id(award.getId())
+                            .title(award.getTitle())
+                            .issuedBy(award.getIssuedBy())
+                            .awardDate(award.getAwardDate())
+                            .description(award.getDescription())
+                            .displayOrder(award.getDisplayOrder())
+                            .build();
+    }
+
+    public static CertificationResponse toCertificationResponse(Certification certification) {
+
+        if (certification == null) {
+            return null;
+        }
+
+        return CertificationResponse.builder()
+                                    .id(certification.getId())
+                                    .name(certification.getName())
+                                    .issuingOrganization(certification.getIssuingOrganization())
+                                    .issueDate(certification.getIssueDate())
+                                    .expiryDate(certification.getExpiryDate())
+                                    .credentialId(certification.getCredentialId())
+                                    .credentialUrl(certification.getCredentialUrl())
+                                    .displayOrder(certification.getDisplayOrder())
+                                    .build();
     }
 }

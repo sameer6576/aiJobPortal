@@ -26,3 +26,6 @@ eureka:
 app:
   jwt:
     secret: test-jwt-secret-for-local-tests-only-0123456789
+  password-reset:
+    expose-token: true
+    expiry-hours: 1

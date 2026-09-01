@@ -46,6 +46,7 @@ Duplicate application and saved-job checks are service prechecks without matchin
 
 - No rate limiting on auth or AI.
 - No audit log suitable for production (and logs must not include tokens, passwords, or resume dumps).
+- Password reset has **no SMTP**; recovery is hash-stored tokens plus an optional local `resetToken` field.
 - Compose service ports are for debugging; they are not a hardened network layout.
 - Notification and AI are optional; the core apply path does not require them.
 

@@ -8,6 +8,16 @@ Runnable walkthrough: [demo.http](http/demo.http). Every gateway route: [JobMate
 
 Public (no JWT): `/auth/**` → user-service.
 
+Anonymous-or-optional JWT (missing `Authorization` is anonymous; a supplied Bearer token is validated and identity headers are injected; malformed/invalid token → 401):
+
+| Method | Path | Notes |
+|---|---|---|
+| GET | `/api/jobs` | Numeric-id detail is `GET /api/jobs/{id}` (`id` digits only). Optional JWT lets the posting employer or an admin see a **DRAFT** by id. |
+| GET | `/api/job-categories`, `/api/job-skills`, `/api/job-tags` | List |
+| GET | `/api/job-categories/{id}`, `/api/job-skills/{id}`, `/api/job-tags/{id}` | Numeric id |
+
+These optional-auth GETs do **not** include `/api/jobs/my`, `/api/jobs/admin`, `/api/jobs/company/{companyId}`, or `/api/jobs/search/natural`. Writes stay protected.
+
 Protected (`Authorization: Bearer <access-token>`). The gateway validates the JWT, then replaces `X-User-Id`, `X-User-Email`, and `X-User-Role` from claims (`email`, `authorities`, `userId`) before forwarding:
 
 | Prefix | Service |
@@ -20,7 +30,9 @@ Protected (`Authorization: Bearer <access-token>`). The gateway validates the JW
 | `/api/preferences/**` | preferences |
 | `/api/ai/**` | AI service |
 
-Access tokens are issued by user-service, expire after 24 hours, and include the user's role in `authorities`. Self-registration as `ROLE_ADMIN` is rejected. Passwords must be at least 8 characters. Suspended and deleted accounts cannot log in.
+Access tokens are issued by user-service, expire after 24 hours, and include the user's role in `authorities`. Self-registration as `ROLE_ADMIN` is rejected. Passwords must be at least 8 characters. Suspended and deleted accounts cannot log in, reset a password, or change a password.
+
+Public password recovery (no JWT, no SMTP): `POST /auth/forgot-password` `{ "email" }` always returns a generic message. Unknown, suspended, and deleted emails do not issue a token. Active accounts store a SHA-256 hash of a one-hour, single-use opaque token. When `app.password-reset.expose-token` is true (default for this local project; env `PASSWORD_RESET_EXPOSE_TOKEN`), the raw token is in `resetToken`; otherwise it is omitted. `POST /auth/reset-password` `{ "token", "newPassword" }` encodes the new password and clears the token. Invalid token: `INVALID_RESET_TOKEN`. Expired: `RESET_TOKEN_EXPIRED`. Authenticated `POST /api/users/change-password` `{ "currentPassword", "newPassword" }` checks the current password (`INVALID_CREDENTIALS` if wrong).
 
 ## Admin and taxonomy (gateway role checks)
 
@@ -38,7 +50,13 @@ Admin only (`ROLE_ADMIN`):
 | PATCH | `/api/companies/{id}/deactivate` |
 | GET | `/api/jobs/admin` |
 
-Taxonomy writes (`ROLE_ADMIN` or `ROLE_EMPLOYER`). GET on the same resources is authenticated but not role-gated at the gateway:
+Employer (`ROLE_EMPLOYER`):
+
+| Method | Path |
+|---|---|
+| GET | `/api/jobs/my` |
+
+Taxonomy writes (`ROLE_ADMIN` or `ROLE_EMPLOYER`). Taxonomy **GET** list/detail is the optional-JWT public table above:
 
 | Method | Path |
 |---|---|
@@ -54,6 +72,7 @@ Taxonomy writes (`ROLE_ADMIN` or `ROLE_EMPLOYER`). GET on the same resources is 
 ### User
 
 - `GET` / `PUT /api/users/profile`
+- `POST /api/users/change-password` (JWT; identity from `X-User-Email`)
 - `GET /api/users/{userId}` (any authenticated caller; application-service uses this over Feign)
 - Admin list, suspend, activate, and soft-delete as in the table above
 
@@ -70,9 +89,10 @@ Taxonomy writes (`ROLE_ADMIN` or `ROLE_EMPLOYER`). GET on the same resources is 
 ### Job
 
 - `POST /api/jobs`
-- `GET /api/jobs/{id}` — drafts return `NOT_FOUND` unless the employer or an admin
-- `GET /api/jobs` — optional `keyword`, `companyId`, `categoryId` (category entity id), `location` (city/state/country contains), `minSalary`, `maxSalary`, `jobType`, `workMode`, `experienceLevel`, `status` (defaults to `OPEN`), `minOpenings`, `maxOpenings` (column `opening`). `skillIds` and `tagIds` are on the request type but are not applied
-- `GET /api/jobs/company/{companyId}` — open jobs only
+- `GET /api/jobs/{id}` — anonymous OK; drafts return `NOT_FOUND` unless the employer or an admin (optional JWT)
+- `GET /api/jobs` — anonymous OK; optional `keyword`, `companyId`, `categoryId` (category entity id), `location` (city/state/country contains), `minSalary`, `maxSalary`, `jobType`, `workMode`, `experienceLevel`, `status` (defaults to `OPEN`), `minOpenings`, `maxOpenings` (column `opening`). `skillIds` and `tagIds` are on the request type but are not applied
+- `GET /api/jobs/my` — employer JWT; every status for that employer id, newest first (no company-id parameter)
+- `GET /api/jobs/company/{companyId}` — open jobs only; JWT required
 - `POST /api/jobs/search/natural` with `{ "query": "..." }` — AI mapping fail-opens to a keyword search
 - `GET /api/jobs/admin`
 - `PUT /api/jobs/{id}`, `PATCH /api/jobs/{id}/publish`, `PATCH /api/jobs/{id}/close`, `DELETE /api/jobs/{id}` — posting employer
@@ -84,9 +104,10 @@ Structured JSON records. PDF or DOC upload is not implemented.
 
 - `POST /api/resumes`
 - `GET /api/resumes/{resumeId}`, `GET /api/resumes/my`
+- `PUT /api/resumes/{resumeId}` — `{ "title" }` (non-blank, max 150); owner only
 - `PUT /api/resumes/{resumeId}/personal-info`, `/summary`, `/default`
 - `DELETE /api/resumes/{resumeId}`
-- Nested owner-scoped resources: `/educations`, `/work-experiences`, `/projects`, `/skills`, `/languages`
+- Nested owner-scoped resources: `/educations`, `/work-experiences`, `/projects`, `/skills`, `/languages`, `/awards`, `/certifications`. Award and certification deletes return `204`.
 
 ### Application
 
@@ -128,7 +149,7 @@ Service failures use a body (successes are not wrapped):
 
 HTTP status follows the exception type (`404`, `403`, `409`, `400`, `401`, `503`). Unexpected failures log the cause and return `INTERNAL_ERROR` with `"An unexpected error occurred"`.
 
-Stable codes: `NOT_FOUND`, `FORBIDDEN`, `CONFLICT`, `BAD_REQUEST`, `UNAUTHORIZED`, `VALIDATION_FAILED`, `INTERNAL_ERROR`, `AI_UNAVAILABLE`, `ALREADY_APPLIED`, `JOB_NOT_OPEN`, `EMAIL_REGISTERED`, `ADMIN_SELF_SIGNUP`, `ACCOUNT_DISABLED`, `INVALID_CREDENTIALS`.
+Stable codes: `NOT_FOUND`, `FORBIDDEN`, `CONFLICT`, `BAD_REQUEST`, `UNAUTHORIZED`, `VALIDATION_FAILED`, `INTERNAL_ERROR`, `AI_UNAVAILABLE`, `ALREADY_APPLIED`, `JOB_NOT_OPEN`, `EMAIL_REGISTERED`, `ADMIN_SELF_SIGNUP`, `ACCOUNT_DISABLED`, `INVALID_CREDENTIALS`, `INVALID_RESET_TOKEN`, `RESET_TOKEN_EXPIRED`.
 
 Gateway missing/invalid JWT and role denials use Spring `ResponseStatusException` (typically `401` / `403`). They are not this `{code,message}` body.
 

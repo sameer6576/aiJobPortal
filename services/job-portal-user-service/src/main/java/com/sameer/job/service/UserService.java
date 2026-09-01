@@ -1,6 +1,8 @@
 package com.sameer.job.service;
 
 import com.sameer.job.dto.response.UserResponse;
+import com.sameer.job.payload.ChangePasswordRequest;
+import com.sameer.job.payload.PasswordActionResponse;
 import com.sameer.job.payload.UpdateUserRequest;
 
 import java.util.List;
@@ -14,6 +16,8 @@ public interface UserService {
     List<UserResponse> getAllUsers();
 
     UserResponse updateProfile(String email, UpdateUserRequest req) throws Exception;
+
+    PasswordActionResponse changePassword(String email, ChangePasswordRequest req);
 
     UserResponse suspendUser(Long id) throws Exception;
 

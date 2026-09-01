@@ -18,6 +18,8 @@ public interface JobService {
 
     List<JobResponse> getJobsByCompany(Long companyId);
 
+    List<JobResponse> getMyJobs(Long employerId);
+
     JobResponse updateJob(Long jobId, Long employerId, JobRequest req) throws Exception;
 
     JobResponse publishJob(Long jobId, Long employerId) throws Exception;

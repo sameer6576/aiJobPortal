@@ -165,6 +165,7 @@ const collection = {
     { key: "seekerToken", value: "" },
     { key: "employerToken", value: "" },
     { key: "adminToken", value: "" },
+    { key: "resetToken", value: "" },
     { key: "userId", value: "1" },
     { key: "companyId", value: "1" },
     { key: "categoryId", value: "1" },
@@ -212,6 +213,15 @@ const collection = {
           }),
           event: [loginTests("adminToken")],
         },
+        req("Forgot password", "POST", "/auth/forgot-password", {
+          body: { email: signupSeeker.email },
+          description:
+            "ForgotPasswordRequest: email. Generic message. Local/demo may include resetToken when app.password-reset.expose-token is true. No SMTP.",
+        }),
+        req("Reset password", "POST", "/auth/reset-password", {
+          body: { token: "{{resetToken}}", newPassword: "SeekPass2" },
+          description: "ResetPasswordRequest: token, newPassword (min 8).",
+        }),
       ],
     },
     {
@@ -226,6 +236,11 @@ const collection = {
             profileImage: "https://cdn.example.com/avatars/sam.png",
           },
           description: "UpdateUserRequest: fullName, phone, profileImage",
+        }),
+        req("Change password", "POST", "/api/users/change-password", {
+          auth: seekerAuth,
+          body: { currentPassword: "SeekPass1", newPassword: "SeekPass2" },
+          description: "ChangePasswordRequest: currentPassword, newPassword (min 8).",
         }),
         req("Get user by id", "GET", "/api/users/{{userId}}", { auth: employerAuth }),
         req("List users (admin)", "GET", "/api/users", { auth: adminAuth }),

@@ -1,7 +1,9 @@
 package com.sameer.job.service.impl;
 
+import com.sameer.job.config.PasswordResetProperties;
 import com.sameer.job.domain.UserRole;
 import com.sameer.job.domain.UserStatus;
+import com.sameer.job.exception.BadRequestException;
 import com.sameer.job.exception.ConflictException;
 import com.sameer.job.exception.ErrorCodes;
 import com.sameer.job.exception.ForbiddenException;
@@ -9,11 +11,16 @@ import com.sameer.job.exception.UnauthorizedException;
 import com.sameer.job.mapper.UserMapper;
 import com.sameer.job.modal.User;
 import com.sameer.job.payload.AuthResponse;
+import com.sameer.job.payload.ForgotPasswordRequest;
+import com.sameer.job.payload.ForgotPasswordResponse;
 import com.sameer.job.payload.LoginRequest;
+import com.sameer.job.payload.PasswordActionResponse;
+import com.sameer.job.payload.ResetPasswordRequest;
 import com.sameer.job.payload.SignupRequest;
 import com.sameer.job.repository.UserRepository;
 import com.sameer.job.security.CustomUserDetailsService;
 import com.sameer.job.security.JwtProvider;
+import com.sameer.job.security.PasswordResetTokens;
 import com.sameer.job.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -33,11 +40,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
+    private static final String FORGOT_PASSWORD_MESSAGE =
+            "If an account exists for that email, a password reset token has been issued.";
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
     private final CustomUserDetailsService customUserDetailsService;
-
+    private final PasswordResetProperties passwordResetProperties;
 
     @Override
     @Transactional
@@ -133,5 +143,63 @@ public class AuthServiceImpl implements AuthService {
 
         return new UsernamePasswordAuthenticationToken
                 (userDetails,null,userDetails.getAuthorities());
+    }
+
+    @Override
+    @Transactional
+    public ForgotPasswordResponse forgotPassword(ForgotPasswordRequest req) {
+        User user = userRepository.findByEmail(req.getEmail());
+        if (user == null || isAccountDisabled(user)) {
+            return ForgotPasswordResponse.builder()
+                    .message(FORGOT_PASSWORD_MESSAGE)
+                    .build();
+        }
+
+        String rawToken = PasswordResetTokens.generateRawToken();
+        user.setPasswordResetTokenHash(PasswordResetTokens.sha256Hex(rawToken));
+        user.setPasswordResetExpiresAt(LocalDateTime.now().plusHours(passwordResetProperties.getExpiryHours()));
+        userRepository.save(user);
+
+        ForgotPasswordResponse.ForgotPasswordResponseBuilder response = ForgotPasswordResponse.builder()
+                .message(FORGOT_PASSWORD_MESSAGE);
+        if (passwordResetProperties.isExposeToken()) {
+            response.resetToken(rawToken);
+        }
+        return response.build();
+    }
+
+    @Override
+    @Transactional
+    public PasswordActionResponse resetPassword(ResetPasswordRequest req) {
+        String tokenHash = PasswordResetTokens.sha256Hex(req.getToken());
+        User user = userRepository.findByPasswordResetTokenHash(tokenHash);
+        if (user == null) {
+            throw new BadRequestException(ErrorCodes.INVALID_RESET_TOKEN, "Invalid or expired reset token");
+        }
+
+        LocalDateTime expiresAt = user.getPasswordResetExpiresAt();
+        if (expiresAt == null || expiresAt.isBefore(LocalDateTime.now())) {
+            user.clearPasswordReset();
+            userRepository.save(user);
+            throw new BadRequestException(ErrorCodes.RESET_TOKEN_EXPIRED, "Reset token has expired");
+        }
+
+        if (isAccountDisabled(user)) {
+            user.clearPasswordReset();
+            userRepository.save(user);
+            throw new ForbiddenException(ErrorCodes.ACCOUNT_DISABLED, "This account cannot reset a password");
+        }
+
+        user.setPassword(passwordEncoder.encode(req.getNewPassword()));
+        user.clearPasswordReset();
+        userRepository.save(user);
+
+        return PasswordActionResponse.builder()
+                .message("Password has been reset")
+                .build();
+    }
+
+    private static boolean isAccountDisabled(User user) {
+        return user.getStatus() == UserStatus.SUSPENDED || user.getStatus() == UserStatus.DELETED;
     }
 }

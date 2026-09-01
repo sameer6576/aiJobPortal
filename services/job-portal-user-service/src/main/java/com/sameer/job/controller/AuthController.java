@@ -1,7 +1,11 @@
 package com.sameer.job.controller;
 
 import com.sameer.job.payload.AuthResponse;
+import com.sameer.job.payload.ForgotPasswordRequest;
+import com.sameer.job.payload.ForgotPasswordResponse;
 import com.sameer.job.payload.LoginRequest;
+import com.sameer.job.payload.PasswordActionResponse;
+import com.sameer.job.payload.ResetPasswordRequest;
 import com.sameer.job.payload.SignupRequest;
 import com.sameer.job.service.AuthService;
 import jakarta.validation.Valid;
@@ -30,5 +34,19 @@ public class AuthController {
             @RequestBody @Valid LoginRequest req
     ) throws Exception {
         return ResponseEntity.ok(authService.login(req));
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<ForgotPasswordResponse> forgotPassword(
+            @RequestBody @Valid ForgotPasswordRequest req
+    ) {
+        return ResponseEntity.ok(authService.forgotPassword(req));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<PasswordActionResponse> resetPassword(
+            @RequestBody @Valid ResetPasswordRequest req
+    ) {
+        return ResponseEntity.ok(authService.resetPassword(req));
     }
 }

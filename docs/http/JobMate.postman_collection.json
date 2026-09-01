@@ -22,6 +22,10 @@
       "value": ""
     },
     {
+      "key": "resetToken",
+      "value": ""
+    },
+    {
       "key": "userId",
       "value": "1"
     },
@@ -282,6 +286,70 @@
               }
             }
           ]
+        },
+        {
+          "name": "Forgot password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/forgot-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "forgot-password"
+              ]
+            },
+            "description": "ForgotPasswordRequest: email. Generic message. Local/demo may include resetToken when app.password-reset.expose-token is true. No SMTP.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"sam.seeker@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Reset password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/reset-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "reset-password"
+              ]
+            },
+            "description": "ResetPasswordRequest: token, newPassword (min 8).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"{{resetToken}}\",\n  \"newPassword\": \"SeekPass2\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
         }
       ]
     },
@@ -342,6 +410,44 @@
             "body": {
               "mode": "raw",
               "raw": "{\n  \"fullName\": \"Sam Seeker\",\n  \"phone\": \"9000000099\",\n  \"profileImage\": \"https://cdn.example.com/avatars/sam.png\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Change password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seekerToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/change-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "change-password"
+              ]
+            },
+            "description": "ChangePasswordRequest: currentPassword, newPassword (min 8).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"SeekPass1\",\n  \"newPassword\": \"SeekPass2\"\n}",
               "options": {
                 "raw": {
                   "language": "json"

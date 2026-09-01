@@ -130,6 +130,16 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
+    public List<JobResponse> getMyJobs(Long employerId) {
+        List<MappedJob> mapped = readTx().execute(status -> jobRepository
+                .findByEmployerIdOrderByCreatedAtDescIdDesc(employerId)
+                .stream()
+                .map(job -> new MappedJob(JobMapper.toResponse(job, null), job.getCompanyId()))
+                .collect(Collectors.toList()));
+        return mapped.stream().map(this::withCompany).toList();
+    }
+
+    @Override
     public List<JobResponse> getJobsByCompany(Long companyId) {
         List<MappedJob> mapped = readTx().execute(status -> jobRepository.findByCompanyId(companyId).stream()
                    .filter(job -> job.getStatus() == JobStatus.OPEN)

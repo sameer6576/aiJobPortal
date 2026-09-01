@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.function.RequestPredicate;
 import org.springframework.web.servlet.function.RequestPredicates;
 import org.springframework.web.servlet.function.RouterFunction;
 import org.springframework.web.servlet.function.ServerRequest;
@@ -60,13 +61,41 @@ public class RouteConfig {
     }
 
     @Bean
-    @Order(-1)
+    @Order(-2)
     public RouterFunction<ServerResponse> jobAdminRoutes() {
         return GatewayRouterFunctions.route("job-admin-routes")
                                      .route(RequestPredicates.GET("/api/jobs/admin"), HandlerFunctions.http())
                                      .filter(LoadBalancerFilterFunctions.lb("job-portal-job-service"))
                                      .before(this::jwtAuthFilter)
                                      .before(request -> requireRole(request, "ROLE_ADMIN"))
+                                     .build();
+    }
+
+    @Bean
+    @Order(-2)
+    public RouterFunction<ServerResponse> jobMyRoutes() {
+        return GatewayRouterFunctions.route("job-my-routes")
+                                     .route(RequestPredicates.GET("/api/jobs/my"), HandlerFunctions.http())
+                                     .filter(LoadBalancerFilterFunctions.lb("job-portal-job-service"))
+                                     .before(this::jwtAuthFilter)
+                                     .before(request -> requireRole(request, "ROLE_EMPLOYER"))
+                                     .build();
+    }
+
+    @Bean
+    @Order(-1)
+    public RouterFunction<ServerResponse> jobPublicReadRoutes() {
+        return GatewayRouterFunctions.route("job-public-read-routes")
+                                     .route(publicJobList(), HandlerFunctions.http())
+                                     .route(publicJobByNumericId(), HandlerFunctions.http())
+                                     .route(publicTaxonomyList("/api/job-categories"), HandlerFunctions.http())
+                                     .route(publicTaxonomyByNumericId("/api/job-categories"), HandlerFunctions.http())
+                                     .route(publicTaxonomyList("/api/job-skills"), HandlerFunctions.http())
+                                     .route(publicTaxonomyByNumericId("/api/job-skills"), HandlerFunctions.http())
+                                     .route(publicTaxonomyList("/api/job-tags"), HandlerFunctions.http())
+                                     .route(publicTaxonomyByNumericId("/api/job-tags"), HandlerFunctions.http())
+                                     .filter(LoadBalancerFilterFunctions.lb("job-portal-job-service"))
+                                     .before(this::optionalJwtAuthFilter)
                                      .build();
     }
 
@@ -87,6 +116,22 @@ public class RouteConfig {
                                      .before(this::jwtAuthFilter)
                                      .before(request -> requireAnyRole(request, "ROLE_ADMIN", "ROLE_EMPLOYER"))
                                      .build();
+    }
+
+    static RequestPredicate publicJobList() {
+        return RequestPredicates.GET("/api/jobs");
+    }
+
+    static RequestPredicate publicJobByNumericId() {
+        return RequestPredicates.GET("/api/jobs/{id:\\d+}");
+    }
+
+    static RequestPredicate publicTaxonomyList(String prefix) {
+        return RequestPredicates.GET(prefix);
+    }
+
+    static RequestPredicate publicTaxonomyByNumericId(String prefix) {
+        return RequestPredicates.GET(prefix + "/{id:\\d+}");
     }
 
     private ServerRequest requireRole(ServerRequest request, String requiredRole) {
@@ -179,17 +224,35 @@ public class RouteConfig {
 //     Jwt Filter
 
     private ServerRequest jwtAuthFilter(ServerRequest request) {
+        return applyJwt(request, true);
+    }
+
+    private ServerRequest optionalJwtAuthFilter(ServerRequest request) {
+        return applyJwt(request, false);
+    }
+
+    ServerRequest applyJwt(ServerRequest request, boolean required) {
         String authHeader = request.headers().firstHeader(JwtConstant.JWT_HEADER);
 
-        if (authHeader == null || !authHeader.startsWith(JwtConstant.TOKEN_PREFIX)) {
+        if (authHeader == null || authHeader.isBlank()) {
+            if (required) {
+                throw new ResponseStatusException(
+                        HttpStatus.UNAUTHORIZED,
+                        "Missing or invalid authorization header"
+                );
+            }
+            return stripIdentityHeaders(request);
+        }
+
+        if (!authHeader.startsWith(JwtConstant.TOKEN_PREFIX)) {
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED,
                     "Missing or invalid authorization header"
             );
         }
 
-        String token = authHeader.substring(JwtConstant.TOKEN_PREFIX.length());
-        if (!jwtUtil.isTokenValid(token)) {
+        String token = authHeader.substring(JwtConstant.TOKEN_PREFIX.length()).trim();
+        if (token.isEmpty() || !jwtUtil.isTokenValid(token)) {
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED,
                     "Invalid or expired JWT Token"
@@ -214,6 +277,16 @@ public class RouteConfig {
                                 if (authorities != null) {
                                     headers.set("X-User-Role", authorities);
                                 }
+                            })
+                            .build();
+    }
+
+    private ServerRequest stripIdentityHeaders(ServerRequest request) {
+        return ServerRequest.from(request)
+                            .headers(headers -> {
+                                headers.remove("X-User-Id");
+                                headers.remove("X-User-Email");
+                                headers.remove("X-User-Role");
                             })
                             .build();
     }

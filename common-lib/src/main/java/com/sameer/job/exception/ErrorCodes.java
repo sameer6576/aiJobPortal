@@ -17,6 +17,8 @@ public final class ErrorCodes {
     public static final String ADMIN_SELF_SIGNUP = "ADMIN_SELF_SIGNUP";
     public static final String ACCOUNT_DISABLED = "ACCOUNT_DISABLED";
     public static final String INVALID_CREDENTIALS = "INVALID_CREDENTIALS";
+    public static final String INVALID_RESET_TOKEN = "INVALID_RESET_TOKEN";
+    public static final String RESET_TOKEN_EXPIRED = "RESET_TOKEN_EXPIRED";
 
     private ErrorCodes() {
     }

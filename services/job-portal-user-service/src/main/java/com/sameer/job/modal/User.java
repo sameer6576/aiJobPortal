@@ -58,4 +58,15 @@ public class User {
     private LocalDateTime suspendedAt;
 
     private LocalDateTime deletedAt;
+
+    /** SHA-256 hex of the opaque reset token; never store the raw token. */
+    @Column(length = 64, unique = true)
+    private String passwordResetTokenHash;
+
+    private LocalDateTime passwordResetExpiresAt;
+
+    public void clearPasswordReset() {
+        this.passwordResetTokenHash = null;
+        this.passwordResetExpiresAt = null;
+    }
 }

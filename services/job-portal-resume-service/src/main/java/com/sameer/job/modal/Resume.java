@@ -25,7 +25,7 @@ public class Resume {
     @Column(nullable = false)
     private Long candidateId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 150)
     private String title;
 
     @Builder.Default

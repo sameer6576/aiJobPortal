@@ -4,6 +4,7 @@ import com.sameer.job.dto.PersonalInfoResponse;
 import com.sameer.job.dto.ResumeResponse;
 import com.sameer.job.dto.response.ApiResponse;
 import com.sameer.job.payload.CreateResumeRequest;
+import com.sameer.job.payload.UpdateResumeTitleRequest;
 import com.sameer.job.service.ResumeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -47,6 +48,22 @@ public class ResumeController {
 
         return ResponseEntity.ok(
                 resumeService.getMyResumes(candidateId)
+        );
+    }
+
+    @PutMapping("/{resumeId}")
+    public ResponseEntity<ResumeResponse> updateTitle(
+            @PathVariable Long resumeId,
+            @RequestHeader("X-User-Id") Long candidateId,
+            @Valid @RequestBody UpdateResumeTitleRequest request
+    ) throws Exception {
+
+        return ResponseEntity.ok(
+                resumeService.updateTitle(
+                        resumeId,
+                        candidateId,
+                        request
+                )
         );
     }
 

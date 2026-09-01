@@ -29,12 +29,12 @@ stateDiagram-v2
   SUSPENDED --> DELETED: admin soft-delete
 ```
 
-| Value | Assigned by | Login |
+| Value | Assigned by | Login / password |
 |---|---|---|
 | `ACTIVE` | Signup; admin activate (clears `suspendedAt`) | Allowed |
-| `SUSPENDED` | Admin suspend (`suspendedAt` set) | **Rejected** `ACCOUNT_DISABLED` |
-| `DELETED` | Admin `delete` (`deletedAt` set; row kept) | **Rejected** `ACCOUNT_DISABLED` |
-| `INACTIVE` | **Never assigned** in user-service | **Not rejected** — if a row were `INACTIVE`, login would succeed |
+| `SUSPENDED` | Admin suspend (`suspendedAt` set) | **Rejected** `ACCOUNT_DISABLED` (login, forgot-token issue, reset, change-password) |
+| `DELETED` | Admin `delete` (`deletedAt` set; row kept) | **Rejected** `ACCOUNT_DISABLED` (same as suspend; forgot-password still returns the generic message) |
+| `INACTIVE` | **Never assigned** in user-service | **Not rejected** — if a row were `INACTIVE`, login, reset, and change-password would succeed |
 
 **Gaps:** no login check for `INACTIVE`; JWT is not revoked on suspend (token valid until expiry); deleted users remain in the users table.
 

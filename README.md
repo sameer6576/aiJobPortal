@@ -94,8 +94,8 @@ Gateway: `http://localhost:5007` (host Java) or `http://localhost:5050` (full Co
 
 Call the **gateway**. Use `Authorization: Bearer <token>` except `/auth/**`.
 
-- `POST /auth/signup`, `POST /auth/login`
-- `GET /api/users/profile`
+- `POST /auth/signup`, `POST /auth/login`, `POST /auth/forgot-password`, `POST /auth/reset-password`
+- `GET /api/users/profile`, `POST /api/users/change-password`
 - `POST /api/companies`, `GET /api/companies/my`
 - `POST /api/jobs`, `GET /api/jobs`, `PATCH /api/jobs/{id}/publish`
 - `POST /api/resumes` and nested resume sections

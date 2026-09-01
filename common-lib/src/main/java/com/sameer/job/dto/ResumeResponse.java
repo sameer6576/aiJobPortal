@@ -33,8 +33,6 @@ public class ResumeResponse {
     private List<ResumeSkillResponse> skills;
     private List<ProjectResponse> projects;
     private List<LanguageResponse> languages;
-
-    // TODO: assignment
-    //    private List<CertificationResponse> certifications;
-    //    private List<AwardResponse> awards;
+    private List<AwardResponse> awards;
+    private List<CertificationResponse> certifications;
 }

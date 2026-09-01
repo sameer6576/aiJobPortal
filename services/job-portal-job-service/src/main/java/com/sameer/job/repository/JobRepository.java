@@ -19,6 +19,9 @@ public interface JobRepository extends JpaRepository<Job, Long>, JpaSpecificatio
     List<Job> findByCompanyId(Long companyId);
 
     @EntityGraph(attributePaths = {"skills", "tags", "category", "category.parent"})
+    List<Job> findByEmployerIdOrderByCreatedAtDescIdDesc(Long employerId);
+
+    @EntityGraph(attributePaths = {"skills", "tags", "category", "category.parent"})
     @Override
     List<Job> findAll();
 

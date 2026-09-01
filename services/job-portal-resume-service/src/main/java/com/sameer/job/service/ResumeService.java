@@ -4,6 +4,7 @@ import com.sameer.job.dto.PersonalInfoResponse;
 import com.sameer.job.dto.ResumeResponse;
 import com.sameer.job.modal.Resume;
 import com.sameer.job.payload.CreateResumeRequest;
+import com.sameer.job.payload.UpdateResumeTitleRequest;
 
 import java.util.List;
 
@@ -17,6 +18,8 @@ public interface ResumeService {
     ResumeResponse updatePersonalInfo(Long resumeId, Long candidateId, PersonalInfoResponse req) throws Exception;
 
     ResumeResponse updateSummary(Long resumeId, Long candidateId, String summary) throws Exception;
+
+    ResumeResponse updateTitle(Long resumeId, Long candidateId, UpdateResumeTitleRequest request) throws Exception;
 
     ResumeResponse setDefaultResume(Long resumeId, Long candidateId) throws Exception;
 

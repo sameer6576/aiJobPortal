@@ -19,6 +19,9 @@ spring:
 app:
   jwt:
     secret: ${JWT_SECRET:}
+  password-reset:
+    expose-token: ${PASSWORD_RESET_EXPOSE_TOKEN:true}
+    expiry-hours: 1
 
 eureka:
   client:

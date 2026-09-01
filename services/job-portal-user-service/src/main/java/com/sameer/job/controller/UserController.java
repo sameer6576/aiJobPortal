@@ -1,8 +1,11 @@
 package com.sameer.job.controller;
 
 import com.sameer.job.dto.response.UserResponse;
+import com.sameer.job.payload.ChangePasswordRequest;
+import com.sameer.job.payload.PasswordActionResponse;
 import com.sameer.job.payload.UpdateUserRequest;
 import com.sameer.job.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +29,14 @@ public class UserController {
             @RequestBody UpdateUserRequest req
     ) throws Exception {
         return ResponseEntity.ok(userService.updateProfile(email, req));
+    }
+
+    @PostMapping("/api/users/change-password")
+    public ResponseEntity<PasswordActionResponse> changePassword(
+            @RequestHeader("X-User-Email") String email,
+            @RequestBody @Valid ChangePasswordRequest req
+    ) {
+        return ResponseEntity.ok(userService.changePassword(email, req));
     }
 
     @GetMapping("/api/users/{userId}")

@@ -54,7 +54,7 @@
 
 **Decision:** Require `ROLE_ADMIN` on those specific gateway paths after JWT validation. Require `ROLE_ADMIN` or `ROLE_EMPLOYER` on taxonomy write paths. Signup tokens include the user's role.
 
-**Consequence:** A seeker or employer token cannot call those routes through the gateway. Services remain header-trusting if their ports are exposed. Taxonomy GET remains JWT-only at the gateway.
+**Consequence:** A seeker or employer token cannot call those routes through the gateway. Services remain header-trusting if their ports are exposed. Taxonomy GET list/detail is optional-JWT at the gateway (anonymous allowed). `GET /api/jobs/my` requires `ROLE_EMPLOYER`.
 
 ## 8. Jib images for Compose
 

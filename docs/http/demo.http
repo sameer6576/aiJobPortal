@@ -49,6 +49,34 @@ Content-Type: application/json
   "password": "EmpPass1"
 }
 
+### Forgot password (local: resetToken when expose-token is true; no SMTP)
+# @name forgotPassword
+POST {{gateway}}/auth/forgot-password
+Content-Type: application/json
+
+{
+  "email": "sam.seeker@example.com"
+}
+
+### Reset password
+POST {{gateway}}/auth/reset-password
+Content-Type: application/json
+
+{
+  "token": "{{forgotPassword.response.body.resetToken}}",
+  "newPassword": "SeekPass2"
+}
+
+### Change password (authenticated)
+POST {{gateway}}/api/users/change-password
+Authorization: Bearer {{seekerToken}}
+Content-Type: application/json
+
+{
+  "currentPassword": "SeekPass1",
+  "newPassword": "SeekPass2"
+}
+
 ### Optional job description draft
 POST {{gateway}}/api/ai/job/describe
 Authorization: Bearer {{employerToken}}
@@ -106,6 +134,13 @@ Content-Type: application/json
   "experienceLevel": "MID_LEVEL",
   "openings": 2
 }
+
+### Employer jobs (all statuses)
+GET {{gateway}}/api/jobs/my
+Authorization: Bearer {{employerToken}}
+
+### Public job list (no token)
+GET {{gateway}}/api/jobs
 
 ### Publish job
 PATCH {{gateway}}/api/jobs/{{createJob.response.body.id}}/publish

@@ -38,10 +38,12 @@ Module wrappers (`mvnw` / `mvnw.cmd`) can run tests inside a single executable m
 
 | Class | Module | What it covers |
 |---|---|---|
-| `AuthServiceImplTest` | `services/job-portal-user-service` | Signup puts the requested role on the JWT; signup rejects `ROLE_ADMIN` self-registration; login rejects `SUSPENDED` users (no token). Mockito unit tests, no Spring context. |
-| `UserServiceImplTest` | `services/job-portal-user-service` | `updateProfile` persists a supplied phone while leaving an omitted full name unchanged. Mockito unit test. |
+| `AuthServiceImplTest` | `services/job-portal-user-service` | Signup puts the requested role on the JWT; signup rejects `ROLE_ADMIN` self-registration; login rejects `SUSPENDED` users (no token); forgot-password is generic for unknown/disabled emails, stores SHA-256 not the raw token, optional `resetToken` exposure; reset encodes the password, is single-use, and rejects expired/disabled. Mockito unit tests, no Spring context. |
+| `UserServiceImplTest` | `services/job-portal-user-service` | `updateProfile` persists a supplied phone while leaving an omitted full name unchanged; change-password verifies current password, encodes the new one, and rejects wrong current / suspended accounts. Mockito unit test. |
 | `ApplicationServiceImplTest` | `services/job-portal-application-service` | Apply sets `AUTO_SHORTLISTED` when AI score is high; Gemini failure leaves `NOT_SCREENED`; duplicate apply fails before AI/job calls; draft jobs cannot be applied to; `getApplicationById` rejects an unrelated user. Mockito unit tests. |
-| `JobSpecificationTest` | `services/job-portal-job-service` | `@DataJpaTest` on H2: `JobSpecification` filters by category and `minOpenings` (`opening` column). |
+| `JobSpecificationTest` | `services/job-portal-job-service` | `@DataJpaTest` on H2: `JobSpecification` filters by category and `minOpenings` (`opening` column); `findByEmployerIdOrderByCreatedAtDescIdDesc` returns every status newest first. |
+| `JobServiceImplTest` | `services/job-portal-job-service` | `getMyJobs` maps repository rows for the employer id without dropping draft/open statuses. Mockito unit test. |
+| `RouteConfigAuthTest` | `cloud/job-portal-api-gateway` | Optional JWT: missing token is anonymous (forged identity stripped); valid Bearer injects claims; malformed/invalid token is 401; public GET predicates do not match `/my`, `/admin`, `/company`, search, or writes. |
 
 ### Context-load smoke tests (11)
 

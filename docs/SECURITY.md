@@ -6,6 +6,8 @@ User-service verifies credentials with BCrypt and issues a signed HMAC JWT (24-h
 
 The system is stateless. It does not implement server sessions, refresh-token rotation, token revocation, OAuth2, or OIDC.
 
+Password reset does not send mail. User-service issues an opaque random token, stores only its SHA-256 hash (`passwordResetTokenHash`) with a one-hour expiry, and consumes it on successful reset. Passwords are BCrypt-encoded and must not be logged. For local/demo, `app.password-reset.expose-token` (default `true`, `PASSWORD_RESET_EXPOSE_TOKEN`) may return the raw token in the forgot-password JSON; set it false when that leak is not wanted.
+
 ## Secret and configuration names
 
 Values are environment variables. Do not commit filled `.env` files. Names used by Config Server, Compose, and services include:
@@ -28,11 +30,11 @@ Only the gateway should be reachable in a deployed environment. Local Compose se
 
 ### Identity header replacement
 
-On protected gateway routes, inbound `X-User-Id`, `X-User-Email`, and `X-User-Role` are removed and then set from the validated JWT. Forged identity headers on a gateway request are ignored. `/auth/**` is not JWT-filtered. Direct service ports still accept those headers.
+On protected gateway routes, inbound `X-User-Id`, `X-User-Email`, and `X-User-Role` are removed and then set from the validated JWT. Forged identity headers on a gateway request are ignored. `/auth/**` is not JWT-filtered. Optional-auth public job/taxonomy GETs also strip those headers when no token is present. Direct service ports still accept those headers.
 
 ### Authorization coverage
 
-At the gateway, `ROLE_ADMIN` is required for `GET /api/users`, user suspend/activate/delete, company verify/deactivate, and `GET /api/jobs/admin`. Job category, skill, and tag writes require `ROLE_ADMIN` or `ROLE_EMPLOYER`. Other `/api/**` routes need a valid JWT only.
+At the gateway, `ROLE_ADMIN` is required for `GET /api/users`, user suspend/activate/delete, company verify/deactivate, and `GET /api/jobs/admin`. `GET /api/jobs/my` requires `ROLE_EMPLOYER`. Job category, skill, and tag writes require `ROLE_ADMIN` or `ROLE_EMPLOYER`. `GET /api/jobs`, `GET /api/jobs/{numeric id}`, and taxonomy GET list/detail are optional-JWT: missing token is anonymous (identity headers stripped); a valid Bearer token injects identity so an owner or admin can read a draft by id; a malformed or invalid supplied token is 401. Other `/api/**` routes need a valid JWT.
 
 At the service (when called with trusted headers):
 

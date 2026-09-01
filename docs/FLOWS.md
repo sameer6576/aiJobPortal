@@ -25,8 +25,11 @@ sequenceDiagram
 
 1. `POST /auth/signup`: unique email; password ≥ 8 characters; `UserRole` must not be `ROLE_ADMIN` (`ADMIN_SELF_SIGNUP`). New user `UserStatus.ACTIVE`. JWT includes claims `email`, `authorities` (role name), `userId`. TTL 24 hours. HMAC-SHA from `JWT_SECRET`.
 2. `POST /auth/login`: unknown email or bad password → `INVALID_CREDENTIALS`. `SUSPENDED` or `DELETED` → `ACCOUNT_DISABLED`. **`INACTIVE` is not rejected** (see [DOMAIN.md](DOMAIN.md)). `lastLogin` updated on success; new JWT issued.
-3. Gateway `/auth/**` is public. Other `/api/**` routes require `Authorization: Bearer `; missing/invalid/expired → 401.
-4. Gateway replaces identity headers from the token. Forged `X-User-*` on a **gateway** request are ignored. Direct service ports still accept those headers.
+3. `POST /auth/forgot-password`: generic success for unknown/disabled emails (no token). Eligible users get a cryptographically random opaque token; only the SHA-256 hash is stored, one-hour expiry, single-use. No email/SMTP. Local/demo may return `resetToken` when `app.password-reset.expose-token` is true (default).
+4. `POST /auth/reset-password`: hashes the submitted token, encodes the new password, clears the stored hash. `INVALID_RESET_TOKEN` / `RESET_TOKEN_EXPIRED` / `ACCOUNT_DISABLED`.
+5. `POST /api/users/change-password` (JWT): verifies current password (`INVALID_CREDENTIALS`), encodes the new password, clears any pending reset token. Suspended/deleted → `ACCOUNT_DISABLED`.
+6. Gateway `/auth/**` is public. `GET /api/jobs`, `GET /api/jobs/{numeric id}`, and taxonomy GET list/detail allow anonymous access; a supplied Bearer token is validated (invalid → 401) and identity is injected. Other `/api/**` routes require `Authorization: Bearer `; missing/invalid/expired → 401.
+7. Gateway replaces identity headers from the token. Forged `X-User-*` on a **gateway** request are ignored. Direct service ports still accept those headers.
 
 ---
 
@@ -65,7 +68,8 @@ sequenceDiagram
 4. Listing visibility:
    - `GET /api/jobs` (and NL search after mapping): default filter **`status=OPEN` and `active=true`**. Passing `status` can list other statuses if `active` is still true.
    - `GET /api/jobs/company/{companyId}`: **OPEN only**.
-   - `GET /api/jobs/{id}`: DRAFT returns **404** unless the caller is the employer (`X-User-Id`) or `X-User-Role` contains `ROLE_ADMIN`.
+   - `GET /api/jobs/{id}`: DRAFT returns **404** unless the caller is the employer (`X-User-Id`) or `X-User-Role` contains `ROLE_ADMIN` (gateway optional JWT).
+   - `GET /api/jobs/my`: every status for the JWT employer id, newest first (gateway `ROLE_EMPLOYER`).
    - `GET /api/jobs/admin`: all jobs (gateway requires `ROLE_ADMIN`).
 5. `PATCH /api/jobs/{id}/publish` (employer on the row): sets `OPEN`, `publishedAt`, `active=true`. **Conflict** if current status is `CLOSED` or `EXPIRED`. Re-publish of an already `OPEN` job is allowed. `EXPIRED` / `FILLED` are not assigned by a scheduler (see [DOMAIN.md](DOMAIN.md)).
 6. `PATCH .../close` sets `CLOSED`, `closedAt`, `active=false`.
@@ -209,6 +213,7 @@ Gateway extra filters (JWT already applied) in `RouteConfig`:
 | `GET /api/users`, `PATCH /api/users/*/suspend`, `PATCH /api/users/*/activate`, `DELETE /api/users/*/delete` | `ROLE_ADMIN` |
 | `PATCH /api/companies/*/verify`, `PATCH /api/companies/*/deactivate` | `ROLE_ADMIN` |
 | `GET /api/jobs/admin` | `ROLE_ADMIN` |
+| `GET /api/jobs/my` | `ROLE_EMPLOYER` |
 | POST/PUT/DELETE `/api/job-categories`, `/api/job-skills`, `/api/job-tags` | `ROLE_ADMIN` **or** `ROLE_EMPLOYER` |
 
 ```mermaid

@@ -89,9 +89,10 @@ Notification-service is a Kafka consumer. It is not routed by the gateway.
 The gateway (`cloud/job-portal-api-gateway`) is the only intended client entry:
 
 - `/auth/**` → user-service, no JWT
-- `/api/**` → JWT required (`Authorization: Bearer …`); invalid or missing token → 401
+- `GET /api/jobs`, `GET /api/jobs/{numeric id}`, taxonomy GET list/detail → optional JWT (anonymous if no token; invalid supplied token → 401); identity headers stripped unless a valid token is present
+- Other `/api/**` → JWT required (`Authorization: Bearer …`); invalid or missing token → 401
 - After HMAC verification, the gateway **strips** caller `X-User-Id`, `X-User-Email`, `X-User-Role` and **sets** them from JWT claims `userId`, `email`, `authorities`
-- Extra path filters: `ROLE_ADMIN` on selected admin routes; `ROLE_ADMIN` or `ROLE_EMPLOYER` on job taxonomy writes (see [FLOWS.md](FLOWS.md#7-admin-through-the-gateway-vs-direct-ports))
+- Extra path filters: `ROLE_ADMIN` on selected admin routes; `ROLE_EMPLOYER` on `GET /api/jobs/my`; `ROLE_ADMIN` or `ROLE_EMPLOYER` on job taxonomy writes (see [FLOWS.md](FLOWS.md#7-admin-through-the-gateway-vs-direct-ports))
 
 Downstream controllers trust those headers. Calling `localhost:5001`–`5010` skips JWT and gateway role checks.
 
