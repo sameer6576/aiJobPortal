@@ -48,6 +48,8 @@ public class ApplicationAiService {
                 - Key Skills: %s
                 - Relevant Experience: %s
 
+                Candidate Instructions: %s
+
                 Write a 3-paragraph cover letter:
 
                 Paragraph 1 (Opening):
@@ -70,6 +72,7 @@ public class ApplicationAiService {
                 - Do NOT use placeholders like [Company Name].
                 - Use the actual company name or say "your team".
                 - Do NOT include a subject line or date.
+                - Follow Candidate Instructions when provided, unless they conflict with the rules above.
                 """.formatted(
                 request.getJobTitle(),
                 request.getJobDescription() != null
@@ -83,7 +86,10 @@ public class ApplicationAiService {
                         ? request.getCandidateSummary()
                         : "Experienced Professional",
                 skills,
-                experience
+                experience,
+                request.getAdditionalContext() != null && !request.getAdditionalContext().isBlank()
+                        ? request.getAdditionalContext()
+                        : "None"
         );
 
         return AiTextResponse.builder()

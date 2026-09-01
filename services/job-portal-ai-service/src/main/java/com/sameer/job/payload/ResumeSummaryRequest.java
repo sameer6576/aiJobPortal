@@ -19,6 +19,8 @@ public class ResumeSummaryRequest {
     private List<EducationInfo> educations;
     private Integer yearsOfExperience;
 
+    private String additionalContext;
+
 
     @Data
     public static class WorkExperienceInfo {

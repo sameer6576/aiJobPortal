@@ -25,4 +25,5 @@ public class CoverLetterRequest {
     private List<String> candidateSkills;
     private List<String> candidateExperience;
     private String targetCompanyName;
+    private String additionalContext;
 }

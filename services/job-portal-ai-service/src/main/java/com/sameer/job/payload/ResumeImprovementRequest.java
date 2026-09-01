@@ -16,4 +16,6 @@ public class ResumeImprovementRequest {
     private String resumeContent;
 
     private String targetJobTitle;
+
+    private String additionalContext;
 }

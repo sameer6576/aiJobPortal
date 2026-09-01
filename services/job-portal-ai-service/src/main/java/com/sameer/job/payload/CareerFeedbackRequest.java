@@ -16,4 +16,6 @@ public class CareerFeedbackRequest {
     private String resumeContent;
 
     private String targetJobTitle;
+
+    private String additionalContext;
 }

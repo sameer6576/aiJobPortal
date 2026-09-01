@@ -55,18 +55,24 @@ public class ResumeAiService {
 
 
     public AiTextResponse generateProfessionalSummary(ResumeSummaryRequest req) throws Exception {
-        String experiences = req.getWorkExperiences() != null ?
+        String experiences = req.getWorkExperiences() != null && !req.getWorkExperiences().isEmpty() ?
                 req.getWorkExperiences().stream().map(
-                        e -> e.getJobTitle() + "at" + e.getCompanyName() +
+                        e -> e.getJobTitle() + " at " + e.getCompanyName() +
                              (e.getDescription() != null && !e.getDescription()
                                                               .isBlank() ? ": " + e.getDescription() : "")
                 ).collect(Collectors.joining("; ")) : "Not provided";
 
-        String skills = req.getSkills() != null ? String.join(", ", req.getSkills()) : "Not provided";
-        String educations = req.getEducations() != null
+        String skills = req.getSkills() != null && !req.getSkills().isEmpty()
+                ? String.join(", ", req.getSkills()) : "Not provided";
+        String educations = req.getEducations() != null && !req.getEducations().isEmpty()
                 ? req.getEducations().stream()
-                     .map(e -> e.getDegree() + (e.getFieldOfStudy() != null ? " in " + e.getInstitutionName() : ""))
+                     .map(e -> e.getDegree()
+                               + (e.getFieldOfStudy() != null ? " in " + e.getFieldOfStudy() : "")
+                               + (e.getInstitutionName() != null ? " from " + e.getInstitutionName() : ""))
                      .collect(Collectors.joining("; ")) : "Not provided";
+
+        String additionalContext = req.getAdditionalContext() != null && !req.getAdditionalContext().isBlank()
+                ? req.getAdditionalContext() : "None";
 
         String prompt = """
                 Write a compelling, professional resume summary based on the following candidate profile:
@@ -76,6 +82,7 @@ public class ResumeAiService {
                 **Work Experience:** %s
                 **Key Skills:** %s
                 **Education:** %s
+                **Candidate Instructions:** %s
                 
                 Write a **3–4 sentence professional summary** that:
                 
@@ -93,11 +100,14 @@ public class ResumeAiService {
                 * Avoid generic buzzwords and unnecessary adjectives.
                 * Do not invent experience, skills, achievements, or metrics.
                 * Keep the summary **under 80 words**.
+                * Only describe details present in the profile above; if a section says "Not provided", ignore it rather than inventing content.
+                * Follow **Candidate Instructions** when they are provided, unless they conflict with the rules above.
                 * Return **only the professional summary**, with no heading or additional explanation.
                 """.formatted(
-                req.getTargetJobTitle() != null ? req.getTargetJobTitle() : "Software Developer",
+                req.getTargetJobTitle() != null && !req.getTargetJobTitle().isBlank()
+                        ? req.getTargetJobTitle() : "Software Developer",
                 req.getYearsOfExperience() != null ? req.getYearsOfExperience() : 0,
-                experiences, skills, educations
+                experiences, skills, educations, additionalContext
         );
 
         return AiTextResponse.builder()
@@ -165,6 +175,8 @@ public class ResumeAiService {
                 **Resume Content:**
                 %s
                 
+                **Candidate Instructions:** %s
+                
                 ### Your Role
                 
                 Act as a senior resume writer, recruiter, and career coach with 15+ years of experience in the Indian technology job market.
@@ -185,7 +197,7 @@ public class ResumeAiService {
                 
                 {
                 "profileStrength": 65,
-                "shortlistingIssues": [
+                "shortListingIssues": [
                 "Reason 1 why recruiters may skip this profile",
                 "Reason 2",
                 "Reason 3"
@@ -194,14 +206,15 @@ public class ResumeAiService {
                 {
                 "area": "Skills | Summary | Experience | Education | Projects | General",
                 "issue": "Specific problem identified in the resume",
-                "recommendation": "Specific, actionable improvement",
+                "action": "Specific, actionable improvement",
                 "priority": "High | Medium | Low"
                 }
                 ],
                 "targetJobs": [
                 {
                 "jobTitle": "Recommended Job Title",
-                "reason": "Why this role realistically suits the candidate's current skills and experience"
+                "reason": "Why this role realistically suits the candidate's current skills and experience",
+                "skillMatch": "Which of the candidate's existing skills support this role"
                 }
                 ],
                 "overallSummary": "2-3 sentences of honest, encouraging career advice"
@@ -224,10 +237,13 @@ public class ResumeAiService {
                 13. Evaluate the resume against realistic expectations for the **Indian technology job market**.
                 14. If no target job title is provided, infer suitable roles from the candidate’s experience and skills.
                 15. Keep `overallSummary` concise, honest, encouraging, and actionable.
-                16. Return **ONLY valid JSON**. Do not use markdown fences, explanations, headings, or text outside the JSON.
+                16. Follow **Candidate Instructions** when provided, unless they conflict with the rules above.
+                17. Return **ONLY valid JSON**. Do not use markdown fences, explanations, headings, or text outside the JSON.
                 """.formatted(
                 req.getTargetJobTitle() != null ? req.getTargetJobTitle() : "Not specified",
-                req.getResumeContent()
+                req.getResumeContent(),
+                req.getAdditionalContext() != null && !req.getAdditionalContext().isBlank()
+                        ? req.getAdditionalContext() : "None"
         );
 
         return geminiClient.generateJson(SYSTEM_PROMPT, prompt, CareerFeedbackResponse.class);
@@ -242,6 +258,8 @@ public class ResumeAiService {
                 
                 **Resume Content:**
                 %s
+                
+                **Candidate Instructions:** %s
                 
                 ### Your Role
                 
@@ -275,7 +293,7 @@ public class ResumeAiService {
                 {
                 "section": "Summary | Experience | Skills | Education | Projects | General",
                 "issue": "Specific problem identified",
-                "recommendation": "Specific action the candidate should take",
+                "suggestion": "Specific action the candidate should take",
                 "priority": "High | Medium | Low"
                 }
                 ],
@@ -297,10 +315,13 @@ public class ResumeAiService {
                 11. Tailor recommendations specifically to the **Target Job Title** rather than giving generic resume advice.
                 12. If the target job title is missing or unclear, infer the most suitable role from the resume.
                 13. Do not recommend changes that would misrepresent the candidate's actual experience.
-                14. Return **ONLY valid JSON** with no markdown, code fences, explanations, or additional text.
+                14. Follow **Candidate Instructions** when provided, unless they conflict with the rules above.
+                15. Return **ONLY valid JSON** with no markdown, code fences, explanations, or additional text.
                 """.formatted(
                 req.getTargetJobTitle() != null ? req.getTargetJobTitle() : "Not Specified",
-                req.getResumeContent()
+                req.getResumeContent(),
+                req.getAdditionalContext() != null && !req.getAdditionalContext().isBlank()
+                        ? req.getAdditionalContext() : "None"
         );
 
         return geminiClient.generateJson(SYSTEM_PROMPT, prompt, ResumeImprovementResponse.class);
